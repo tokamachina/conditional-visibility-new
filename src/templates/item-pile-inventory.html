@@ -1,0 +1,87 @@
+<form class="flexcol {{cssClasses}}" style="padding:0.5rem;" autocomplete="off">
+
+    <div class="item-piles-item-drop-container">
+
+        <div id="item-piles-preview-container">
+            <img id="item-piles-preview-image">
+        </div>
+
+        {{#if hasRecipient}}
+        <p style="text-align: center; flex: 0 1 auto;">{{localize "ITEM-PILES.Inspect.AsActor" actorName=recipient.name }}</p>
+        {{else}}
+        <p style="text-align: center; flex: 0 1 auto;">{{localize "ITEM-PILES.Inspect.NoActor"}}</p>
+        {{/if}}
+
+        <hr>
+
+        {{#if isDeleted}}
+
+            <p style="text-align: center; flex: 0 1 auto;">{{localize "ITEM-PILES.Inspect.Destroyed"}}</p>
+
+        {{else}}
+
+            {{#if isEmpty}}
+            <p style="text-align: center; flex: 0 1 auto;">{{localize "ITEM-PILES.Inspect.Empty"}}</p>
+            {{/if}}
+
+            <div class="item-piles-items">
+                {{#each items as |item id|}}
+                <div class="flexrow item-piles-item-row {{#unless item.quantity}}item-pile-item-disabled{{/unless}}" data-item-id="{{item.id}}" data-item-type="{{item.type}}">
+                    <img class="item-piles-img" src="{{item.img}}"/>
+                    <div class="item-piles-name item-piles-text">
+                        {{#if @root.canInspectItems}}<a class="item-piles-item-clickable">{{/if}}
+                        {{item.name}}
+                        {{#if @root.canInspectItems}}</a>{{/if}}
+                    </div>
+                    {{#if @root.hasRecipient}}
+                        <input class="item-piles-quantity" type="number" min="1" value="{{item.currentQuantity}}" max="{{item.quantity}}" {{#unless item.quantity}}disabled{{/unless}}/>
+                    {{/if}}
+                    <span class="item-piles-text item-piles-input-divider {{#unless @root.hasRecipient}}item-piles-text-right{{/unless}}">
+                        {{#if @root.hasRecipient}}/ {{else}}x{{/if}}{{item.quantity}}
+                    </span>
+                    {{#if @root.hasRecipient}}
+                        <button class="item-piles-take-button" type="button" {{#unless item.quantity}}disabled{{/unless}}>{{localize "ITEM-PILES.Inspect.Take"}}</button>
+                    {{/if}}
+                </div>
+                {{/each}}
+                {{#if hasAttributes}}
+                {{#if hasItems}}
+                <hr>
+                {{/if}}
+                {{/if}}
+                {{#each attributes as |attribute id|}}
+                <div class="flexrow item-piles-item-row item-piles-attribute-row" data-attribute-name="{{attribute.name}}" data-attribute-path="{{attribute.path}}">
+                    <img class="item-piles-img" src="{{attribute.img}}"/>
+                    <div class="item-piles-name item-piles-text">{{attribute.name}}</div>
+                    {{#if @root.hasRecipient}}
+                        <input class="item-piles-quantity" type="number" min="1" value="{{attribute.currentQuantity}}" max="{{attribute.quantity}}" {{#unless attribute.quantity}}disabled{{/unless}}/>
+                    {{/if}}
+                    <span class="item-piles-text item-piles-input-divider {{#unless @root.hasRecipient}}item-piles-text-right{{/unless}}">
+                        {{#if @root.hasRecipient}}/ {{else}}x{{/if}}{{attribute.quantity}}
+                    </span>
+                    {{#if @root.hasRecipient}}
+                        <button class="item-piles-attribute-take-button" type="button" {{#unless attribute.quantity}}disabled{{/unless}}>{{localize "ITEM-PILES.Inspect.Take"}}</button>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+
+        {{/if}}
+
+        <footer class="sheet-footer flexrow" style="margin-top: 1rem;">
+            {{#if hasRecipient}}
+                {{#unless isEmpty}}
+                <button type="submit" name="takeAll" value="takeAll"><i class="fas fa-download"></i> {{localize "ITEM-PILES.Inspect.TakeAll"}}</button>
+                {{/unless}}
+                {{#unless isDeleted}}
+                {{#if isContainer}}
+                <button type="submit" name="close" value="close"><i class="fas fa-times"></i> {{localize "ITEM-PILES.Inspect.Close"}}</button>
+                {{/if}}
+                {{/unless}}
+            {{/if}}
+            <button type="submit" name="leave" value="leave"><i class="fas fa-times"></i> {{localize "ITEM-PILES.Inspect.Leave"}}</button>
+        </footer>
+
+    </div>
+
+</form>

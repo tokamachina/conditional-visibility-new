@@ -38,6 +38,33 @@ function getGame(): Game {
   return game;
 }
 
+export const CONDITIONAL_VISIBILITY_MODULE_NAME = 'conditional-visibility';
+export const CONDITIONAL_VISIBILITY_DEFAULT_STEALTH = 10;
+
+export interface StatusEffect {
+  id: string;
+  visibilityId: string;
+  label: string;
+  icon: string;
+}
+
+export enum StatusEffectSightFlags {
+  SEE_INVISIBLE = 'seeinvisible',
+  BLIND_SIGHT = 'blindsight',
+  TREMOR_SENSE = 'tremorsense',
+  TRUE_SIGHT = 'truesight',
+  DEVILS_SIGHT = 'devilssight',
+  PASSIVE_STEALTH = '_ste',
+}
+
+// TODO PUT THESE IN LOCALIZATION FOR OTHER LANGUAGE
+export enum StatusEffectStatusFlags {
+  INVISIBLE = 'invisible',
+  OBSCURED = 'obscured',
+  IN_DARKNESS = 'indarkness',
+  HIDDEN = 'hidden',
+}
+
 function defaultSettings(apply = false) {
     return {
         "dynamicAttributes": {
@@ -47,55 +74,61 @@ function defaultSettings(apply = false) {
             type: Array
         },
         "actorClassType": {
-            name: "ITEM-PILES.Setting.ActorClass.Title",
-            hint: "ITEM-PILES.Setting.ActorClass.Label",
+            name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.ActorClass.name`,
+            hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.ActorClass.hint`,
             scope: "world",
             config: true,
-            default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ACTOR_CLASS_TYPE : game.system.template.Actor.types[0],
+            default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ACTOR_CLASS_TYPE : game.system.template.Actor?.types[0],
             type: String
         },
         "itemQuantityAttribute": {
-            name: "ITEM-PILES.Setting.Quantity.Title",
-            hint: "ITEM-PILES.Setting.Quantity.Label",
+            name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Quantity.name`,
+            hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Quantity.hint`,
             scope: "world",
             config: true,
             default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ITEM_QUANTITY_ATTRIBUTE : "",
             type: String
         },
-        "itemTypeAttribute": {
-            name: "ITEM-PILES.Setting.ItemType.Title",
-            hint: "ITEM-PILES.Setting.ItemType.Label",
+        "visibilityTypeAttribute": {
+            name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityType.name`,
+            hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityType.hint`,
             scope: "world",
             config: true,
             default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ITEM_TYPE_ATTRIBUTE : "",
             type: String
         },
-        "itemTypeFilters": {
-            name: "ITEM-PILES.Setting.ItemTypeFilters.Title",
-            hint: "ITEM-PILES.Setting.ItemTypeFilters.Label",
+        "visibilityTypeFilters": {
+            name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityTypeFilters.name`,
+            hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityTypeFilters.hint`,
             scope: "world",
             config: true,
             default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ITEM_TYPE_FILTERS : "",
             type: String
         }
+        "visibilityDefaultValue": {
+          name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityDefaultValue.name`,
+          hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityDefaultValue.hint`,
+          scope: "world",
+          config: true,
+          default: 10,
+          type: Number
+      }
     }
 }
 
 export default function registerSettings() {
 
     game.settings.registerMenu(CONSTANTS.MODULE_NAME, "resetAllSettings", {
-        name: "ITEM-PILES.Setting.Reset.Title",
-        label: "ITEM-PILES.Setting.Reset.Label",
-        hint: "ITEM-PILES.Setting.Reset.Hint",
+        name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Reset.name`,
+        hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Reset.hint`,
         icon: "fas fa-coins",
         type: ResetSettingsDialog,
         restricted: true
     });
 
     game.settings.registerMenu(CONSTANTS.MODULE_NAME, "openDynamicAttributesEditor", {
-        name: "ITEM-PILES.Setting.Attributes.Title",
-        label: "ITEM-PILES.Setting.Attributes.Label",
-        hint: "ITEM-PILES.Setting.Attributes.Hint",
+        name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Attributes.name`,
+        hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Attributes.hint`,
         icon: "fas fa-coins",
         type: ItemPileAttributeEditor,
         restricted: true
@@ -107,8 +140,8 @@ export default function registerSettings() {
     }
 
     game.settings.register(CONSTANTS.MODULE_NAME, "deleteEmptyPiles", {
-        name: "ITEM-PILES.Setting.DeleteEmptyPiles.Title",
-        hint: "ITEM-PILES.Setting.DeleteEmptyPiles.Label",
+        name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.DeleteEmptyPiles.name`,
+        hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.DeleteEmptyPiles.hint`,
         scope: "world",
         config: true,
         default: false,
@@ -116,8 +149,8 @@ export default function registerSettings() {
     });
 
     game.settings.register(CONSTANTS.MODULE_NAME, "preloadFiles", {
-        name: "ITEM-PILES.Setting.PreloadFiles.Title",
-        hint: "ITEM-PILES.Setting.PreloadFiles.Label",
+        name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.PreloadFiles.name`,
+        hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.PreloadFiles.hint`,
         scope: "client",
         config: true,
         default: true,
@@ -132,8 +165,8 @@ export default function registerSettings() {
     });
 
     game.settings.register(CONSTANTS.MODULE_NAME, "debug", {
-        name: "ITEM-PILES.Setting.Debug.Title",
-        hint: "ITEM-PILES.Setting.Debug.Label",
+        name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Debug.name`,
+        hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Debug.hint`,
         scope: "client",
         config: true,
         default: false,
@@ -171,15 +204,16 @@ export default function registerSettings() {
 }
 
 class ResetSettingsDialog extends FormApplication {
-    constructor(...args) {
-        super(...args);
+    constructor(...args:any[]) {
+        super(args);
+        //@ts-ignore
         return new Dialog({
-            title: game.i18n.localize("ITEM-PILES.Dialogs.ResetSettings.Title"),
-            content: `<p style="margin-bottom:1rem;">${game.i18n.localize("ITEM-PILES.Dialogs.ResetSettings.Content")}</p>`,
+            title: game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.ResetSettings.Title`),
+            content: '<p style="margin-bottom:1rem;">' + game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.ResetSettings.Content`) + '</p>',
             buttons: {
                 confirm: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ITEM-PILES.Dialogs.ResetSettings.Confirm"),
+                    label: game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.ResetSettings.Confirm`),
                     callback: async () => {
                         await applyDefaultSettings();
                         window.location.reload();
@@ -187,11 +221,15 @@ class ResetSettingsDialog extends FormApplication {
                 },
                 cancel: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ITEM-PILES.Dialogs.Cancel")
+                    label: game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.Cancel`)
                 }
             },
             default: "cancel"
         })
+    }
+
+    async _updateObject(event: Event, formData?: object): Promise<any>{
+      // do nothing
     }
 }
 
@@ -211,8 +249,8 @@ export async function checkSystem(){
         await game.settings.set(CONSTANTS.MODULE_NAME, "systemNotFoundWarningShown", true);
 
         return Dialog.prompt({
-            title: game.i18n.localize("ITEM-PILES.Dialogs.NoSystemFound.Title"),
-            content: lib.dialogWarning(game.i18n.localize("ITEM-PILES.Dialogs.NoSystemFound.Content")),
+            title: game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.NoSystemFound.Title`),
+            content: lib.dialogWarning(game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.NoSystemFound.Content`)),
             callback: () => {}
         });
 
@@ -225,12 +263,12 @@ export async function checkSystem(){
     if(game.settings.get(CONSTANTS.MODULE_NAME, "systemNotFoundWarningShown")){
 
         return new Dialog({
-            title: game.i18n.localize("ITEM-PILES.Dialogs.SystemFound.Title"),
-            content: lib.dialogWarning(game.i18n.localize("ITEM-PILES.Dialogs.SystemFound.Content"), "fas fa-search"),
+            title: game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.SystemFound.Title`),
+            content: warn(game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.SystemFound.Content`), "fas fa-search"),
             buttons: {
                 confirm: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ITEM-PILES.Dialogs.SystemFound.Confirm"),
+                    label: game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.SystemFound.Confirm`),
                     callback: () => {
                         applyDefaultSettings();
                     }

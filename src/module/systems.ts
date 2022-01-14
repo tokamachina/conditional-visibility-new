@@ -1,10 +1,10 @@
-import dnd5e from "./systems/dnd5e.js";
+
 
 // ↓ IMPORT SYSTEMS HERE ↓
-import pf1 from "./systems/pf2.js";
-import ds4 from "./systems/ds4.js";
-import d35e from "./systems/ds4.js";
-import swade from "./systems/swade.js";
+import dnd5e from "./systems/dnd5e";
+import pf2 from "./systems/pf2";
+import generic from "./systems/generic";
+
 // ↑ IMPORT SYSTEMS HERE ↑
 
 /**
@@ -14,12 +14,10 @@ import swade from "./systems/swade.js";
 export const SYSTEMS = {
     get DATA() {
         return {
-            dnd5e,
             // ↓ ADD SYSTEMS HERE ↓
-            pf1,
-            ds4,
-            d35e,
-            swade,
+            dnd5e,
+            pf2,
+            generic
             // ↑ ADD SYSTEMS HERE ↑
         }?.[game.system.id];
     }

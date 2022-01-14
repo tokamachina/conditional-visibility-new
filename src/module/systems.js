@@ -1,7 +1,7 @@
 import dnd5e from "./systems/dnd5e.js";
 
 // ↓ IMPORT SYSTEMS HERE ↓
-import pf1 from "./systems/pf1.js";
+import pf1 from "./systems/pf2.js";
 import ds4 from "./systems/ds4.js";
 import d35e from "./systems/ds4.js";
 import swade from "./systems/swade.js";

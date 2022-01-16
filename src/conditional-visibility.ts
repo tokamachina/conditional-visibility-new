@@ -16,7 +16,7 @@ import { canvas, game } from './module/settings';
 import { preloadTemplates } from './module/preloadTemplates';
 import { registerHotkeys } from './module/hotkeys';
 import { CONSTANTS } from './module/constants';
-import { error } from './module/lib/lib';
+import { error, log } from './module/lib/lib';
 
 // declare global {
 //   interface Window {
@@ -79,6 +79,7 @@ Hooks.once('libChangelogsReady', function () {
   //@ts-ignore
   libChangelogs.register(
     CONDITIONAL_VISIBILITY_MODULE_NAME,
-    `Big update integration levelc. perfect vision, shared vision`,
+    `Big update integration levels. perfect vision, shared vision`,
+    'minor',
   );
 });

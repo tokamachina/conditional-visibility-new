@@ -6,40 +6,41 @@ import { checkSystem, CONDITIONAL_VISIBILITY_MODULE_NAME } from './settings';
 import { canvas, game } from './settings';
 import { registerSocket } from './socket';
 import API from './api';
+import { ConditionalVisibility } from './conditional-visibility-impl';
 
 export const readyHooks = async (): Promise<void> => {
   Hooks.callAll(HOOKS.READY);
 
   // setup all the hooks
-  // const sightLayer = canvas.layers.find((layer) => {
-  //   switch (game.system.id) {
-  //     case 'dnd5e':
-  //       //@ts-ignore
-  //       return layer.__proto__.constructor.name === 'SightLayer';
-  //       break;
-  //     case 'pf2e':
-  //       //@ts-ignore
-  //       return layer.__proto__.constructor.name === 'SightLayerPF2e';
-  //       break;
-  //     default:
-  //       //@ts-ignore
-  //       return layer.__proto__.constructor.name === 'SightLayer';
-  //   }
-  // });
+  const sightLayer = canvas.layers.find((layer) => {
+    switch (game.system.id) {
+      case 'dnd5e':
+        //@ts-ignore
+        return layer.__proto__.constructor.name === 'SightLayer';
+        break;
+      case 'pf2e':
+        //@ts-ignore
+        return layer.__proto__.constructor.name === 'SightLayerPF2e';
+        break;
+      default:
+        //@ts-ignore
+        return layer.__proto__.constructor.name === 'SightLayer';
+    }
+  });
 
   //@ts-ignore
-  ConditionalVisibility.initialize(sightLayer, canvas.hud?.token);
+  //ConditionalVisibility.initialize(sightLayer, canvas.hud?.token);
 
   // Add any additional hooks if necessary
   Hooks.on('renderTokenConfig', (tokenConfig, html, data) => {
-    ConditionalVisibility.INSTANCE.onRenderTokenConfig(tokenConfig, html, data);
+    // ConditionalVisibility.INSTANCE.onRenderTokenConfig(tokenConfig, html, data);
   });
   Hooks.on('renderTokenHUD', (app, html, token) => {
-    ConditionalVisibility.INSTANCE.onRenderTokenHUD(app, html, token);
+    // ConditionalVisibility.INSTANCE.onRenderTokenHUD(app, html, token);
   });
 
   Hooks.on('sightRefresh', () => {
-    ConditionalVisibility.INSTANCE.restrictVisibility(32);
+    // ConditionalVisibility.INSTANCE.restrictVisibility(32);
   });
   //synthetic actors go through this
   // Hooks.on("preUpdateToken", ( token, update, options, userId) => {
@@ -47,25 +48,25 @@ export const readyHooks = async (): Promise<void> => {
   // });
   //real actors go through this
   Hooks.on('updateToken', (token, updates) => {
-    if ('elevation' in updates || 'x' in updates || 'y' in updates || 'rotation' in updates) {
-      ConditionalVisibility.INSTANCE.restrictVisibility(100);
-      //token._object.visible = ConditionalVisibility.canSee(token._object);
-    }
+    // if ('elevation' in updates || 'x' in updates || 'y' in updates || 'rotation' in updates) {
+    //   ConditionalVisibility.INSTANCE.restrictVisibility(100);
+    //   //token._object.visible = ConditionalVisibility.canSee(token._object);
+    // }
   });
   Hooks.on('createActiveEffect', (effect, options, userId) => {
-    ConditionalVisibility.INSTANCE.onCreateEffect(effect, options, userId);
+    // ConditionalVisibility.INSTANCE.onCreateEffect(effect, options, userId);
   });
 
   Hooks.on('deleteActiveEffect', (effect, options, userId) => {
-    ConditionalVisibility.INSTANCE.onDeleteEffect(effect, options, userId);
+    // ConditionalVisibility.INSTANCE.onDeleteEffect(effect, options, userId);
   });
 
   Hooks.on('createItem', (effect, options, userId) => {
-    ConditionalVisibility.INSTANCE.onCreateEffect(effect, options, userId);
+    // ConditionalVisibility.INSTANCE.onCreateEffect(effect, options, userId);
   });
 
   Hooks.on('deleteItem', (effect, options, userId) => {
-    ConditionalVisibility.INSTANCE.onDeleteEffect(effect, options, userId);
+    // ConditionalVisibility.INSTANCE.onDeleteEffect(effect, options, userId);
   });
 };
 

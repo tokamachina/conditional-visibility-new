@@ -1,6 +1,8 @@
 import Effect, { Constants } from '../effects/effect';
 import { EffectDefinitions } from '../conditional-visibility-effect-definition';
 import { i18n } from '../lib/lib';
+import { CONDITIONAL_VISIBILITY_MODULE_NAME } from '../settings';
+import { StatusEffectStatusFlags } from '../conditional-visibility-models';
 
 export default {
   /** Equivalent to the VisionLevel enum in the Pathfinder 2e system */
@@ -58,6 +60,26 @@ export default {
       path: 'data.attributes.senses.devilssight',
       img: 'systems/dnd5e/icons/skills/blue_17.jpg',
       effect: EffectDefinitions.devilssight(0),
+    },
+  ],
+  CONDITIONS: [
+    {
+      id: CONDITIONAL_VISIBILITY_MODULE_NAME + '.invisible',
+      visibilityId: StatusEffectStatusFlags.INVISIBLE, //'invisible',
+      label: i18n(CONDITIONAL_VISIBILITY_MODULE_NAME + '.invisible'),
+      icon: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/unknown.svg',
+    },
+    {
+      id: CONDITIONAL_VISIBILITY_MODULE_NAME + '.obscured',
+      visibilityId: StatusEffectStatusFlags.OBSCURED, //'obscured',
+      label: i18n(CONDITIONAL_VISIBILITY_MODULE_NAME + '.obscured'),
+      icon: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/foggy.svg',
+    },
+    {
+      id: CONDITIONAL_VISIBILITY_MODULE_NAME + '.indarkness',
+      visibilityId: StatusEffectStatusFlags.IN_DARKNESS, // 'indarkness',
+      label: i18n(CONDITIONAL_VISIBILITY_MODULE_NAME + '.indarkness'),
+      icon: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/moon.svg',
     },
   ],
 };

@@ -1,4 +1,5 @@
 import { CONSTANTS } from './constants';
+import { ConditionalVisibilityAttributeEditor } from './formapplications/conditionalVisibilityAttributeEditor';
 import { dialogWarning, warn } from './lib/lib';
 import { SYSTEMS } from './systems';
 
@@ -49,38 +50,6 @@ function defaultSettings(apply = false) {
       default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.SENSES : [],
       type: Array,
     },
-    // actorClassType: {
-    //   name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.ActorClass.name`,
-    //   hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.ActorClass.hint`,
-    //   scope: 'world',
-    //   config: true,
-    //   default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ACTOR_CLASS_TYPE : game.system.template.Actor?.types[0],
-    //   type: String,
-    // },
-    // itemQuantityAttribute: {
-    //   name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Quantity.name`,
-    //   hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Quantity.hint`,
-    //   scope: 'world',
-    //   config: true,
-    //   default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ITEM_QUANTITY_ATTRIBUTE : '',
-    //   type: String,
-    // },
-    // visibilityTypeAttribute: {
-    //   name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityType.name`,
-    //   hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityType.hint`,
-    //   scope: 'world',
-    //   config: true,
-    //   default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ITEM_TYPE_ATTRIBUTE : '',
-    //   type: String,
-    // },
-    // visibilityTypeFilters: {
-    //   name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityTypeFilters.name`,
-    //   hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityTypeFilters.hint`,
-    //   scope: 'world',
-    //   config: true,
-    //   default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ITEM_TYPE_FILTERS : '',
-    //   type: String,
-    // },
     visibilityDefaultValue: {
       name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityDefaultValue.name`,
       hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityDefaultValue.hint`,
@@ -101,44 +70,19 @@ export const registerSettings = function (): void {
     restricted: true,
   });
 
-  // game.settings.registerMenu(CONSTANTS.MODULE_NAME, "openDynamicAttributesEditor", {
-  //     name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Attributes.name`,
-  //     hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Attributes.hint`,
-  //     icon: "fas fa-coins",
-  //     type: ItemPileAttributeEditor,
-  //     restricted: true
-  // });
+  game.settings.registerMenu(CONSTANTS.MODULE_NAME, 'openDynamicAttributesEditor', {
+    name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Attributes.name`,
+    hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Attributes.hint`,
+    icon: 'fas fa-coins',
+    type: ConditionalVisibilityAttributeEditor,
+    restricted: true,
+  });
 
   const settings = defaultSettings();
   for (const [name, data] of Object.entries(settings)) {
     //@ts-ignore
     game.settings.register(CONSTANTS.MODULE_NAME, name, data);
   }
-
-  game.settings.register(CONSTANTS.MODULE_NAME, 'deleteEmptyPiles', {
-    name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.DeleteEmptyPiles.name`,
-    hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.DeleteEmptyPiles.hint`,
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_NAME, 'preloadFiles', {
-    name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.PreloadFiles.name`,
-    hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.PreloadFiles.hint`,
-    scope: 'client',
-    config: true,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_NAME, 'defaultItemPileActorID', {
-    scope: 'world',
-    config: false,
-    default: '',
-    type: String,
-  });
 
   game.settings.register(CONSTANTS.MODULE_NAME, 'debug', {
     name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Debug.name`,

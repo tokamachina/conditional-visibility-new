@@ -1,160 +1,33 @@
 {
-    "ITEM-PILES": {
+  "conditional-visibility.settings.autoStealth.name": "Auto hide on stealth rolls",
+  "conditional-visibility.settings.autoStealth.hint": "On supported game systems, set the hidden condition on a token's stealth roll",
 
-        "Inspect": {
-            "Title": "Inspecting Pile Contents",
-            "AsActor": "You're inspecting this pile as {actorName}",
-            "NoActor": "You are inspecting the contents of this pile without controlling a token, which means you can't take items from it.",
-            "TakeAll": "Take All Items",
-            "Empty": "This pile is empty.",
-            "Destroyed": "This pile no longer exists and lies barren.",
-            "Take": "Take",
-            "Close": "Close Lid",
-            "Leave": "Leave"
-        },
+  "conditional-visibility.popup.dismissuntilupdated": "Dismiss until updated",
+  "conditional-visibility.popup.close": "Close",
+  "conditional-visibility.popup.version0910.1": "A compendium has is now part of this module, for those who wish to use macros instead of conditions icons to apply conditions, or to apply them in bulk.",
+  "conditional-visibility.popup.version0910.2": "There is also a script that makes an effort to migrate tokens from the Foundry 0.6.x model to the Foundry 0.7 model, though you may still have to re-apply some effects",
+  "conditional-visibility.popup.version0910.3": "Using these scripts as macros will require the installation of the Furnace module, as they are asynchronous",
 
-        "Errors": {
-            "DisallowedItemDrop": "You cannot an drop \"{type}\" items",
-            "NoSourceDrop": "You cannot drop items from the item bar unless you are a GM.",
-            "PileTooFar": "You're too far away to interact with this pile.",
-            "PileLocked": "This item pile is locked and cannot be opened - you can't drop items in it.",
-            "DropNoToken": "You don't have a token on this scene, so you can't drop any items here."
-        },
+  "conditional-visibility.help.readmeat": "More instructions can be found at the",
+  "conditional-visibility.help.gamesystem": "Game System",
+  "conditional-visibility.help.hasStealth": "Has Stealth",
+  "conditional-visibility.help.availableconditions": "Available Conditions",
 
-        "Dialogs": {
-            "DropTypeWarning": {
-                "Title": "Item Type Warning",
-                "Content": "You're dropping an item that is of a type (\"{type}\") that is normally not allowed to be dropped. Are you sure you want to do this?"
-            },
-            "ResetSettings": {
-                "Title": "Reset Item Piles Module Settings",
-                "Content": "Are you sure you want to reset all of the Item Piles module settings to the current system's defaults? <strong>THIS CANNOT BE UNDONE!</strong>",
-                "Confirm": "Reset Module Settings"
-            },
-            "LinkedActorWarning": {
-                "Title": "Item Piles & Linked Actor",
-                "Content": "Are you sure you want to turn this <strong>linked actor</strong> into an item pile? This actor's token is linked and all tokens of this actor will share its inventory and attributes."
-            },
-            "NoSystemFound": {
-                "Title": "System Not Recognized",
-                "Content": "This system is not currently fully supported. This means that the module does not know how to best handle this system's items, but can still operate in a limited fashion.<br><br>You can configure the module's settings yourself, but it requires a bit of technical know-how.<br><br>If you have any questions, ping <strong>Wasp#2005</strong> on the Foundry discord."
-            },
-            "SystemFound": {
-                "Title": "System Recognized",
-                "Content": "This system was previously not supported, but in an recent update it was added as a supported system!<br><br>Do you want to load this system's default Item Pile settings?",
-                "Confirm": "Apply System Defaults"
-            },
-            "Cancel": "Cancel"
-        },
+  "conditional-visibility.unsupportedsystem": "Conditional Visibility does not support the system {system}, as it has its own condition mechanism.  Issues (especially pull requests) are welcomed",
+  "conditional-visibility.ExtraSenseInstructions": "Additional senses that may enhance vision, for unlimited range use -1",
+  "conditional-visibility.seeinvisible": "Sees Invisible",
+  "conditional-visibility.blindsight": "Blindsight",
+  "conditional-visibility.tremorsense": "Tremorsense",
+  "conditional-visibility.devilssight": "Devil's Sight",
+  "conditional-visibility.truesight": "Truesight",
 
-        "AttributeEditor": {
-            "Title": "Dynamic Attributes Editor",
-            "Explanation": "Here you can define which attributes on characters that can be picked up from item piles, such as currencies. In D&D5e, currencies exist on actors on the attribute path \"actor.data.data.currency.gp\", so you'd add your own with the name \"Gold Coins\" and attribute path \"data.currency.gp\".",
-            "Name": "Attribute name",
-            "AttributePath": "Attribute path",
-            "Icon": "Attribute icon",
-            "AddNew": "Add new attribute",
-            "Submit": "Submit Attributes"
-        },
+  "conditional-visibility.invisible": "Invisible",
+  "conditional-visibility.obscured": "Obscured",
+  "conditional-visibility.indarkness": "In Darkness",
+  "conditional-visibility.hidden": "Hidden",
 
-        "Defaults": {
-            "Title": "Item Pile Configuration",
-            "Configure": "Item Pile",
-            "MainSettings": "Main Settings",
-            "SingleItemSettings": "Single Item Settings",
-            "ContainerSettings": "Container Settings",
-            "Update": "Update Item Pile",
-            "EnabledPile": "Enabled",
-            "EnabledPileExplanation": "Whether this should act as an item pile.",
-            "InspectItems": "Enable Item Inspect",
-            "InspectItemsExplanation": "Clicking item names will open the item's sheet.",
-            "Distance": "Interaction Distance",
-            "GridUnits": "Grid Units (leave empty for infinite)",
-            "ItemTypeFilter": "Item Type Filter",
-            "ItemTypeFilterExplanation": "Items of these types will not be shown in any item pile UI, each type separated by a comma. Leave blank to use module defaults.",
-            "Macro": "On Interact Macro",
-            "MacroExplanation": "Name of macro to execute when this pile is interacted with.",
-            "MacroPlaceholder": "Insert macro name",
-            "OverrideAttributes": "Override Dynamic Attributes",
-            "OverrideAttributesExplanation": "Configure if this pile should be able to transfer other attributes than the default.",
-            "ConfigureOverrideAttributes": "Configure Override Dynamic Attributes",
-            "DeleteWhenEmpty": "Delete when empty",
-            "DeleteWhenEmptyExplanation": "Causes the item pile to auto-delete itself once it's empty.",
-            "DeleteWhenEmptyDefault": "Default module setting",
-            "DeleteWhenEmptyYes": "Yes, delete when empty",
-            "DeleteWhenEmptyNo": "No, don't delete when empty",
-            "DisplayOne": "Display Single Item Image",
-            "DisplayOneExplanation": "If the pile is made up of a single item, this sets the pile token's image to be the image of the item.",
-            "OverrideSingleItemScale": "Override single item token scale",
-            "SingleItemScale": "Single item token scale",
-            "DisplayOneContainerWarning": "Warning! You have both \"Display Single Item Image\" and \"Is Container\" enabled. In this case, the container images takes priority.",
-            "IsContainer": "Is Container",
-            "Locked": "Is Locked",
-            "Closed": "Is Closed",
-            "ClosedImagePath": "Closed Image Path",
-            "EmptyImagePath": "Empty Image Path",
-            "OpenedImagePath": "Opened Image Path",
-            "LockedImagePath": "Locked Image Path",
-            "CloseSoundPath": "Closing Sound Path",
-            "OpenSoundPath": "Opening Sound Path",
-            "LockedSoundPath": "Locked Sound Path"
-        },
-
-        "HUD": {
-            "ToggleLocked": "Toggle Locked",
-            "ToggleClosed": "Toggle Closed",
-            "Configure": "Configure Pile"
-        },
-
-        "DropItem": {
-            "Title": "Dropping Item",
-            "Dropping": "You're dropping",
-            "ExistingPiles": "There's already an item pile at this location, you will add your item(s) to this pile.",
-            "QuantityToDrop": "You have {quantity} of this item, how many do you want to drop?",
-            "AddToPile": "Add to pile",
-            "NewPile": "Create new pile",
-            "Cancel": "Cancel"
-        },
-
-        "Setting": {
-            "Reset": {
-                "Title": "Reset settings to default",
-                "Label": "Reset Item Piles Settings To Default",
-                "Hint": "This will reset all of the settings of Item Piles back to the active game system's default."
-            },
-            "ActorClass": {
-                "Title": "Actor class type",
-                "Label": "This setting defines the type of actor that will be used for the default item pile actor that is created on first item drop. In the case of D&D5e, this is \"character\", as it does not have a dedicated loot actor type."
-            },
-            "Quantity": {
-                "Title": "Item quantity attribute",
-                "Label": "Here you can configure what the attribute path is for each item's quantity. For example, in D&D5e system, each item's quantity is stored in the item's \"item.data.data.quantity\" attribute, so you'd put \"data.quantity\" in this setting."
-            },
-            "Attributes": {
-                "Title": "Dynamic Attributes",
-                "Label": "Configure Attributes",
-                "Hint": "This setting define the attributes that are eligible for pickup in item paths, such as currencies or power, which may not be actual items."
-            },
-            "ItemType": {
-                "Title": "Item type attribute",
-                "Label": "This setting defines the attribute path for determining where the item types live. In D&D5e, it's just \"type\" because the type is defined directly in \"item.data.type\", because each item distinguishes its type with that attribute."
-            },
-            "ItemTypeFilters": {
-                "Title": "Item type filters",
-                "Label": "Here you can configure what item types are ignored and not listed in the item pile dialogs. For example, in D&D5e we probably don't want to show spells, feats, and classes, so you'd put \"spell, feat, class\"."
-            },
-            "DeleteEmptyPiles": {
-                "Title": "Auto-delete empty piles",
-                "Label": "This causes item piles to delete themselves once they run out of items. This can be overridden on individual item piles."
-            },
-            "PreloadFiles": {
-                "Title": "Preload Files",
-                "Label": "Causes files (images and audio) of piles to be preloaded, resulting in a seamless experience."
-            },
-            "Debug": {
-                "Title": "Enable debugging",
-                "Label": "Prints debug messages to the console"
-            }
-        }
-    }
+  "conditional-visibility.stealth.not.supported": "Conditional Visilbity does not support the hidden condition/stealth for {sysid}",
+  "conditional-visibility.currentstealth": "Current Stealth",
+  "conditional-visibility.stealthroll": "Stealh Roll",
+  "conditional-visibility.stealthrolldescription": "This value will be compared with passive perception as long is the token is hiding.  Non-numeric entries will result in the initial value being taken"
 }

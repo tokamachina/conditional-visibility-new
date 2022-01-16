@@ -1,9 +1,8 @@
-
-
+import { game } from './settings';
 // ↓ IMPORT SYSTEMS HERE ↓
-import dnd5e from "./systems/dnd5e";
-import pf2 from "./systems/pf2";
-import generic from "./systems/generic";
+import dnd5e from './systems/dnd5e';
+import pf2 from './systems/pf2';
+import generic from './systems/generic';
 
 // ↑ IMPORT SYSTEMS HERE ↑
 
@@ -12,13 +11,13 @@ import generic from "./systems/generic";
  * FOLLOW THE CONVENTION IN THE D&D 5E SYSTEM FILE
  */
 export const SYSTEMS = {
-    get DATA() {
-        return {
-            // ↓ ADD SYSTEMS HERE ↓
-            dnd5e,
-            pf2,
-            generic
-            // ↑ ADD SYSTEMS HERE ↑
-        }?.[game.system.id];
-    }
+  get DATA() {
+    return {
+      // ↓ ADD SYSTEMS HERE ↓
+      dnd5e,
+      pf2,
+      generic,
+      // ↑ ADD SYSTEMS HERE ↑
+    }?.[game.system.id];
+  },
 };

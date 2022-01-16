@@ -13,6 +13,7 @@
 import { CONDITIONAL_VISIBILITY_MODULE_NAME, registerSettings } from './module/settings';
 import { readyHooks } from './module/Hooks';
 import { canvas, game } from './module/settings';
+import { preloadTemplates } from './module/preloadTemplates';
 
 // declare global {
 //   interface Window {
@@ -20,45 +21,48 @@ import { canvas, game } from './module/settings';
 //   }
 // }
 
-export function isGMConnected(){
-  return !!Array.from(game.users).find(user => user.isGM && user.active);
+export function isGMConnected() {
+  return !!Array.from(game.users).find((user) => user.isGM && user.active);
 }
 
 export function wait(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
 
 export let debugEnabled = 0;
 // 0 = none, warnings = 1, debug = 2, all = 3
 
-export function debug(msg, args = "") {
-  if (debugEnabled > 1){
-    console.log(`DEBUG | ${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${msg}`, args)
+export function debug(msg, args = '') {
+  if (debugEnabled > 1) {
+    console.log(`DEBUG | ${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${msg}`, args);
   }
+  return msg;
 }
 
 export function log(message) {
   message = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${message}`;
-  console.log(message.replace("<br>", "\n"));
+  console.log(message.replace('<br>', '\n'));
+  return message;
 }
 
 export function notify(message) {
   message = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${message}`;
   ui.notifications?.notify(message);
-  console.log(message.replace("<br>", "\n"));
+  console.log(message.replace('<br>', '\n'));
+  return message;
 }
 
 export function warn(warning, notify = false) {
   warning = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${warning}`;
   if (notify) ui.notifications?.warn(warning);
-  console.warn(warning.replace("<br>", "\n"));
+  console.warn(warning.replace('<br>', '\n'));
+  return warning;
 }
 
-export function custom_error(error, notify = true) {
+export function error(error, notify = true) {
   error = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${error}`;
   if (notify) ui.notifications?.error(error);
-  return new Error(error.replace("<br>", "\n"));
+  return new Error(error.replace('<br>', '\n'));
 }
 
 export function timelog(message): void {

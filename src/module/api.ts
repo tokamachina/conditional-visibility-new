@@ -1,8 +1,7 @@
-import CONSTANTS from './constants';
+import { CONSTANTS } from './constants';
 import { conditionalVisibilitySocket, SOCKET_HANDLERS } from './socket';
-import { HOOKS } from './hooks';
-import { error } from '../conditional-visibility';
 import { canvas, game } from './settings';
+import { error } from './lib/lib';
 
 export default class API {
   /**

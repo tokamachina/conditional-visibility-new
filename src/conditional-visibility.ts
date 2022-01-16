@@ -10,78 +10,19 @@
  * 					 determines how others may use and modify your module
  */
 // Import TypeScript modules
-import { CONDITIONAL_VISIBILITY_MODULE_NAME, registerSettings } from './module/settings';
+import { checkSystem, CONDITIONAL_VISIBILITY_MODULE_NAME, registerSettings } from './module/settings';
 import { readyHooks } from './module/Hooks';
 import { canvas, game } from './module/settings';
 import { preloadTemplates } from './module/preloadTemplates';
+import { registerHotkeys } from './module/hotkeys';
+import { CONSTANTS } from './module/constants';
+import { error } from './module/lib/lib';
 
 // declare global {
 //   interface Window {
 //     Senses: ConditionalVisibility;
 //   }
 // }
-
-export function isGMConnected() {
-  return !!Array.from(game.users).find((user) => user.isGM && user.active);
-}
-
-export function wait(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-export let debugEnabled = 0;
-// 0 = none, warnings = 1, debug = 2, all = 3
-
-export function debug(msg, args = '') {
-  if (debugEnabled > 1) {
-    console.log(`DEBUG | ${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${msg}`, args);
-  }
-  return msg;
-}
-
-export function log(message) {
-  message = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${message}`;
-  console.log(message.replace('<br>', '\n'));
-  return message;
-}
-
-export function notify(message) {
-  message = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${message}`;
-  ui.notifications?.notify(message);
-  console.log(message.replace('<br>', '\n'));
-  return message;
-}
-
-export function warn(warning, notify = false) {
-  warning = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${warning}`;
-  if (notify) ui.notifications?.warn(warning);
-  console.warn(warning.replace('<br>', '\n'));
-  return warning;
-}
-
-export function error(error, notify = true) {
-  error = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${error}`;
-  if (notify) ui.notifications?.error(error);
-  return new Error(error.replace('<br>', '\n'));
-}
-
-export function timelog(message): void {
-  warn(Date.now(), message);
-}
-
-export const i18n = (key: string): string => {
-  return game.i18n.localize(key);
-};
-
-export const i18nFormat = (key: string, data = {}): string => {
-  return game.i18n.format(key, data);
-};
-
-export const setDebugLevel = (debugText: string): void => {
-  debugEnabled = { none: 0, warn: 1, debug: 2, all: 3 }[debugText] || 0;
-  // 0 = none, warnings = 1, debug = 2, all = 3
-  if (debugEnabled >= 3) CONFIG.debug.hooks = true;
-};
 
 /* ------------------------------------ */
 /* Initialize module					*/
@@ -113,6 +54,23 @@ Hooks.once('setup', function () {});
 /* When ready							*/
 /* ------------------------------------ */
 Hooks.once('ready', async function () {
+  if (!game.modules.get('lib-wrapper')?.active && game.user?.isGM) {
+    let word = 'install and activate';
+    if (game.modules.get('lib-wrapper')) word = 'activate';
+    throw error(`Requires the 'libWrapper' module. Please ${word} it.`);
+  }
+  if (!game.modules.get('socketlib')?.active && game.user?.isGM) {
+    let word = 'install and activate';
+    if (game.modules.get('socketlib')) word = 'activate';
+    throw error(`Requires the 'socketlib' module. Please ${word} it.`);
+  }
+
+  // if (!isGMConnected()) {
+  //   warn(`Requires a GM to be connected for players to be able to loot item piles.`, true);
+  // }
+
+  checkSystem();
+  registerHotkeys();
   // Do anything once the module is ready
   readyHooks();
 });

@@ -1,6 +1,6 @@
-import CONSTANTS from '../constants.js';
+import { CONSTANTS } from '../constants.js';
 import API from '../api.js';
-import { canvas, game } from '../settings';
+import { canvas, CONDITIONAL_VISIBILITY_MODULE_NAME, game } from '../settings';
 
 export function isGMConnected() {
   return !!Array.from(<Users>game.users).find((user) => user.isGM && user.active);
@@ -10,27 +10,59 @@ export function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// export function debug(msg, args = '') {
-//   if (game.settings.get(CONSTANTS.MODULE_NAME, 'debug')) console.log(`DEBUG | Item Piles | ${msg}`, args);
-// }
+// export let debugEnabled = 0;
+// 0 = none, warnings = 1, debug = 2, all = 3
 
-// export function custom_notify(message) {
-//   message = `Item Piles | ${message}`;
-//   ui.notifications.notify(message);
-//   console.log(message.replace('<br>', '\n'));
-// }
+export function debug(msg, args = '') {
+  if (game.settings.get(CONSTANTS.MODULE_NAME, 'debug')) {
+    console.log(`DEBUG | ${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${msg}`, args);
+  }
+  return msg;
+}
 
-// export function custom_warning(warning, notify = false) {
-//   warning = `Item Piles | ${warning}`;
-//   if (notify) ui.notifications.warn(warning);
-//   console.warn(warning.replace('<br>', '\n'));
-// }
+export function log(message) {
+  message = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${message}`;
+  console.log(message.replace('<br>', '\n'));
+  return message;
+}
 
-// export function custom_error(error, notify = true) {
-//   error = `Item Piles | ${error}`;
-//   if (notify) ui.notifications.error(error);
-//   return new Error(error.replace('<br>', '\n'));
-// }
+export function notify(message) {
+  message = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${message}`;
+  ui.notifications?.notify(message);
+  console.log(message.replace('<br>', '\n'));
+  return message;
+}
+
+export function warn(warning, notify = false) {
+  warning = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${warning}`;
+  if (notify) ui.notifications?.warn(warning);
+  console.warn(warning.replace('<br>', '\n'));
+  return warning;
+}
+
+export function error(error, notify = true) {
+  error = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${error}`;
+  if (notify) ui.notifications?.error(error);
+  return new Error(error.replace('<br>', '\n'));
+}
+
+export function timelog(message): void {
+  warn(Date.now(), message);
+}
+
+export const i18n = (key: string): string => {
+  return game.i18n.localize(key);
+};
+
+export const i18nFormat = (key: string, data = {}): string => {
+  return game.i18n.format(key, data);
+};
+
+// export const setDebugLevel = (debugText: string): void => {
+//   debugEnabled = { none: 0, warn: 1, debug: 2, all: 3 }[debugText] || 0;
+//   // 0 = none, warnings = 1, debug = 2, all = 3
+//   if (debugEnabled >= 3) CONFIG.debug.hooks = true;
+// };
 
 export function getTokensAtLocation(position) {
   const tokens = [...(<Token[]>canvas.tokens?.placeables)];

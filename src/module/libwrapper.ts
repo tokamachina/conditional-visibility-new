@@ -1,5 +1,5 @@
 import API from './api.js';
-import CONSTANTS from './constants.js';
+import { CONSTANTS } from './constants.js';
 
 export function registerLibwrappers() {
   // libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype._onClickLeft2', function (wrapped, ...args) {

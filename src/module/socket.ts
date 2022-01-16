@@ -1,6 +1,6 @@
-import CONSTANTS from './constants.js';
-import API from './api.js';
-import { debug } from '../conditional-visibility.js';
+import { CONSTANTS } from './constants';
+import API from './api';
+import { debug } from './lib/lib';
 
 export const SOCKET_HANDLERS = {
   /**

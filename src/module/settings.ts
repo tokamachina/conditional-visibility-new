@@ -1,6 +1,5 @@
-import { warn } from '../conditional-visibility';
-import CONSTANTS from './constants';
-import { dialogWarning } from './lib/lib';
+import { CONSTANTS } from './constants';
+import { dialogWarning, warn } from './lib/lib';
 import { SYSTEMS } from './systems';
 
 export const game = getGame();
@@ -135,6 +134,7 @@ export const registerSettings = function (): void {
 
   const settings = defaultSettings();
   for (const [name, data] of Object.entries(settings)) {
+    //@ts-ignore
     game.settings.register(CONSTANTS.MODULE_NAME, name, data);
   }
 

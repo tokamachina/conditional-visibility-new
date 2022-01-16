@@ -40,70 +40,47 @@ function getGame(): Game {
 export const CONDITIONAL_VISIBILITY_MODULE_NAME = CONSTANTS.MODULE_NAME;
 // export const CONDITIONAL_VISIBILITY_DEFAULT_STEALTH = 10;
 
-export interface StatusEffect {
-  id: string;
-  visibilityId: string;
-  label: string;
-  icon: string;
-}
-
-export enum StatusEffectSightFlags {
-  SEE_INVISIBLE = 'seeinvisible',
-  BLIND_SIGHT = 'blindsight',
-  TREMOR_SENSE = 'tremorsense',
-  TRUE_SIGHT = 'truesight',
-  DEVILS_SIGHT = 'devilssight',
-  PASSIVE_STEALTH = '_ste',
-}
-
-// TODO PUT THESE IN LOCALIZATION FOR OTHER LANGUAGE
-export enum StatusEffectStatusFlags {
-  INVISIBLE = 'invisible',
-  OBSCURED = 'obscured',
-  IN_DARKNESS = 'indarkness',
-  HIDDEN = 'hidden',
-}
-
 function defaultSettings(apply = false) {
   return {
     dynamicAttributes: {
       scope: 'world',
       config: false,
-      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.DYNAMIC_ATTRIBUTES : [],
+      //@ts-ignore
+      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.SENSES : [],
       type: Array,
     },
-    actorClassType: {
-      name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.ActorClass.name`,
-      hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.ActorClass.hint`,
-      scope: 'world',
-      config: true,
-      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ACTOR_CLASS_TYPE : game.system.template.Actor?.types[0],
-      type: String,
-    },
-    itemQuantityAttribute: {
-      name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Quantity.name`,
-      hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Quantity.hint`,
-      scope: 'world',
-      config: true,
-      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ITEM_QUANTITY_ATTRIBUTE : '',
-      type: String,
-    },
-    visibilityTypeAttribute: {
-      name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityType.name`,
-      hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityType.hint`,
-      scope: 'world',
-      config: true,
-      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ITEM_TYPE_ATTRIBUTE : '',
-      type: String,
-    },
-    visibilityTypeFilters: {
-      name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityTypeFilters.name`,
-      hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityTypeFilters.hint`,
-      scope: 'world',
-      config: true,
-      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ITEM_TYPE_FILTERS : '',
-      type: String,
-    },
+    // actorClassType: {
+    //   name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.ActorClass.name`,
+    //   hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.ActorClass.hint`,
+    //   scope: 'world',
+    //   config: true,
+    //   default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ACTOR_CLASS_TYPE : game.system.template.Actor?.types[0],
+    //   type: String,
+    // },
+    // itemQuantityAttribute: {
+    //   name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Quantity.name`,
+    //   hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Quantity.hint`,
+    //   scope: 'world',
+    //   config: true,
+    //   default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ITEM_QUANTITY_ATTRIBUTE : '',
+    //   type: String,
+    // },
+    // visibilityTypeAttribute: {
+    //   name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityType.name`,
+    //   hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityType.hint`,
+    //   scope: 'world',
+    //   config: true,
+    //   default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ITEM_TYPE_ATTRIBUTE : '',
+    //   type: String,
+    // },
+    // visibilityTypeFilters: {
+    //   name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityTypeFilters.name`,
+    //   hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityTypeFilters.hint`,
+    //   scope: 'world',
+    //   config: true,
+    //   default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.ITEM_TYPE_FILTERS : '',
+    //   type: String,
+    // },
     visibilityDefaultValue: {
       name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityDefaultValue.name`,
       hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityDefaultValue.hint`,
@@ -193,12 +170,12 @@ export const registerSettings = function (): void {
     type: Boolean,
   });
 
-  game.settings.register(CONSTANTS.MODULE_NAME, 'monksActiveTilesDropItemWarning', {
-    scope: 'world',
-    config: false,
-    default: false,
-    type: Boolean,
-  });
+  //   game.settings.register(CONSTANTS.MODULE_NAME, 'monksActiveTilesDropItemWarning', {
+  //     scope: 'world',
+  //     config: false,
+  //     default: false,
+  //     type: Boolean,
+  //   });
 };
 
 class ResetSettingsDialog extends FormApplication {

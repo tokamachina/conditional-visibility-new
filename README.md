@@ -12,17 +12,11 @@
 
 ![GitHub all releases](https://img.shields.io/github/downloads/p4535992/conditional-visibility/total?style=for-the-badge)
 
-## THIS MODULE IS IN MAINTENANCE MODE (OR AT LEAST I WILL NOT DEVELOPING SOMETHING ON THE SHORT TERM) ANYONE IS FREE TO TAKE CHARGE ON THIS
-
 Invisible Stalkers should only be seen by players that have cast See Invisibility.  Stealthy Goblins should only be seen by players with high perception.
 And when that Drow casts Darkness, players should need Devil's Sight to see any tokens inside.
 
 Conditional Visibility allows you to set conditions on tokens that will display them only to players whose senses meet the conditions necessary to see
 the token.
-
-## What fork i must use this or the one from [Szefo09](https://github.com/szefo09/conditional-visibility/) ?
-
- As for the forks mine or that of szefo09 have no particular differences, they were just born a little in contrast with each other. I wanted to update the official one in typescript to help gludington while szefo09 had it rearranged on its own with the classic javascript.
 
 ## Suggestion for future developing for anyone want to help
 
@@ -56,34 +50,37 @@ This module uses the [levels](https://github.com/theripper93/Levels) library. It
 
 ## Usage
 
-### Conditions
+## Conditions Panel
 
-**Conditional Visibility** works by adding new conditions to the conditions panel, for Invisible, Obscured, In Magical Darkness, and Hidden (currently 5e Only).
-It does not work for game systems that use their own condition systems, though discussion (and pull requests!) are certainly welcomed
-from those more familiar with those systems.  Pathfinder 2e has partial support now, using the system's default Invisible condition.
+### System Dnd5e
 
-![Conditions Panel](./support/conditions.png)
+#### Seeing in Darkness
 
-### Invisible, Obscured, or Magical Darkness
+| Light Conditions/Vision | Normal Vision | Darkvision | Sunlight Sensitivity or Darkvision Superior | Blindsight or Truesight or Devil's Sight | Tremorsense |
+|:-----------------------:|:-------------:|:----------:|:-------------------------------------------:|:----------------------------------------:|:-----------:|
+| Bright Light | See normally | See normally | See normally | See normally | Senses nonflying |
+| Dim Light | Disadvantage on PER checks; -5 to passive perception | See normally | See normally | See normally | Senses nonflying |
+| Darkness | Blinded | Disadvantage on PER checks; -5 to passive perception | See normally | See normally | Senses nonflying |
+| Magical Darkness | Blinded | Varies by Spell | See normally | See normally | Senses nonflying |
 
-When a token has one of these conditions, it can only be seen by a token with the proper senses configured in their Vision panel.
+#### Attacking in the Sunlight
 
-![Vision Panel](./support/visionControls.png)
+| Attacker vison/Target vision | Blinded | Normal Vision | Darkvision | Sunlight Sensitivity or Darkvision Superior | Blindsight or Truesight or Devil's Sight | Tremorsense |
+|:---------------:|:-------:|:-------------:|:----------:|:-------------------------------------------:|:-----------------------:|:-----------:|
+| Blinded | Fails perception checks; must guess target's location | Disadvantage on attacks; fails perception checks; must guess target’s location | Disadvantage on attacks; fails perception checks; must guess target’s location | Disadvantage on attacks; fails perception checks; must guess target’s location | Disadvantage on attacks; fails perception checks; must guess target’s location | No Effect |
+| Normal | Advantage on attacks | No Effect | No Effect | No Effect | No Effect | No Effect |
+| Darkvision | Advantage on attacks | No Effect | No Effect | No Effect | No Effect | No Effect |
+| Sunlight Sensitivity or Darkvision Superior | Disadvantage on perception checks | Disadvantage on perception checks & attacks | Disadvantage on perception checks & attacks | Disadvantage on perception checks & attacks | Disadvantage on perception checks & attacks | No Effect |
+| Blindsight or Truesight or Devil's Sight | Advantage on attacks | No Effect | No Effect | No Effect | No Effect | No Effect |
+| Tremorsense | No Effect | No Effect | No Effect | No Effect | No Effect | No Effect |
 
-Put it together, it looks like this (click to play on YouTube):
 
-[![Watch the video](https://img.youtube.com/vi/IlgjHmSAsww/hqdefault.jpg)](https://youtu.be/IlgjHmSAsww)
 
-### Hidden (currently 5e only)
 
-When the hidden condition is selected, a stealth roll is automatically made, which can be customized before closing.  The token will only be seen by a token whose passive perception
-exceeds that stealth roll. (click to play on YouTube):
 
-[![Watch the video](https://img.youtube.com/vi/pYay4fRlnu4/hqdefault.jpg)](https://youtu.be/pYay4fRlnu4)
+## Did you want ot help with your system prepare some table like the one i do it for Dnd5e for help me to define some rule for your system
 
-### Other Ways of Applying conditions to a token
-
-#### Scripting
+## Api
 
 New to version 0.0.8, script entry points are created for macro and script authors.  The following methods are supported:
 

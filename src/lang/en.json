@@ -20,11 +20,13 @@
   "conditional-visibility.tremorsense": "Tremorsense",
   "conditional-visibility.devilssight": "Devil's Sight",
   "conditional-visibility.truesight": "Truesight",
+  "conditional-visibility.lowlightvision": "Low light vision",
 
   "conditional-visibility.invisible": "Invisible",
   "conditional-visibility.obscured": "Obscured",
   "conditional-visibility.indarkness": "In Darkness",
   "conditional-visibility.hidden": "Hidden",
+  "conditional-visibility.blinded": "Blinded",
 
   "conditional-visibility.stealth.not.supported": "Conditional Visilbity does not support the hidden condition/stealth for {sysid}",
   "conditional-visibility.currentstealth": "Current Stealth",

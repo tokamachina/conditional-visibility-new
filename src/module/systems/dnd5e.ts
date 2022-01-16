@@ -1,40 +1,63 @@
+import Effect, { Constants } from '../effects/effect';
+import { EffectDefinitions } from '../conditional-visibility-effect-definition';
+import { i18n } from '../lib/lib';
+
 export default {
-  // The actor class type is the type of actor that will be used for the default item pile actor that is created on first item drop.
-  ACTOR_CLASS_TYPE: 'character',
-
-  // The item quantity attribute is the path to the attribute on items that denote how many of that item that exists
-  ITEM_QUANTITY_ATTRIBUTE: 'data.quantity',
-
-  // Item types and the filters actively remove items from the item pile inventory UI that users cannot loot, such as spells, feats, and classes
-  ITEM_TYPE_ATTRIBUTE: 'type',
-  ITEM_TYPE_FILTERS: 'spell,feat,class',
-
-  // Dynamic attributes are things like currencies or transferable powers that exist as editable number fields on character sheets
-  DYNAMIC_ATTRIBUTES: [
-    // {
-    //   name: 'DND5E.CurrencyPP',
-    //   path: 'data.currency.pp',
-    //   img: 'icons/commodities/currency/coin-inset-snail-silver.webp',
-    // },
-    // {
-    //   name: 'DND5E.CurrencyGP',
-    //   path: 'data.currency.gp',
-    //   img: 'icons/commodities/currency/coin-embossed-crown-gold.webp',
-    // },
-    // {
-    //   name: 'DND5E.CurrencyEP',
-    //   path: 'data.currency.ep',
-    //   img: 'icons/commodities/currency/coin-inset-copper-axe.webp',
-    // },
-    // {
-    //   name: 'DND5E.CurrencySP',
-    //   path: 'data.currency.sp',
-    //   img: 'icons/commodities/currency/coin-engraved-moon-silver.webp',
-    // },
-    // {
-    //   name: 'DND5E.CurrencyCP',
-    //   path: 'data.currency.cp',
-    //   img: 'icons/commodities/currency/coin-engraved-waves-copper.webp',
-    // },
+  /** Equivalent to the VisionLevel enum in the Pathfinder 2e system */
+  VISION_LEVEL: {
+    BLINDED: 0,
+    NORMAL: 1,
+    LOW_LIGHT_VISION: 2,
+    DARKVISION: 3,
+    BLINDSIGHT: 4,
+    TREMORSENSE: 5,
+  },
+  /**
+   * The set of possible sensory perception types which an Actor may have.
+   * @enum {string}
+   */
+  SENSES: [
+    {
+      id: 'blindsight',
+      name: i18n('conditional-visibility.blindsight'),
+      path: 'data.attributes.senses.blindsight',
+      img: 'systems/dnd5e/icons/skills/affliction_24.jpg',
+      effect: EffectDefinitions.blindsigth(0),
+    },
+    {
+      id: 'darkvision',
+      name: i18n('conditional-visibility.darkvision'),
+      path: 'data.attributes.senses.darkvision',
+      img: 'systems/dnd5e/icons/spells/evil-eye-red-1.jpg',
+      effect: EffectDefinitions.darkvision(0),
+    },
+    {
+      id: 'tremorsense',
+      name: i18n('conditional-visibility.tremorsense'),
+      path: 'data.attributes.senses.tremorsense',
+      img: 'systems/dnd5e/icons/skills/ice_15.jpg',
+      effect: EffectDefinitions.tremorsense(0),
+    },
+    {
+      id: 'truesight',
+      name: i18n('conditional-visibility.truesight'),
+      path: 'data.attributes.senses.truesight',
+      img: 'systems/dnd5e/icons/skills/emerald_11.jpg',
+      effect: EffectDefinitions.truesight(0),
+    },
+    {
+      id: 'seeinvisible',
+      name: i18n('conditional-visibility.seeinvisible'),
+      path: 'data.attributes.senses.seeinvisible',
+      img: 'systems/dnd5e/icons/skills/shadow_11.jpg',
+      effect: EffectDefinitions.seeinvisible(0),
+    },
+    {
+      id: 'devilssight',
+      name: i18n('conditional-visibility.devilssight'),
+      path: 'data.attributes.senses.devilssight',
+      img: 'systems/dnd5e/icons/skills/blue_17.jpg',
+      effect: EffectDefinitions.devilssight(0),
+    },
   ],
 };

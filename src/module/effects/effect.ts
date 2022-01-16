@@ -1,4 +1,4 @@
-import { getGame } from '../settings';
+import { game } from '../settings';
 
 /**
  * Data class for defining an effect
@@ -88,15 +88,15 @@ export default class Effect {
   }
 
   _getDurationData() {
-    if (getGame().combat) {
+    if (game.combat) {
       return {
-        startRound: getGame().combat?.round,
+        startRound: game.combat?.round,
         rounds: this._getCombatRounds(),
         turns: this.turns,
       };
     } else {
       return {
-        startTime: getGame().time.worldTime,
+        startTime: game.time.worldTime,
         seconds: this._getSeconds(),
       };
     }
@@ -124,6 +124,56 @@ export default class Effect {
     }
 
     return undefined;
+  }
+
+  static _createAtlEffectKey(key: string) {
+    let result = key;
+    //@ts-ignore
+    const version = (game.version ?? game.data.version).charAt(0);
+
+    if (version == '9') {
+      switch (key) {
+        case 'ATL.preset':
+          break;
+        case 'ATL.brightSight':
+          break;
+        case 'ATL.dimSight':
+          break;
+        case 'ATL.height':
+          break;
+        case 'ATl.img':
+          break;
+        case 'ATL.mirrorX':
+          break;
+        case 'ATL.mirrorY':
+          break;
+        case 'ATL.rotation':
+          break;
+        case 'ATL.scale':
+          break;
+        case 'ATL.width':
+          break;
+        case 'ATL.dimLight':
+          result = 'ATL.light.dim';
+          break;
+        case 'ATL.brightLight':
+          result = 'ATL.light.bright';
+          break;
+        case 'ATL.lightAnimation':
+          result = 'ATL.light.animation';
+          break;
+        case 'ATL.lightColor':
+          result = 'ATL.light.color';
+          break;
+        case 'ATL.lightAlpha':
+          result = 'ATL.light.alpha';
+          break;
+        case 'ATL.lightAngle':
+          result = 'ATL.light.angle';
+          break;
+      }
+    }
+    return result;
   }
 }
 

@@ -1,8 +1,18 @@
+import Effect from './effects/effect';
+
 export interface StatusEffect {
   id: string;
   visibilityId: string;
   label: string;
   icon: string;
+}
+
+export interface StatusSight {
+  id: string;
+  name: string;
+  path: string;
+  img: string;
+  effect: Effect;
 }
 
 export enum StatusEffectSightFlags {

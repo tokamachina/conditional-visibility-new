@@ -6,7 +6,6 @@ import { checkSystem, CONDITIONAL_VISIBILITY_MODULE_NAME } from './settings';
 import { canvas, game } from './settings';
 import { registerSocket } from './socket';
 import API from './api';
-import { ConditionalVisibility } from './conditional-visibility-impl';
 
 const prefix =
   (str) =>
@@ -16,6 +15,7 @@ const module = prefix(CONSTANTS.MODULE_NAME);
 
 export const HOOKS = {
   READY: module`ready`,
+  ON_RENDER_TOKEN_CONFIG: module`onRenderTokenConfig`,
   // PRE_TRANSFER_EVERYTHING: module`preTransferEverything`,
   // TRANSFER_EVERYTHING: module`transferEverything`,
   // PILE: {

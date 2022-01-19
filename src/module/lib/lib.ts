@@ -3,8 +3,8 @@ import API from '../api.js';
 import { canvas, CONDITIONAL_VISIBILITY_MODULE_NAME, game } from '../settings';
 import { StatusEffectSightFlags, VisionCapabilities } from '../conditional-visibility-models.js';
 
-export function isGMConnected() {
-  return !!Array.from(<Users>game.users).find((user) => user.isGM && user.active);
+export function isGMConnected(): boolean {
+  return Array.from(<Users>game.users).find((user) => user.isGM && user.active) ? true : false;
 }
 
 export function wait(ms) {
@@ -169,53 +169,53 @@ export function dialogWarning(message, icon = 'fas fa-exclamation-triangle') {
     </p>`;
 }
 
-export function getVisionCapabilities(srcToken:Token, ): VisionCapabilities {
-  const visionCapabilities: VisionCapabilities = new VisionCapabilities();
-  if (srcToken) {
-    let _seeinvisible =
-      <number>(
-        srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.SEE_INVISIBLE)
-      ) ?? 0;
+// export function getVisionCapabilities(srcToken:Token, ): VisionCapabilities {
+//   const visionCapabilities: VisionCapabilities = new VisionCapabilities();
+//   if (srcToken) {
+//     let _seeinvisible =
+//       <number>(
+//         srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.SEE_INVISIBLE)
+//       ) ?? 0;
 
-    let _blindsight =
-      <number>(
-        srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.BLIND_SIGHT)
-      ) ?? 0;
+//     let _blindsight =
+//       <number>(
+//         srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.BLIND_SIGHT)
+//       ) ?? 0;
 
-    let _tremorsense =
-      <number>(
-        srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.TREMOR_SENSE)
-      ) ?? 0; 
+//     let _tremorsense =
+//       <number>(
+//         srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.TREMOR_SENSE)
+//       ) ?? 0;
 
-    let _truesight =
-      <number>(
-        srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.TRUE_SIGHT)
-      ) ?? 0;
+//     let _truesight =
+//       <number>(
+//         srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.TRUE_SIGHT)
+//       ) ?? 0;
 
-    let _devilssight =
-      <number>(
-        srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.DEVILS_SIGHT)
-      ) ?? 0;
+//     let _devilssight =
+//       <number>(
+//         srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.DEVILS_SIGHT)
+//       ) ?? 0;
 
-      if()
+//       if()
 
-    _seeinvisible = _seeinvisible < 0 ? 100000 : _seeinvisible;
-    _blindsight = _blindsight < 0 ? 100000 : _blindsight;
-    _tremorsense = _tremorsense < 0 ? 100000 : _tremorsense;
-    _truesight = _truesight < 0 ? 100000 : _truesight;
-    _devilssight = _devilssight < 0 ? 100000 : _devilssight;
+//     _seeinvisible = _seeinvisible < 0 ? 100000 : _seeinvisible;
+//     _blindsight = _blindsight < 0 ? 100000 : _blindsight;
+//     _tremorsense = _tremorsense < 0 ? 100000 : _tremorsense;
+//     _truesight = _truesight < 0 ? 100000 : _truesight;
+//     _devilssight = _devilssight < 0 ? 100000 : _devilssight;
 
-    visionCapabilities.seeinvisible = Math.max(_seeinvisible, _blindsight, _tremorsense, _truesight, _devilssight);
-    visionCapabilities.seeobscured = Math.max(_blindsight, _tremorsense);
-    visionCapabilities.seeindarkness = Math.max(_blindsight, _devilssight, _tremorsense, _truesight);
-    
-    //@ts-ignore
-    if (srcToken?._movement !== null) {
-      //@ts-ignore
-      visionCapabilities.visionfrom = srcToken._movement.B;
-    } else {
-      visionCapabilities.visionfrom = srcToken?.position ?? { x: 0, y: 0 };
-    }
-  }
-  return visionCapabilities;
-}
+//     visionCapabilities.seeinvisible = Math.max(_seeinvisible, _blindsight, _tremorsense, _truesight, _devilssight);
+//     visionCapabilities.seeobscured = Math.max(_blindsight, _tremorsense);
+//     visionCapabilities.seeindarkness = Math.max(_blindsight, _devilssight, _tremorsense, _truesight);
+
+//     //@ts-ignore
+//     if (srcToken?._movement !== null) {
+//       //@ts-ignore
+//       visionCapabilities.visionfrom = srcToken._movement.B;
+//     } else {
+//       visionCapabilities.visionfrom = srcToken?.position ?? { x: 0, y: 0 };
+//     }
+//   }
+//   return visionCapabilities;
+// }

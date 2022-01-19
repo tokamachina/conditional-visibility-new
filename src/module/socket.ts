@@ -7,6 +7,7 @@ export const SOCKET_HANDLERS = {
    * Generic sockets
    */
   CALL_HOOK: 'callHook',
+  ON_RENDER_TOKEN_CONFIG: 'onRenderTokenConfig',
 
   // /**
   //  * Item pile sockets
@@ -57,7 +58,9 @@ export function registerSocket() {
   // /**
   //  * Conditional Visibility sockets
   //  */
-  // conditionalVisibilitySocket.register(SOCKET_HANDLERS.CREATE_PILE, (...args) => API._createItemPile(...args));
+  conditionalVisibilitySocket.register(SOCKET_HANDLERS.ON_RENDER_TOKEN_CONFIG, (...args) =>
+    API._onRenderTokenConfig([...args]),
+  );
   // conditionalVisibilitySocket.register(SOCKET_HANDLERS.UPDATE_PILE, (...args) => API._updateItemPile(...args));
   // conditionalVisibilitySocket.register(SOCKET_HANDLERS.UPDATED_PILE, (...args) => API._updatedItemPile(...args));
   // conditionalVisibilitySocket.register(SOCKET_HANDLERS.DELETE_PILE, (...args) => API._deleteItemPile(...args));

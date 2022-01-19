@@ -1,5 +1,10 @@
 import { EffectDefinitions } from '../conditional-visibility-effect-definition';
-import { StatusEffectSightFlags, StatusEffectStatusFlags } from '../conditional-visibility-models';
+import {
+  StatusEffect,
+  StatusEffectSightFlags,
+  StatusEffectStatusFlags,
+  StatusSight,
+} from '../conditional-visibility-models';
 import CONSTANTS from '../constants';
 import { i18n } from '../lib/lib';
 import { CONDITIONAL_VISIBILITY_MODULE_NAME } from '../settings';
@@ -11,7 +16,7 @@ export default {
   //   LOW_LIGHT_VISION: 2,
   //   DARKVISION: 3,
   // },
-  SENSES: [
+  SENSES: <StatusSight[]>[
     {
       id: StatusEffectSightFlags.BLINDED,
       name: i18n(`${CONSTANTS.MODULE_NAME}.${StatusEffectSightFlags.LOW_LIGHT_VISION}`),
@@ -34,12 +39,24 @@ export default {
       effect: EffectDefinitions.darkvision(0),
     },
   ],
-  CONDITIONS: [
+  CONDITIONS: <StatusEffect[]>[
     {
       id: StatusEffectStatusFlags.INVISIBLE,
       visibilityId: StatusEffectStatusFlags.INVISIBLE,
       label: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.INVISIBLE}`),
       icon: 'systems/pf2e/icons/conditions/invisible.webp',
+    },
+    {
+      id: StatusEffectStatusFlags.OBSCURED,
+      visibilityId: StatusEffectStatusFlags.OBSCURED, //'obscured',
+      label: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.OBSCURED}`),
+      icon: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/foggy.svg',
+    },
+    {
+      id: StatusEffectStatusFlags.IN_DARKNESS,
+      visibilityId: StatusEffectStatusFlags.IN_DARKNESS, // 'indarkness',
+      label: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.IN_DARKNESS}`),
+      icon: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/moon.svg',
     },
   ],
 };

@@ -5,6 +5,8 @@ import { error } from './lib/lib';
 import EffectInterface from './effects/effect-interface';
 import EffectHandler from './effects/effect-handler';
 import Effect from './effects/effect';
+import { StatusEffect, StatusSight } from './conditional-visibility-models';
+import { HOOKS } from './hooks';
 
 export default class API {
   static effectInterface: EffectInterface;
@@ -14,7 +16,7 @@ export default class API {
    *
    * @returns {array}
    */
-  static get SENSES(): { id: string; name: string; path: string; img: string; effect: Effect }[] {
+  static get SENSES(): StatusSight[] {
     return <any[]>game.settings.get(CONSTANTS.MODULE_NAME, 'senses');
   }
 
@@ -23,7 +25,7 @@ export default class API {
    *
    * @returns {array}
    */
-  static get CONDITIONS(): { id: string; visibilityId: string; label: string; icon: string }[] {
+  static get CONDITIONS(): StatusEffect[] {
     return <any[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
   }
 
@@ -37,6 +39,13 @@ export default class API {
   //     .split(',')
   //     .map((str) => str.trim().toLowerCase());
   // }
+
+  static async _onRenderTokenConfig(inAttributes: any[]) {
+    const [tokenConfig, html, data] = inAttributes;
+    const hookResult = Hooks.call(HOOKS.ON_RENDER_TOKEN_CONFIG, tokenConfig, html, data);
+    if (hookResult === false) return;
+    return conditionalVisibilitySocket.executeAsGM(SOCKET_HANDLERS.ON_RENDER_TOKEN_CONFIG, tokenConfig, html, data);
+  }
 
   /**
    * Sets the attributes used to track dynamic attributes in this system

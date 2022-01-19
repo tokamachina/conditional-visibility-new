@@ -2,8 +2,14 @@ import Effect, { Constants } from '../effects/effect';
 import { EffectDefinitions } from '../conditional-visibility-effect-definition';
 import { i18n } from '../lib/lib';
 import { CONDITIONAL_VISIBILITY_MODULE_NAME } from '../settings';
-import { StatusEffectSightFlags, StatusEffectStatusFlags } from '../conditional-visibility-models';
+import {
+  StatusEffect,
+  StatusEffectSightFlags,
+  StatusEffectStatusFlags,
+  StatusSight,
+} from '../conditional-visibility-models';
 import CONSTANTS from '../constants';
+import ArrayMatrix from '../lib/javascript-array-matrix';
 
 export default {
   /** Equivalent to the VisionLevel enum in the Pathfinder 2e system */
@@ -19,7 +25,7 @@ export default {
    * The set of possible sensory perception types which an Actor may have.
    * @enum {string}
    */
-  SENSES: [
+  SENSES: <StatusSight[]>[
     // {
     //   id: 'stealthpassive',
     //   name: i18n(`${CONSTANTS.MODULE_NAME}.stealthpassive'),
@@ -71,7 +77,13 @@ export default {
       effect: EffectDefinitions.devilssight(0),
     },
   ],
-  CONDITIONS: [
+  CONDITIONS: <StatusEffect[]>[
+    {
+      id: StatusEffectStatusFlags.HIDDEN,
+      visibilityId: StatusEffectStatusFlags.HIDDEN, //'hidden',
+      label: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.HIDDEN}`),
+      icon: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/newspaper.svg',
+    },
     {
       id: StatusEffectStatusFlags.INVISIBLE,
       visibilityId: StatusEffectStatusFlags.INVISIBLE, //'invisible',
@@ -92,6 +104,13 @@ export default {
     },
   ],
   // LIGTH_VS_VISION: [
+  //   { color: 'Blue', size: 'Small', sku: '123' },
+  //   { color: 'Blue', size: 'Medium', sku: '124' },
+  //   { color: 'Red', size: 'Medium', sku: '125' },
+  //   { color: 'Blue', size: 'Large', sku: '126' },
+  //   { color: 'Red', size: 'Large', sku: '127' },
+  //   { color: 'Green', size: 'Large', sku: '128' }
+  // ]
   //   {
   //     brightlight : {
   //       BLINDED: 'BLINDED',
@@ -106,4 +125,16 @@ export default {
   //     magicaldarkness
   //   }
   // ],
+  hasStealth(): boolean {
+    return true;
+  },
+  rollStealth(token: Token): Roll {
+    if (token && token.actor) {
+      //@ts-ignore
+      const roll = new Roll('1d20 + (' + token.actor.data.data.skills.ste.total + ')').roll();
+      return roll;
+    } else {
+      return super.rollStealth(token);
+    }
+  },
 };

@@ -1,3 +1,4 @@
+import { error } from '../lib/lib';
 import { canvas, game } from '../settings';
 import Effect from './effect';
 
@@ -38,6 +39,21 @@ export default class EffectHandler {
   }
 
   /**
+   * Searches through the list of available effects and returns one matching the
+   * effect name. Prioritizes finding custom effects first.
+   *
+   * @param {string} effectName - the effect name to search for
+   * @returns {Effect} the found effect
+   */
+  findEffectByNameArr(inAttributes: any[]): Effect {
+    if (!Array.isArray(inAttributes)) {
+      throw error('findEffectByNameArr | inAttributes must be of type array');
+    }
+    const [effectName] = inAttributes;
+    return this.findEffectByName(effectName);
+  }
+
+  /**
    * Toggles an effect on or off by name on an actor by UUID
    *
    * @param {string} effectName - name of the effect to toggle
@@ -56,6 +72,20 @@ export default class EffectHandler {
   }
 
   /**
+   * Toggles an effect on or off by name on an actor by UUID
+   *
+   * @param {string} effectName - name of the effect to toggle
+   * @param {string[]} uuids - uuids to apply the effect to
+   */
+  async toggleEffectArr(inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('toggleEffectArr | inAttributes must be of type array');
+    }
+    const [effectName, ...uuids] = inAttributes;
+    return this.toggleEffect(effectName, ...uuids);
+  }
+
+  /**
    * Checks to see if any of the current active effects applied to the actor
    * with the given UUID match the effect name and are a convenient effect
    *
@@ -70,6 +100,23 @@ export default class EffectHandler {
       (activeEffect) =>
         <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
     );
+  }
+
+  /**
+   * Checks to see if any of the current active effects applied to the actor
+   * with the given UUID match the effect name and are a convenient effect
+   *
+   * @param {string} effectName - the name of the effect to check
+   * @param {string} uuid - the uuid of the actor to see if the effect is
+   * applied to
+   * @returns {boolean} true if the effect is applied, false otherwise
+   */
+  async hasEffectAppliedArr(inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('removeEffectArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid] = inAttributes;
+    return this.hasEffectApplied(effectName, uuid);
   }
 
   /**
@@ -92,6 +139,21 @@ export default class EffectHandler {
       await actor.deleteEmbeddedDocuments('ActiveEffect', [<string>effectToRemove.id]);
       this.log(`Removed effect ${effectName} from ${actor.name} - ${actor.id}`);
     }
+  }
+
+  /**
+   * Removes the effect with the provided name from an actor matching the
+   * provided UUID
+   *
+   * @param {string} effectName - the name of the effect to remove
+   * @param {string} uuid - the uuid of the actor to remove the effect from
+   */
+  async removeEffectArr(inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('removeEffectArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid] = inAttributes;
+    return this.removeEffect(effectName, uuid);
   }
 
   /**
@@ -123,6 +185,21 @@ export default class EffectHandler {
     await actor.createEmbeddedDocuments('ActiveEffect', [activeEffectData]);
 
     this.log(`Added effect ${effect.name} to ${actor.name} - ${actor.id}`);
+  }
+
+  /**
+   * Adds the effect with the provided name to an actor matching the provided
+   * UUID
+   *
+   * @param {string} effectName - the name of the effect to add
+   * @param {string} uuid - the uuid of the actor to add the effect to
+   */
+  async addEffectArr(inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('addEffectArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid, origin] = inAttributes;
+    return this.addEffect(effectName, uuid, origin);
   }
 
   _handleIntegrations(effect) {
@@ -168,6 +245,10 @@ export default class EffectHandler {
     });
   }
 
+  // ============================================================
+  // Additional feature for retrocompatibility
+  // ============================================================
+
   /**
    * Searches through the list of available effects and returns one matching the
    * effect name. Prioritizes finding custom effects first.
@@ -180,6 +261,21 @@ export default class EffectHandler {
     return await (<ActiveEffect>(
       actor?.data?.effects?.find((activeEffect) => <string>activeEffect?.data?.label == effectName)
     ));
+  }
+
+  /**
+   * Searches through the list of available effects and returns one matching the
+   * effect name. Prioritizes finding custom effects first.
+   *
+   * @param {string} effectName - the effect name to search for
+   * @returns {Effect} the found effect
+   */
+  async findEffectByNameOnActorArr(inAttributes: any[]): Promise<ActiveEffect> {
+    if (!Array.isArray(inAttributes)) {
+      throw error('findEffectByNameOnActorArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid] = inAttributes;
+    return this.findEffectByNameOnActor(effectName, uuid);
   }
 
   /**
@@ -208,11 +304,45 @@ export default class EffectHandler {
    * applied to
    * @returns {boolean} true if the effect is applied, false otherwise
    */
+  async hasEffectAppliedOnActorArr(inAttributes: any[]): Promise<boolean> {
+    if (!Array.isArray(inAttributes)) {
+      throw error('hasEffectAppliedOnActorArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid] = inAttributes;
+    return this.hasEffectAppliedOnActor(effectName, uuid);
+  }
+
+  /**
+   * Checks to see if any of the current active effects applied to the actor
+   * with the given UUID match the effect name and are a convenient effect
+   *
+   * @param {string} effectId - the id of the effect to check
+   * @param {string} uuid - the uuid of the actor to see if the effect is
+   * applied to
+   * @returns {boolean} true if the effect is applied, false otherwise
+   */
   async hasEffectAppliedFromIdOnActor(effectId: string, uuid: string): Promise<boolean> {
     const actor = await this.getActorByUuid(uuid);
     return actor?.data?.effects?.some(
       (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?._id == effectId,
     );
+  }
+
+  /**
+   * Checks to see if any of the current active effects applied to the actor
+   * with the given UUID match the effect name and are a convenient effect
+   *
+   * @param {string} effectId - the id of the effect to check
+   * @param {string} uuid - the uuid of the actor to see if the effect is
+   * applied to
+   * @returns {boolean} true if the effect is applied, false otherwise
+   */
+  async hasEffectAppliedFromIdOnActorArr(inAttributes: any[]): Promise<boolean> {
+    if (!Array.isArray(inAttributes)) {
+      throw error('hasEffectAppliedFromIdOnActorArr | inAttributes must be of type array');
+    }
+    const [effectId, uuid] = inAttributes;
+    return this.hasEffectAppliedFromIdOnActor(effectId, uuid);
   }
 
   /**
@@ -247,6 +377,21 @@ export default class EffectHandler {
    * @param {string} effectName - the name of the effect to remove
    * @param {string} uuid - the uuid of the actor to remove the effect from
    */
+  async removeEffectOnActorArr(inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('removeEffectOnActorArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid] = inAttributes;
+    return this.removeEffectOnActor(effectName, uuid);
+  }
+
+  /**
+   * Removes the effect with the provided name from an actor matching the
+   * provided UUID
+   *
+   * @param {string} effectId - the id of the effect to remove
+   * @param {string} uuid - the uuid of the actor to remove the effect from
+   */
   async removeEffectFromIdOnActor(effectToRemoveId: string, uuid: string) {
     if (effectToRemoveId) {
       const actor = <Actor>await this.getActorByUuid(uuid);
@@ -262,6 +407,21 @@ export default class EffectHandler {
       await effectToRemove.delete();
       this.log(`Removed effect ${effectToRemove?.data?.label} from ${actor.name} - ${actor.id}`);
     }
+  }
+
+  /**
+   * Removes the effect with the provided name from an actor matching the
+   * provided UUID
+   *
+   * @param {string} effectId - the id of the effect to remove
+   * @param {string} uuid - the uuid of the actor to remove the effect from
+   */
+  async removeEffectFromIdOnActorArr(inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('removeEffectFromIdOnActor | inAttributes must be of type array');
+    }
+    const [effectToRemoveId, uuid] = inAttributes;
+    return this.removeEffectFromIdOnActor(effectToRemoveId, uuid);
   }
 
   /**
@@ -281,7 +441,24 @@ export default class EffectHandler {
     }
   }
 
-  // FoundryHelper
+  /**
+   * Adds the effect with the provided name to an actor matching the provided
+   * UUID
+   *
+   * @param {string} effectName - the name of the effect to add
+   * @param {string} uuid - the uuid of the actor to add the effect to
+   */
+  async addEffectOnActorArr(inAttributes) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('addEffectOnActorArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid, effect] = inAttributes;
+    return this.addEffectOnActor(effectName, uuid, effect);
+  }
+
+  // =========================
+  // FoundryHelper for retrocompatibility
+  // =========================
 
   /**
    * Gets all UUIDs for selected or targeted tokens, depending on if priortize

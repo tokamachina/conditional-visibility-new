@@ -65,7 +65,7 @@ This module uses the [levels](https://github.com/theripper93/Levels) library. It
 
 #### Attacking in the Sunlight
 
-| Attacker vison/Target vision | Blinded | Normal Vision | Darkvision | Sunlight Sensitivity or Darkvision Superior | Blindsight or Truesight or Devil's Sight | Tremorsense |
+| Attacker vision/Target vision | Blinded | Normal Vision | Darkvision | Sunlight Sensitivity or Darkvision Superior | Blindsight or Truesight or Devil's Sight | Tremorsense |
 |:---------------:|:-------:|:-------------:|:----------:|:-------------------------------------------:|:-----------------------:|:-----------:|
 | Blinded | Fails perception checks; must guess target's location | Disadvantage on attacks; fails perception checks; must guess target’s location | Disadvantage on attacks; fails perception checks; must guess target’s location | Disadvantage on attacks; fails perception checks; must guess target’s location | Disadvantage on attacks; fails perception checks; must guess target’s location | No Effect |
 | Normal | Advantage on attacks | No Effect | No Effect | No Effect | No Effect | No Effect |

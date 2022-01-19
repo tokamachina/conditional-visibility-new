@@ -92,6 +92,30 @@ export function registerSocket() {
   // conditionalVisibilitySocket.register(SOCKET_HANDLERS.TRANSFER_ATTRIBUTES, (...args) => API._transferAttributes(...args));
   // conditionalVisibilitySocket.register(SOCKET_HANDLERS.TRANSFER_ALL_ATTRIBUTES, (...args) => API._transferAllAttributes(...args));
   // conditionalVisibilitySocket.register(SOCKET_HANDLERS.TRANSFER_EVERYTHING, (...args) => API._transferEverything(...args));
+
+  /**
+   * Effects
+   */
+  conditionalVisibilitySocket.register('toggleEffect', (...args) =>
+    API.effectInterface._effectHandler.toggleEffectArr([...args]),
+  );
+  conditionalVisibilitySocket.register('addEffect', (...args) =>
+    API.effectInterface._effectHandler.addEffectArr([...args]),
+  );
+  conditionalVisibilitySocket.register('removeEffect', (...args) =>
+    API.effectInterface._effectHandler.removeEffectArr([...args]),
+  );
+  // conditionalVisibilitySocket.register('addActorDataChanges', (...args) => API._actorUpdater.addActorDataChanges(...args));
+  // conditionalVisibilitySocket.register('removeActorDataChanges', (...args) => API._actorUpdater.removeActorDataChanges(...args));
+  conditionalVisibilitySocket.register('addEffectOnActor', (...args) =>
+    API.effectInterface._effectHandler.addEffectOnActorArr([...args]),
+  );
+  conditionalVisibilitySocket.register('removeEffectOnActor', (...args) =>
+    API.effectInterface._effectHandler.removeEffectOnActorArr([...args]),
+  );
+  conditionalVisibilitySocket.register('removeEffectFromIdOnActor', (...args) =>
+    API.effectInterface._effectHandler.removeEffectFromIdOnActorArr([...args]),
+  );
 }
 
 async function callHook(inHookName, ...args) {

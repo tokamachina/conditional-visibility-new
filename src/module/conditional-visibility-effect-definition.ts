@@ -38,7 +38,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.stealthpassive',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: (number && number  > 0) ? `${number}` : `@data.skills.ste.passive`,
+          value: number && number > 0 ? `${number}` : `@data.skills.ste.passive`,
           priority: 5,
         },
       ],
@@ -56,7 +56,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.darkvision',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.darkvision`,
+          value: number && number > 0 ? `${number}` : `@data.attributes.senses.darkvision`,
           priority: 5,
         },
       ],
@@ -82,7 +82,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.blindsight',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.blindsight`,
+          value: number && number > 0 ? `${number}` : `@data.attributes.senses.blindsight`,
           priority: 5,
         },
       ],
@@ -100,7 +100,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.tremorsense',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.tremorsense`,
+          value: number && number > 0 ? `${number}` : `@data.attributes.senses.tremorsense`,
           priority: 5,
         },
       ],
@@ -118,7 +118,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.truesight',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.truesight`,
+          value: number && number > 0 ? `${number}` : `@data.attributes.senses.truesight`,
           priority: 5,
         },
       ],
@@ -136,7 +136,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.seeinvisible',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.seeinvisible`,
+          value: number && number > 0 ? `${number}` : `@data.attributes.senses.seeinvisible`,
           priority: 5,
         },
       ],
@@ -154,7 +154,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.devilssight',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.devilssight`,
+          value: number && number > 0 ? `${number}` : `@data.attributes.senses.devilssight`,
           priority: 5,
         },
       ],
@@ -172,7 +172,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.lowlightvision',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.lowlightvision`,
+          value: number && number > 0 ? `${number}` : `@data.attributes.senses.lowlightvision`,
           priority: 5,
         },
       ],
@@ -200,9 +200,7 @@ export class EffectDefinitions {
       icon: 'systems/dnd5e/icons/skills/light_01.jpg',
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
-      changes: [
-
-      ],
+      changes: [],
       atlChanges: [
         {
           key: EffectDefinitions._createAtlEffectKey('ATL.light.dim'),

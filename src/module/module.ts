@@ -1,10 +1,11 @@
-import { registerLibwrappers } from "./libwrapper";
-import { registerSocket } from "./socket";
+import { registerLibwrappers } from './libwrapper';
+import { registerSocket, conditionalVisibilitySocket } from './socket';
 import { canvas, game } from './settings';
-import CONSTANTS from "./constants";
-import { HOOKS } from "./hooks";
-import { debug } from "./lib/lib";
-import API from "./api.js";
+import CONSTANTS from './constants';
+import { HOOKS } from './hooks';
+import { debug } from './lib/lib';
+import API from './api.js';
+import EffectInterface from './effects/effect-interface';
 
 export const initHooks = async (): Promise<void> => {
   // registerSettings();
@@ -45,10 +46,16 @@ export const initHooks = async (): Promise<void> => {
 
 export const setupHooks = async (): Promise<void> => {
   //@ts-ignore
-  game[CONSTANTS.MODULE_NAME] = {};
-  game[CONSTANTS.MODULE_NAME].API = {};
+  window.ConditionalVisibility.API.effectInterface = new EffectInterface(CONSTANTS.MODULE_NAME, conditionalVisibilitySocket);
+
+  if(game[CONSTANTS.MODULE_NAME]){
+    game[CONSTANTS.MODULE_NAME] = {};
+  }
+  if(game[CONSTANTS.MODULE_NAME].API){
+    game[CONSTANTS.MODULE_NAME].API = {};
+  }
   //@ts-ignore
-  game[CONSTANTS.MODULE_NAME].API =  window.ConditionalVisibility.API;
+  game[CONSTANTS.MODULE_NAME].API = window.ConditionalVisibility.API;
 };
 
 export const readyHooks = async (): Promise<void> => {

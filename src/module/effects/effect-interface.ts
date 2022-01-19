@@ -1,3 +1,4 @@
+import { conditionalVisibilitySocket } from './../socket';
 import Effect from './effect';
 import EffectHandler from './effect-handler';
 
@@ -11,34 +12,35 @@ export default class EffectInterface {
   _socket: any;
   moduleName: string;
 
-  constructor(moduleName) {
+  constructor(moduleName, socket) {
     this.moduleName = moduleName;
     // this._actorUpdater = new ActorUpdater();
     this._effectHandler = new EffectHandler(moduleName);
+    this._socket = socket;
   }
 
-  /**
-   * Initializes the socket and registers the socket functions
-   */
-  initialize() {
-    //@ts-ignore
-    this._socket = socketlib.registerModule(this.moduleName);
-    this._registerFunctions();
-  }
+  // /**
+  //  * Initializes the socket and registers the socket functions
+  //  */
+  // initialize(socket) {
+  //   //@ts-ignore
+  //   this._socket = socket;//socketlib.registerModule(this.moduleName);
+  //   this._registerFunctions();
+  // }
 
-  _registerFunctions() {
-    this._socket.register('toggleEffect', this._effectHandler.toggleEffect.bind(this._effectHandler));
-    this._socket.register('addEffect', this._effectHandler.addEffect.bind(this._effectHandler));
-    this._socket.register('removeEffect', this._effectHandler.removeEffect.bind(this._effectHandler));
-    // this._socket.register('addActorDataChanges', this._actorUpdater.addActorDataChanges.bind(this._actorUpdater));
-    // this._socket.register('removeActorDataChanges', this._actorUpdater.removeActorDataChanges.bind(this._actorUpdater));
-    this._socket.register('addEffectOnActor', this._effectHandler.addEffectOnActor.bind(this._effectHandler));
-    this._socket.register('removeEffectOnActor', this._effectHandler.removeEffectOnActor.bind(this._effectHandler));
-    this._socket.register(
-      'removeEffectFromIdOnActor',
-      this._effectHandler.removeEffectFromIdOnActor.bind(this._effectHandler),
-    );
-  }
+  // _registerFunctions() {
+  //   this._socket.register('toggleEffect', this._effectHandler.toggleEffect.bind(this._effectHandler));
+  //   this._socket.register('addEffect', this._effectHandler.addEffect.bind(this._effectHandler));
+  //   this._socket.register('removeEffect', this._effectHandler.removeEffect.bind(this._effectHandler));
+  //   // this._socket.register('addActorDataChanges', this._actorUpdater.addActorDataChanges.bind(this._actorUpdater));
+  //   // this._socket.register('removeActorDataChanges', this._actorUpdater.removeActorDataChanges.bind(this._actorUpdater));
+  //   this._socket.register('addEffectOnActor', this._effectHandler.addEffectOnActor.bind(this._effectHandler));
+  //   this._socket.register('removeEffectOnActor', this._effectHandler.removeEffectOnActor.bind(this._effectHandler));
+  //   this._socket.register(
+  //     'removeEffectFromIdOnActor',
+  //     this._effectHandler.removeEffectFromIdOnActor.bind(this._effectHandler),
+  //   );
+  // }
 
   /**
    * Toggles the effect on the provided actor UUIDS as the GM via sockets

@@ -7,12 +7,12 @@ import { StatusEffectStatusFlags } from '../conditional-visibility-models';
 export default {
   /** Equivalent to the VisionLevel enum in the Pathfinder 2e system */
   VISION_LEVEL: {
-    BLINDED: 0,
-    NORMAL: 1,
-    LOW_LIGHT_VISION: 2,
-    DARKVISION: 3,
-    BLINDSIGHT: 4,
-    TREMORSENSE: 5,
+    BLINDED: 'BLINDED',
+    NORMAL: 'NORMAL',
+    DARKVISION: 'DARKVISION',
+    SUNLIGHT_SENSITIVITY: 'SUNLIGHT_SENSITIVITY',
+    BLINDSIGHT: 'BLINDSIGHT',
+    TREMORSENSE: 'TREMORSENSE',
   },
   /**
    * The set of possible sensory perception types which an Actor may have.
@@ -90,4 +90,19 @@ export default {
       icon: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/moon.svg',
     },
   ],
+  // LIGTH_VS_VISION: [
+  //   {
+  //     brightlight : {
+  //       BLINDED: 'BLINDED',
+  //       NORMAL: '',
+  //       DARKVISION: '',
+  //       SUNLIGHT_SENSITIVITY: '',
+  //       BLINDSIGHT: '',
+  //       TREMORSENSE: 'TREMORSENSE',
+  //     },
+  //     dimlight: { apples: 0, oranges: 10, bananas: 0, melons: 0 },
+  //     darkness: { apples: 0, oranges: 0, bananas: 0, melons: 5 },
+  //     magicaldarkness
+  //   }
+  // ],
 };

@@ -31,5 +31,32 @@
   "conditional-visibility.stealth.not.supported": "Conditional Visilbity does not support the hidden condition/stealth for {sysid}",
   "conditional-visibility.currentstealth": "Current Stealth",
   "conditional-visibility.stealthroll": "Stealh Roll",
-  "conditional-visibility.stealthrolldescription": "This value will be compared with passive perception as long is the token is hiding.  Non-numeric entries will result in the initial value being taken"
+  "conditional-visibility.stealthrolldescription": "This value will be compared with passive perception as long is the token is hiding.  Non-numeric entries will result in the initial value being taken",
+
+  "conditional-visibility.effects.stealthpassive.name": "Stealth Passive {number}",
+  "conditional-visibility.effects.stealthpassive.description": "Stealth passive {number}",
+
+  "conditional-visibility.effects.darkvision.name": "Darkvision {number}",
+  "conditional-visibility.effects.darkvision.description": "Upgrade darkvision to {number}",
+
+  "conditional-visibility.effects.blindsigth.name": "Blindsight {number}",
+  "conditional-visibility.effects.blindsigth.description": "A monster with blindsight {number} can perceive its surroundings without relying on sight, within a specific radius.<br>Creatures without eyes, such as grimlocks and gray oozes, typically have this special sense, as do creatures with echolocation or heightened senses, such as bats and true dragons.<br>If a monster is naturally blind, it has a parenthetical note to this effect, indicating that the radius of its blindsight defines the maximum range of its perception",
+
+  "conditional-visibility.effects.tremorsense.name": "Tremorsense {number}",
+  "conditional-visibility.effects.tremorsense.description": "A monster with tremorsense can detect and pinpoint the origin of vibrations within a specific radius, provided that the monster and the source of the vibrations are in contact with the same ground or substance. Tremorsense can't be used to detect flying or incorporeal creatures. Many burrowing creatures, such as ankhegs and umber hulks, have this special sense.",
+
+  "conditional-visibility.effects.truesight.name": "Truesight {number}",
+  "conditional-visibility.effects.truesight.description": "The ability to see things as they actually are. For the duration, the creature has truesight, notices secret doors hidden by magic, and can see into the Ethereal Plane, all out to a range of 120 feet.",
+
+  "conditional-visibility.effects.seeinvisible.name": "See Invisible {number}",
+  "conditional-visibility.effects.seeinvisible.description": "For the Duration, you see Invisible Creatures and Objects as if they were visible, and you can see into the Ethereal Plane. Ethereal Creatures and Objects appear ghostly and translucent.",
+
+  "conditional-visibility.effects.devilssight.name": "Devil's sight {number}",
+  "conditional-visibility.effects.devilssight.description": "You can see normally in darkness, both magical and nonmagical, to a distance of 120 feet.",
+
+  "conditional-visibility.effects.lowlightvision.name": "Low Light vision {number}",
+  "conditional-visibility.effects.lowlightvision.description": "A creature with low-light vision can see in dim light as though it were bright light, so it ignores the concealed condition due to dim light.",
+
+  "conditional-visibility.effects.blinded.name": "Blinded {number}",
+  "conditional-visibility.effects.blinded.description": "A blinded creature can't see and automatically fails any ability check that requires sight<br>Attack rolls against the creature have advantage, and the creature's attack rolls have disadvantage."
 }

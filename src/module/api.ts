@@ -1,4 +1,4 @@
-import { CONSTANTS } from './constants';
+import CONSTANTS from './constants';
 import { conditionalVisibilitySocket, SOCKET_HANDLERS } from './socket';
 import { canvas, game } from './settings';
 import { error } from './lib/lib';

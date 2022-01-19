@@ -11,12 +11,12 @@
  */
 // Import TypeScript modules
 import { checkSystem, CONDITIONAL_VISIBILITY_MODULE_NAME, registerSettings } from './module/settings';
-import { readyHooks } from './module/Hooks';
 import { canvas, game } from './module/settings';
 import { preloadTemplates } from './module/preloadTemplates';
 import { registerHotkeys } from './module/hotkeys';
-import { CONSTANTS } from './module/constants';
+import CONSTANTS from './module/constants';
 import { error, log } from './module/lib/lib';
+import { initHooks, readyHooks, setupHooks } from './module/module';
 
 // declare global {
 //   interface Window {
@@ -38,17 +38,15 @@ Hooks.once('init', async function () {
   await preloadTemplates();
 
   // Register custom sheets (if any)
-});
-
-Hooks.once('socketlib.ready', () => {
-  //@ts-ignore
-  ConditionalVisibility.SOCKET = socketlib.registerModule(CONDITIONAL_VISIBILITY_MODULE_NAME);
+  initHooks();
 });
 
 /* ------------------------------------ */
 /* Setup module							*/
 /* ------------------------------------ */
-Hooks.once('setup', function () {});
+Hooks.once('setup', function () {
+  setupHooks();
+});
 
 /* ------------------------------------ */
 /* When ready							*/
@@ -74,6 +72,10 @@ Hooks.once('ready', async function () {
   // Do anything once the module is ready
   readyHooks();
 });
+
+/* ------------------------------------ */
+/* Other Hooks							*/
+/* ------------------------------------ */
 
 Hooks.once('libChangelogsReady', function () {
   //@ts-ignore

@@ -1,4 +1,4 @@
-import { CONSTANTS } from '../constants.js';
+import CONSTANTS from '../constants.js';
 import API from '../api.js';
 import { canvas, CONDITIONAL_VISIBILITY_MODULE_NAME, game } from '../settings';
 
@@ -51,11 +51,11 @@ export function timelog(message): void {
 }
 
 export const i18n = (key: string): string => {
-  return game.i18n.localize(key);
+  return game.i18n.localize(key).trim();
 };
 
 export const i18nFormat = (key: string, data = {}): string => {
-  return game.i18n.format(key, data);
+  return game.i18n.format(key, data).trim();
 };
 
 // export const setDebugLevel = (debugText: string): void => {

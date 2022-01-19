@@ -1,4 +1,4 @@
-import { CONSTANTS } from './constants';
+import CONSTANTS from './constants';
 import API from './api';
 import { debug } from './lib/lib';
 
@@ -55,7 +55,7 @@ export function registerSocket() {
   conditionalVisibilitySocket.register(SOCKET_HANDLERS.CALL_HOOK, (hook, ...args) => callHook(hook, ...args));
 
   // /**
-  //  * Item pile sockets
+  //  * Conditional Visibility sockets
   //  */
   // conditionalVisibilitySocket.register(SOCKET_HANDLERS.CREATE_PILE, (...args) => API._createItemPile(...args));
   // conditionalVisibilitySocket.register(SOCKET_HANDLERS.UPDATE_PILE, (...args) => API._updateItemPile(...args));

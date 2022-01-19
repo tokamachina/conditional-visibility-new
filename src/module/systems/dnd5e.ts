@@ -20,6 +20,14 @@ export default {
    */
   SENSES: [
     {
+      id: 'stealthpassive',
+      name: i18n('conditional-visibility.stealthpassive'),
+      //path: 'data.skills.ste.passive',
+      path: 'data.attributes.senses.stealthpassive',
+      img: '',
+      effect: EffectDefinitions.stealthpassive(0),
+    },
+    {
       id: 'blindsight',
       name: i18n('conditional-visibility.blindsight'),
       path: 'data.attributes.senses.blindsight',

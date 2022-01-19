@@ -1,4 +1,6 @@
+import CONSTANTS from './constants';
 import Effect, { Constants } from './effects/effect';
+import { i18nFormat } from './lib/lib';
 
 /**
  * Defines all of the effect definitions
@@ -25,10 +27,28 @@ export class EffectDefinitions {
   // The source effect
   // =============================================
 
+  static stealthpassive(number: number) {
+    return new Effect({
+      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.stealthpassive.name`, number),
+      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.stealthpassive.description`, number),
+      icon: '',
+      // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
+      transfer: true,
+      changes: [
+        {
+          key: 'data.attributes.senses.stealthpassive',
+          mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
+          value: (number && number  > 0) ? `${number}` : `@data.skills.ste.passive`,
+          priority: 5,
+        },
+      ],
+    });
+  }
+
   static darkvision(number: number) {
     return new Effect({
-      name: `Darkvision ${number && number > 0 ? `(${number} ft.)` : ''}`,
-      description: `Upgrade darkvision to ${number && number > 0 ? `(${number})` : ''} for 8 hours`,
+      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.darkvision.name`, number),
+      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.darkvision.description`, number),
       icon: 'systems/dnd5e/icons/spells/evil-eye-red-1.jpg',
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
@@ -36,7 +56,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.darkvision',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: `${number}`,
+          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.darkvision`,
           priority: 5,
         },
       ],
@@ -53,12 +73,8 @@ export class EffectDefinitions {
 
   static blindsigth(number: number) {
     return new Effect({
-      name: `Blindsight ${number && number > 0 ? `(${number} ft.)` : ''}`,
-      description: `A monster with blindsight ${
-        number && number > 0 ? `(${number} ft.)` : ''
-      } can perceive its surroundings without relying on sight, within a specific radius.
-      <br>Creatures without eyes, such as grimlocks and gray oozes, typically have this special sense, as do creatures with echolocation or heightened senses, such as bats and true dragons.
-      <br>If a monster is naturally blind, it has a parenthetical note to this effect, indicating that the radius of its blindsight defines the maximum range of its perception`,
+      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.name`, number),
+      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.description`, number),
       icon: 'systems/dnd5e/icons/skills/affliction_24.jpg',
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
@@ -66,7 +82,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.blindsight',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: `${number}`,
+          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.blindsight`,
           priority: 5,
         },
       ],
@@ -75,8 +91,8 @@ export class EffectDefinitions {
 
   static tremorsense(number: number) {
     return new Effect({
-      name: `Tremorsense ${number && number > 0 ? `(${number} ft.)` : ''}`,
-      description: `A monster with tremorsense can detect and pinpoint the origin of vibrations within a specific radius, provided that the monster and the source of the vibrations are in contact with the same ground or substance. Tremorsense can't be used to detect flying or incorporeal creatures. Many burrowing creatures, such as ankhegs and umber hulks, have this special sense.`,
+      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.tremorsense.name`, number),
+      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.tremorsense.description`, number),
       icon: 'systems/dnd5e/icons/skills/ice_15.jpg',
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
@@ -84,7 +100,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.tremorsense',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: `${number}`,
+          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.tremorsense`,
           priority: 5,
         },
       ],
@@ -93,8 +109,8 @@ export class EffectDefinitions {
 
   static truesight(number) {
     return new Effect({
-      name: `Truesight ${number && number > 0 ? `(${number} ft.)` : ''}`,
-      description: `The ability to see things as they actually are. For the duration, the creature has truesight, notices secret doors hidden by magic, and can see into the Ethereal Plane, all out to a range of 120 feet.`,
+      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.truesight.name`, number),
+      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.truesight.description`, number),
       icon: 'systems/dnd5e/icons/skills/emerald_11.jpg',
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
@@ -102,7 +118,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.truesight',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: `${number}`,
+          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.truesight`,
           priority: 5,
         },
       ],
@@ -111,8 +127,8 @@ export class EffectDefinitions {
 
   static seeinvisible(number) {
     return new Effect({
-      name: `See Invisible ${number && number > 0 ? `(${number} ft.)` : ''}`,
-      description: ``,
+      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.seeinvisible.name`, number),
+      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.seeinvisible.description`, number),
       icon: 'systems/dnd5e/icons/skills/shadow_11.jpg',
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
@@ -120,7 +136,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.seeinvisible',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: `${number}`,
+          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.seeinvisible`,
           priority: 5,
         },
       ],
@@ -129,8 +145,8 @@ export class EffectDefinitions {
 
   static devilssight(number) {
     return new Effect({
-      name: `Devil's sight ${number && number > 0 ? `(${number} ft.)` : ''}`,
-      description: `You can see normally in darkness, both magical and nonmagical, to a distance of 120 feet.`,
+      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.devilssight.name`, number),
+      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.devilssight.description`, number),
       icon: 'systems/dnd5e/icons/skills/blue_17.jpg',
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
@@ -138,7 +154,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.devilssight',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: `${number}`,
+          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.devilssight`,
           priority: 5,
         },
       ],
@@ -147,8 +163,8 @@ export class EffectDefinitions {
 
   static lowlightvision(number) {
     return new Effect({
-      name: `Low Light vision ${number && number > 0 ? `(${number} ft.)` : ''}`,
-      description: `A creature with low-light vision can see in dim light as though it were bright light, so it ignores the concealed condition due to dim light.`,
+      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.lowlightvision.name`, number),
+      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.lowlightvision.description`, number),
       icon: 'systems/dnd5e/icons/skills/violet_09.jpg',
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
@@ -156,7 +172,7 @@ export class EffectDefinitions {
         {
           key: 'data.attributes.senses.lowlightvision',
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: `${number}`,
+          value: (number && number  > 0) ? `${number}` : `@data.attributes.senses.lowlightvision`,
           priority: 5,
         },
       ],
@@ -179,13 +195,14 @@ export class EffectDefinitions {
 
   static blinded(number) {
     return new Effect({
-      name: `Blinded ${number && number > 0 ? `(${number} ft.)` : ''}`,
-      description: `A blinded creature can’t see and automatically fails any ability check that requires sight<br>
-      Attack rolls against the creature have advantage, and the creature’s attack rolls have disadvantage.`,
+      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blinded.name`, number),
+      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blinded.description`, number),
       icon: 'systems/dnd5e/icons/skills/light_01.jpg',
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
-      changes: [],
+      changes: [
+
+      ],
       atlChanges: [
         {
           key: EffectDefinitions._createAtlEffectKey('ATL.light.dim'),

@@ -1,4 +1,5 @@
-import { CONSTANTS } from './constants';
+import API from './api';
+import CONSTANTS from './constants';
 import { ConditionalVisibilityAttributeEditor } from './formapplications/conditionalVisibilityAttributeEditor';
 import { dialogWarning, warn } from './lib/lib';
 import { SYSTEMS } from './systems';
@@ -37,6 +38,12 @@ function getGame(): Game {
   }
   return game;
 }
+
+export function getAPI(): API {
+  return game[CONSTANTS.MODULE_NAME].API;
+}
+
+
 
 export const CONDITIONAL_VISIBILITY_MODULE_NAME = CONSTANTS.MODULE_NAME;
 // export const CONDITIONAL_VISIBILITY_DEFAULT_STEALTH = 10;

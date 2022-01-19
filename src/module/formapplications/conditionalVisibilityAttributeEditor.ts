@@ -1,4 +1,4 @@
-import { CONSTANTS } from '../constants';
+import CONSTANTS from '../constants';
 import { canvas, game } from '../settings';
 
 export class ConditionalVisibilityAttributeEditor extends FormApplication {

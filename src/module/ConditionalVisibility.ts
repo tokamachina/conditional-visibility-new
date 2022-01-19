@@ -1,7 +1,10 @@
+import API from './api';
 import { canvas, CONDITIONAL_VISIBILITY_MODULE_NAME, game } from './settings';
 import { conditionalVisibilitySocket } from './socket';
 
 export class ConditionalVisibility {
+  static API: API;
+
   /**
    * Create a ConditionalVisibility with a given sightLayer and tokenHud.
    * @param sightLayer the sightLayer to use
@@ -77,7 +80,7 @@ export class ConditionalVisibility {
     //   const flags = ConditionalVisibility.INSTANCE._conditionalVisibilitySystem.getVisionCapabilities(
     //     ConditionalVisibility.INSTANCE._getSrcTokens(),
     //   );
-    const isCVVisible = this._conditionalVisibilitySystem.canSee(targetToken, flags);
+    const isCVVisible = this.canSee(targetToken, flags);
 
     return isCVVisible ? wrapped(...args) : false;
   }

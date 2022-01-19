@@ -27,23 +27,23 @@ export class EffectDefinitions {
   // The source effect
   // =============================================
 
-  static stealthpassive(number: number) {
-    return new Effect({
-      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.stealthpassive.name`, number),
-      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.stealthpassive.description`, number),
-      icon: '',
-      // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
-      transfer: true,
-      changes: [
-        {
-          key: 'data.attributes.senses.stealthpassive',
-          mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@data.skills.ste.passive`,
-          priority: 5,
-        },
-      ],
-    });
-  }
+  // static stealthpassive(number: number) {
+  //   return new Effect({
+  //     name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.stealthpassive.name`, number),
+  //     description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.stealthpassive.description`, number),
+  //     icon: '',
+  //     // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
+  //     transfer: true,
+  //     changes: [
+  //       {
+  //         key: 'data.attributes.senses.stealthpassive',
+  //         mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
+  //         value: number && number > 0 ? `${number}` : `@data.skills.ste.passive`,
+  //         priority: 5,
+  //       },
+  //     ],
+  //   });
+  // }
 
   static darkvision(number: number) {
     return new Effect({

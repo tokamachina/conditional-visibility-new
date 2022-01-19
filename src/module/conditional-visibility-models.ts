@@ -14,7 +14,7 @@ export enum StatusEffectSightFlags {
   DEVILS_SIGHT = 'devilssight',
   PASSIVE_STEALTH = '_ste',
   // additional PF2E
-  LOW_LIGHT_VISON = 'lowlightvision',
+  LOW_LIGHT_VISION = 'lowlightvision',
   BLINDED = 'blinded',
 }
 
@@ -25,4 +25,12 @@ export enum StatusEffectStatusFlags {
   IN_DARKNESS = 'indarkness',
   HIDDEN = 'hidden',
   IN_MAGICAL_DARKNESS = 'inmagicaldarkness',
+}
+
+export class VisionCapabilities {
+  public seeinvisible: number;
+  public seeobscured: number;
+  public seeindarkness: number;
+  public seehidden: number;
+  public seeinmagicaldarkness: number;
 }

@@ -48,21 +48,28 @@ export const CONDITIONAL_VISIBILITY_MODULE_NAME = CONSTANTS.MODULE_NAME;
 
 function defaultSettings(apply = false) {
   return {
-    dynamicAttributes: {
+    senses: {
       scope: 'world',
       config: false,
       //@ts-ignore
       default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.SENSES : [],
       type: Array,
     },
-    visibilityDefaultValue: {
-      name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityDefaultValue.name`,
-      hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityDefaultValue.hint`,
+    conditiions: {
       scope: 'world',
-      config: true,
-      default: 10,
-      type: Number,
+      config: false,
+      //@ts-ignore
+      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.CONDITIONS : [],
+      type: Array,
     },
+    // visibilityDefaultValue: {
+    //   name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityDefaultValue.name`,
+    //   hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityDefaultValue.hint`,
+    //   scope: 'world',
+    //   config: true,
+    //   default: 10,
+    //   type: Number,
+    // },
   };
 }
 

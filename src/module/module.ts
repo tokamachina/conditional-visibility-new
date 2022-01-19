@@ -1,11 +1,12 @@
 import { registerLibwrappers } from './libwrapper';
 import { registerSocket, conditionalVisibilitySocket } from './socket';
-import { canvas, game } from './settings';
+import { canvas, checkSystem, game } from './settings';
 import CONSTANTS from './constants';
 import { HOOKS } from './hooks';
 import { debug } from './lib/lib';
 import API from './api.js';
 import EffectInterface from './effects/effect-interface';
+import { registerHotkeys } from './hotkeys';
 
 export const initHooks = async (): Promise<void> => {
   // registerSettings();
@@ -45,22 +46,6 @@ export const initHooks = async (): Promise<void> => {
 };
 
 export const setupHooks = async (): Promise<void> => {
-  //@ts-ignore
-  window.ConditionalVisibility.API.effectInterface = new EffectInterface(CONSTANTS.MODULE_NAME, conditionalVisibilitySocket);
-
-  if(game[CONSTANTS.MODULE_NAME]){
-    game[CONSTANTS.MODULE_NAME] = {};
-  }
-  if(game[CONSTANTS.MODULE_NAME].API){
-    game[CONSTANTS.MODULE_NAME].API = {};
-  }
-  //@ts-ignore
-  game[CONSTANTS.MODULE_NAME].API = window.ConditionalVisibility.API;
-};
-
-export const readyHooks = async (): Promise<void> => {
-  Hooks.callAll(HOOKS.READY);
-
   // setup all the hooks
   const sightLayer = canvas.layers.find((layer) => {
     switch (game.system.id) {
@@ -77,6 +62,27 @@ export const readyHooks = async (): Promise<void> => {
         return layer.__proto__.constructor.name === 'SightLayer';
     }
   });
+
+  //@ts-ignore
+  window.ConditionalVisibility.API.effectInterface = new EffectInterface(
+    CONSTANTS.MODULE_NAME,
+    conditionalVisibilitySocket,
+  );
+
+  if (game[CONSTANTS.MODULE_NAME]) {
+    game[CONSTANTS.MODULE_NAME] = {};
+  }
+  if (game[CONSTANTS.MODULE_NAME].API) {
+    game[CONSTANTS.MODULE_NAME].API = {};
+  }
+  //@ts-ignore
+  game[CONSTANTS.MODULE_NAME].API = window.ConditionalVisibility.API;
+};
+
+export const readyHooks = async (): Promise<void> => {
+  checkSystem();
+  registerHotkeys();
+  Hooks.callAll(HOOKS.READY);
 
   //@ts-ignore
   //ConditionalVisibility.initialize(sightLayer, canvas.hud?.token);

@@ -1,6 +1,7 @@
 import CONSTANTS from '../constants.js';
 import API from '../api.js';
 import { canvas, CONDITIONAL_VISIBILITY_MODULE_NAME, game } from '../settings';
+import { StatusEffectSightFlags, VisionCapabilities } from '../conditional-visibility-models.js';
 
 export function isGMConnected() {
   return !!Array.from(<Users>game.users).find((user) => user.isGM && user.active);
@@ -168,199 +169,53 @@ export function dialogWarning(message, icon = 'fas fa-exclamation-triangle') {
     </p>`;
 }
 
-// export function getItemPileData(inDocument) {
-//   if (inDocument instanceof TokenDocument && inDocument?.data?.actorLink) {
-//     inDocument = inDocument?.actor;
-//   } else if (inDocument instanceof Actor && inDocument.token) {
-//     inDocument = inDocument?.token;
-//   }
-//   try {
-//     const data = inDocument.getFlag(CONSTANTS.MODULE_NAME, CONSTANTS.FLAG_NAME);
-//     if (!data) return {};
-//     const defaults = foundry.utils.duplicate(CONSTANTS.PILE_DEFAULTS);
-//     return foundry.utils.mergeObject(defaults, data);
-//   } catch (err) {
-//     return {};
-//   }
-// }
+export function getVisionCapabilities(srcToken:Token, ): VisionCapabilities {
+  const visionCapabilities: VisionCapabilities = new VisionCapabilities();
+  if (srcToken) {
+    let _seeinvisible =
+      <number>(
+        srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.SEE_INVISIBLE)
+      ) ?? 0;
 
-// export async function updateItemPile(inDocument, flagData, tokenData) {
-//   if (!tokenData) tokenData = {};
+    let _blindsight =
+      <number>(
+        srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.BLIND_SIGHT)
+      ) ?? 0;
 
-//   let documentActor;
-//   let documentTokens:Token[] = [];
+    let _tremorsense =
+      <number>(
+        srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.TREMOR_SENSE)
+      ) ?? 0; 
 
-//   if (inDocument instanceof Actor) {
-//     documentActor = inDocument;
-//     if (inDocument.token) {
-//       documentToken.push(inDocument?.token);
-//     } else {
-//       documentTokens = canvas.tokens.placeables
-//         .filter((token) => token.document.actor === documentActor)
-//         .map((token) => token.document);
-//     }
-//   } else {
-//     documentActor = inDocument.actor;
-//     if (inDocument.isLinked) {
-//       documentTokens = canvas.tokens.placeables
-//         .filter((token) => token.document.actor === documentActor)
-//         .map((token) => token.document);
-//     } else {
-//       documentTokens.push(inDocument);
-//     }
-//   }
+    let _truesight =
+      <number>(
+        srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.TRUE_SIGHT)
+      ) ?? 0;
 
-//   const updates = documentTokens.map((tokenDocument) => {
-//     const newTokenData = foundry.utils.mergeObject(tokenData, {
-//       img: getItemPileTokenImage(tokenDocument, flagData),
-//       scale: getItemPileTokenScale(tokenDocument, flagData),
-//     });
-//     return {
-//       _id: tokenDocument.id,
-//       ...newTokenData,
-//       [`flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}`]: flagData,
-//     };
-//   });
+    let _devilssight =
+      <number>(
+        srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.DEVILS_SIGHT)
+      ) ?? 0;
 
-//   await canvas.scene.updateEmbeddedDocuments('Token', updates);
+      if()
 
-//   return documentActor.update({
-//     [`flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}`]: flagData,
-//     token: {
-//       [`flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}`]: flagData,
-//     },
-//   });
-// }
+    _seeinvisible = _seeinvisible < 0 ? 100000 : _seeinvisible;
+    _blindsight = _blindsight < 0 ? 100000 : _blindsight;
+    _tremorsense = _tremorsense < 0 ? 100000 : _tremorsense;
+    _truesight = _truesight < 0 ? 100000 : _truesight;
+    _devilssight = _devilssight < 0 ? 100000 : _devilssight;
 
-// export function getItemPileTokenImage(pileDocument, data = false) {
-//   if (!data) {
-//     data = getItemPileData(pileDocument);
-//   }
-
-//   let originalImg;
-//   if (pileDocument instanceof TokenDocument) {
-//     originalImg = pileDocument.data.actorLink ? pileDocument.actor.data.token.img : pileDocument.data.img;
-//   } else {
-//     originalImg = pileDocument.data.token.img;
-//   }
-
-//   if (!isValidItemPile(pileDocument)) return originalImg;
-
-//   const items = getItemPileItems(pileDocument);
-//   const attributes = getItemPileAttributes(pileDocument);
-
-//   const numItems = items.length + attributes.length;
-
-//   let img;
-
-//   if (data.displayOne && numItems === 1) {
-//     img = items.length > 0 ? items[0].data.img : attributes[0].img;
-//   }
-
-//   if (data.isContainer) {
-//     img = data.lockedImage || data.closedImage || data.openedImage || data.emptyImage;
-
-//     if (data.locked && data.lockedImage) {
-//       img = data.lockedImage;
-//     } else if (data.closed && data.closedImage) {
-//       img = data.closedImage;
-//     } else if (data.emptyImage && isItemPileEmpty(pileDocument)) {
-//       img = data.emptyImage;
-//     } else if (data.openedImage) {
-//       img = data.openedImage;
-//     }
-//   }
-
-//   return img || originalImg;
-// }
-
-// export function getItemPileTokenScale(pileDocument, data) {
-//   if (!data) {
-//     data = getItemPileData(pileDocument);
-//   }
-
-//   let baseScale;
-//   if (pileDocument instanceof TokenDocument) {
-//     baseScale = pileDocument.data.actorLink ? pileDocument.actor.data.token.scale : pileDocument.data.scale;
-//   } else {
-//     baseScale = pileDocument.data.token.scale;
-//   }
-
-//   const items = getItemPileItems(pileDocument);
-//   const attributes = getItemPileAttributes(pileDocument);
-
-//   const numItems = items.length + attributes.length;
-
-//   if (
-//     !isValidItemPile(pileDocument, data) ||
-//     data.isContainer ||
-//     !data.displayOne ||
-//     !data.overrideSingleItemScale ||
-//     numItems > 1
-//   )
-//     return baseScale;
-
-//   return data.singleItemScale;
-// }
-
-// export function getItemPileItems(target, itemTypeFilters = false) {
-//   if (!isValidItemPile(target)) return [];
-
-//   const pileItemFilters = Array.isArray(itemTypeFilters)
-//     ? new Set(itemTypeFilters)
-//     : new Set(getItemPileItemTypeFilters(target));
-
-//   const targetActor = target instanceof TokenDocument ? target.actor : target;
-
-//   return Array.from(targetActor.items).filter((item) => {
-//     const itemType = getProperty(item.data, API.ITEM_TYPE_ATTRIBUTE);
-//     return !pileItemFilters.has(itemType);
-//   });
-// }
-
-// export function isValidItemPile(inDocument, data = false) {
-//   const documentActor = inDocument instanceof TokenDocument ? inDocument.actor : inDocument;
-//   return inDocument && !inDocument.destroyed && documentActor && (data || getItemPileData(inDocument))?.enabled;
-// }
-
-// export function getItemPileItemTypeFilters(target) {
-//   if (!isValidItemPile(target)) return [];
-//   const pileData = getItemPileData(target);
-//   return pileData.itemTypeFilters
-//     ? pileData.itemTypeFilters.split(',').map((str) => str.trim().toLowerCase())
-//     : API.ITEM_TYPE_FILTERS;
-// }
-
-// export function isItemPileEmpty(target) {
-//   const targetActor = target instanceof TokenDocument ? target.actor : target;
-
-//   if (!targetActor) return false;
-
-//   const hasNoItems = getItemPileItems(target).length === 0;
-//   const hasEmptyAttributes = getItemPileAttributes(target).length === 0;
-
-//   return hasNoItems && hasEmptyAttributes;
-// }
-
-// export function getItemPileAttributeList(target) {
-//   const pileData = getItemPileData(target);
-//   return pileData.overrideAttributes || API.DYNAMIC_ATTRIBUTES;
-// }
-
-// export function getItemPileAttributes(target) {
-//   let targetActor = target?.actor ?? target;
-//   const attributes = getItemPileAttributeList(targetActor);
-//   return attributes
-//     .filter((attribute) => {
-//       return hasProperty(targetActor.data, attribute.path) && Number(getProperty(targetActor.data, attribute.path)) > 0;
-//     })
-//     .map((attribute) => {
-//       const localizedName = game.i18n.has(attribute.name) ? game.i18n.localize(attribute.name) : attribute.name;
-//       return {
-//         name: localizedName,
-//         path: attribute.path,
-//         img: attribute.img,
-//         quantity: Number(getProperty(targetActor.data, attribute.path) ?? 1),
-//       };
-//     });
-// }
+    visionCapabilities.seeinvisible = Math.max(_seeinvisible, _blindsight, _tremorsense, _truesight, _devilssight);
+    visionCapabilities.seeobscured = Math.max(_blindsight, _tremorsense);
+    visionCapabilities.seeindarkness = Math.max(_blindsight, _devilssight, _tremorsense, _truesight);
+    
+    //@ts-ignore
+    if (srcToken?._movement !== null) {
+      //@ts-ignore
+      visionCapabilities.visionfrom = srcToken._movement.B;
+    } else {
+      visionCapabilities.visionfrom = srcToken?.position ?? { x: 0, y: 0 };
+    }
+  }
+  return visionCapabilities;
+}

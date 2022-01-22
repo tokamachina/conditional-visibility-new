@@ -10,7 +10,7 @@ import { i18n } from '../lib/lib';
 import { CONDITIONAL_VISIBILITY_MODULE_NAME } from '../settings';
 
 export default {
-  HP: 'actorData.data.attributes.hp.value',
+  HP_ATTRIBUTE: 'data.attributes.hp.value',
   // VISION_LEVEL: {
   //   BLINDED: 0,
   //   NORMAL: 1,
@@ -20,10 +20,11 @@ export default {
   SENSES: <StatusSight[]>[
     {
       id: StatusEffectSightFlags.BLINDED,
-      name: i18n(`${CONSTANTS.MODULE_NAME}.${StatusEffectSightFlags.LOW_LIGHT_VISION}`),
+      name: i18n(`${CONSTANTS.MODULE_NAME}.${StatusEffectSightFlags.BLINDED}`),
       path: 'data.traits.senses.blinded',
       img: 'systems/dnd5e/icons/skills/affliction_24.jpg',
       effect: EffectDefinitions.blinded(0),
+      pathOri:'data.attributes.conditions.blind'
     },
     {
       id: StatusEffectSightFlags.LOW_LIGHT_VISION,

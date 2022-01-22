@@ -47,21 +47,6 @@ export const initHooks = async (): Promise<void> => {
 
 export const setupHooks = async (): Promise<void> => {
   // setup all the hooks
-  const sightLayer = canvas.layers.find((layer) => {
-    switch (game.system.id) {
-      case 'dnd5e':
-        //@ts-ignore
-        return layer.__proto__.constructor.name === 'SightLayer';
-        break;
-      case 'pf2e':
-        //@ts-ignore
-        return layer.__proto__.constructor.name === 'SightLayerPF2e';
-        break;
-      default:
-        //@ts-ignore
-        return layer.__proto__.constructor.name === 'SightLayer';
-    }
-  });
 
   //@ts-ignore
   window.ConditionalVisibility.API.effectInterface = new EffectInterface(
@@ -84,46 +69,17 @@ export const readyHooks = async (): Promise<void> => {
   registerHotkeys();
   Hooks.callAll(HOOKS.READY);
 
-  //@ts-ignore
-  //ConditionalVisibility.initialize(sightLayer, canvas.hud?.token);
-
+  const sightLayer = canvas.layers.find(layer => {
+    //@ts-ignore
+    return layer.__proto__.constructor.name === 'SightLayer';
+  });
+  ConditionalVisibility.initialize(sightLayer, canvas.hud?.token);
   // Add any additional hooks if necessary
-  Hooks.on('renderTokenConfig', (tokenConfig, html, data) => {
-    // ConditionalVisibility.INSTANCE.onRenderTokenConfig(tokenConfig, html, data);
-    module.onRenderTokenConfig(tokenConfig, html, data);
+  Hooks.on("renderTokenConfig", (tokenConfig, html, data) => {
+      ConditionalVisibility.INSTANCE.onRenderTokenConfig(tokenConfig, html, data);
   });
-  Hooks.on('renderTokenHUD', (app, html, token) => {
-    // ConditionalVisibility.INSTANCE.onRenderTokenHUD(app, html, token);
-  });
-
-  Hooks.on('sightRefresh', () => {
-    // ConditionalVisibility.INSTANCE.restrictVisibility(32);
-  });
-  //synthetic actors go through this
-  // Hooks.on("preUpdateToken", ( token, update, options, userId) => {
-  //     ConditionalVisibility.INSTANCE.onUpdateToken( token, update, options, userId);
-  // });
-  //real actors go through this
-  Hooks.on('updateToken', (token, updates) => {
-    // if ('elevation' in updates || 'x' in updates || 'y' in updates || 'rotation' in updates) {
-    //   ConditionalVisibility.INSTANCE.restrictVisibility(100);
-    //   //token._object.visible = ConditionalVisibility.canSee(token._object);
-    // }
-  });
-  Hooks.on('createActiveEffect', (effect, options, userId) => {
-    // ConditionalVisibility.INSTANCE.onCreateEffect(effect, options, userId);
-  });
-
-  Hooks.on('deleteActiveEffect', (effect, options, userId) => {
-    // ConditionalVisibility.INSTANCE.onDeleteEffect(effect, options, userId);
-  });
-
-  Hooks.on('createItem', (effect, options, userId) => {
-    // ConditionalVisibility.INSTANCE.onCreateEffect(effect, options, userId);
-  });
-
-  Hooks.on('deleteItem', (effect, options, userId) => {
-    // ConditionalVisibility.INSTANCE.onDeleteEffect(effect, options, userId);
+  Hooks.on("renderTokenHUD", (app, html, token) => {
+      ConditionalVisibility.INSTANCE.onRenderTokenHUD(app, html, token);
   });
 };
 

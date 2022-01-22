@@ -15,6 +15,7 @@ export interface StatusSight {
   path: string;
   img: string;
   effect: Effect;
+  pathOri?:string;
 }
 
 export enum StatusEffectSightFlags {
@@ -25,6 +26,7 @@ export enum StatusEffectSightFlags {
   TRUE_SIGHT = 'truesight',
   DEVILS_SIGHT = 'devilssight',
   PASSIVE_STEALTH = '_ste',
+  PASSIVE_PERCEPTION = '_prc',
   // additional PF2E
   LOW_LIGHT_VISION = 'lowlightvision',
   BLINDED = 'blinded',
@@ -56,6 +58,7 @@ export class VisionCapabilities {
   private _truesight: number;
   private _devilssight: number;
   private _passivestealth: number;
+  private _passiveperception: number;
   private _lowlightvision: number;
   private _blinded: number;
 
@@ -100,6 +103,14 @@ export class VisionCapabilities {
           srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.PASSIVE_STEALTH)
         ) ?? 0;
 
+      const _passiveperceptionTmp =
+        <number>(
+          srcToken?.data?.document?.getFlag(
+            CONDITIONAL_VISIBILITY_MODULE_NAME,
+            StatusEffectSightFlags.PASSIVE_PERCEPTION,
+          )
+        ) ?? 0;
+
       const _lowlightvisionTmp =
         <number>(
           srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.LOW_LIGHT_VISION)
@@ -122,6 +133,10 @@ export class VisionCapabilities {
       // this.seeinvisible = Math.max(_seeinvisible, _blindsight, _tremorsense, _truesight, _devilssight);
       // this.seeobscured = Math.max(_blindsight, _tremorsense);
       // this.seeindarkness = Math.max(_blindsight, _devilssight, _tremorsense, _truesight);
+
+      // TODO
+
+      this._passiveperception = _passiveperceptionTmp; //srcToken?.actor?.data?.data?.skills?.prc?.passive
 
       // //@ts-ignore
       // if (srcToken?._movement !== null) {
@@ -150,5 +165,13 @@ export class VisionCapabilities {
   }
   canSeeInMagicalDarkness() {
     return Math.max(this._blindsight, this._devilssight, this._tremorsense, this._truesight);
+  }
+  hasStealth(): boolean {
+    return true;
+  }
+  rollStealth(): Roll {
+    //@ts-ignore
+    const roll = new Roll('1d20 + (' + this.token.actor.data.data.skills.ste.total + ')').roll();
+    return roll;
   }
 }

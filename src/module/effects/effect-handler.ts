@@ -490,7 +490,7 @@ export default class EffectHandler {
    * @param {string} effectName - the name of the effect to add
    * @param {string} uuid - the uuid of the actor to add the effect to
    */
-  async addEffectOnActorArr(inAttributes) {
+  async addEffectOnActorArr(...inAttributes) {
     if (!Array.isArray(inAttributes)) {
       throw error('addEffectOnActorArr | inAttributes must be of type array');
     }

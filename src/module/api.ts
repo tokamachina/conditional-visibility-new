@@ -14,7 +14,7 @@ export default class API {
     return new EffectInterface(CONSTANTS.MODULE_NAME, conditionalVisibilitySocket);
   }
 
-  static get enhancedConditions():EnhancedConditions{
+  static get enhancedConditions(): EnhancedConditions {
     //@ts-ignore
     return game.cub;
   }
@@ -48,7 +48,7 @@ export default class API {
   //     .map((str) => str.trim().toLowerCase());
   // }
 
-  static async _onRenderTokenConfig(inAttributes: any[]) {
+  static async _onRenderTokenConfig(...inAttributes: any[]) {
     if (!Array.isArray(inAttributes)) {
       throw error('_onRenderTokenConfig | inAttributes must be of type array');
     }

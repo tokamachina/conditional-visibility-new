@@ -12,7 +12,7 @@ import CONSTANTS from '../constants';
 import ArrayMatrix from '../lib/javascript-array-matrix';
 
 export default {
-  HP: 'actorData.data.attributes.hp.value',
+  HP_ATTRIBUTE: 'data.attributes.hp.value',
   /** Equivalent to the VisionLevel enum in the Pathfinder 2e system */
   // VISION_LEVEL: [
   //   'BLINDED',
@@ -35,6 +35,13 @@ export default {
     //   img: '',
     //   effect: EffectDefinitions.stealthpassive(0),
     // },
+    {
+      id: StatusEffectSightFlags.BLINDED,
+      name: i18n(`${CONSTANTS.MODULE_NAME}.${StatusEffectSightFlags.BLINDED}`),
+      path: 'data.traits.senses.blinded',
+      img: 'systems/dnd5e/icons/skills/affliction_24.jpg',
+      effect: EffectDefinitions.blinded(0),
+    },
     {
       id: StatusEffectSightFlags.BLIND_SIGHT,
       name: i18n(`${CONSTANTS.MODULE_NAME}.${StatusEffectSightFlags.BLIND_SIGHT}`),
@@ -126,16 +133,4 @@ export default {
   //     magicaldarkness
   //   }
   // ],
-  hasStealth(): boolean {
-    return true;
-  },
-  rollStealth(token: Token): Roll {
-    if (token && token.actor) {
-      //@ts-ignore
-      const roll = new Roll('1d20 + (' + token.actor.data.data.skills.ste.total + ')').roll();
-      return roll;
-    } else {
-      return super.rollStealth(token);
-    }
-  },
 };

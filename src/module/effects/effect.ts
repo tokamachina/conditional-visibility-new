@@ -60,10 +60,12 @@ export default class Effect {
   /**
    * Converts the effect data to an active effect data object
    *
-   * @param {string} origin - the origin to add to the effect
+   * @param {object} params - the params to use for conversion
+   * @param {string} params.origin - the origin to add to the effect
+   * @param {boolean} params.overlay - whether the effect is an overlay or not
    * @returns The active effect data object for this effect
    */
-  convertToActiveEffectData(origin?: string): Record<string, unknown> {
+  convertToActiveEffectData({ origin = '', overlay = false } = {}): Record<string, unknown> {
     return {
       id: this._id,
       name: this.name,
@@ -74,8 +76,10 @@ export default class Effect {
       flags: foundry.utils.mergeObject(this.flags, {
         core: {
           statusId: this._id,
+          overlay,
         },
         isConvenient: true,
+        convenientDescription: this.description,
       }),
       origin: origin ?? '',
       transfer: this.transfer ?? false,
@@ -90,7 +94,7 @@ export default class Effect {
   _getDurationData() {
     if (game.combat) {
       return {
-        startRound: game.combat?.round,
+        startRound: game.combat.round,
         rounds: this._getCombatRounds(),
         turns: this.turns,
       };
@@ -124,56 +128,6 @@ export default class Effect {
     }
 
     return undefined;
-  }
-
-  static _createAtlEffectKey(key: string) {
-    let result = key;
-    //@ts-ignore
-    const version = (game.version ?? game.data.version).charAt(0);
-
-    if (version == '9') {
-      switch (key) {
-        case 'ATL.preset':
-          break;
-        case 'ATL.brightSight':
-          break;
-        case 'ATL.dimSight':
-          break;
-        case 'ATL.height':
-          break;
-        case 'ATl.img':
-          break;
-        case 'ATL.mirrorX':
-          break;
-        case 'ATL.mirrorY':
-          break;
-        case 'ATL.rotation':
-          break;
-        case 'ATL.scale':
-          break;
-        case 'ATL.width':
-          break;
-        case 'ATL.dimLight':
-          result = 'ATL.light.dim';
-          break;
-        case 'ATL.brightLight':
-          result = 'ATL.light.bright';
-          break;
-        case 'ATL.lightAnimation':
-          result = 'ATL.light.animation';
-          break;
-        case 'ATL.lightColor':
-          result = 'ATL.light.color';
-          break;
-        case 'ATL.lightAlpha':
-          result = 'ATL.light.alpha';
-          break;
-        case 'ATL.lightAngle':
-          result = 'ATL.light.angle';
-          break;
-      }
-    }
-    return result;
   }
 }
 

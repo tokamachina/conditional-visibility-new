@@ -59,7 +59,7 @@ export function registerSocket() {
   //  * Conditional Visibility sockets
   //  */
   conditionalVisibilitySocket.register(SOCKET_HANDLERS.ON_RENDER_TOKEN_CONFIG, (...args) =>
-    API._onRenderTokenConfig([...args]),
+    API._onRenderTokenConfig(...args),
   );
   // conditionalVisibilitySocket.register(SOCKET_HANDLERS.UPDATE_PILE, (...args) => API._updateItemPile(...args));
   // conditionalVisibilitySocket.register(SOCKET_HANDLERS.UPDATED_PILE, (...args) => API._updatedItemPile(...args));
@@ -100,24 +100,24 @@ export function registerSocket() {
    * Effects
    */
   conditionalVisibilitySocket.register('toggleEffect', (...args) =>
-    API.effectInterface._effectHandler.toggleEffectArr([...args]),
+    API.effectInterface._effectHandler.toggleEffectArr(...args),
   );
   conditionalVisibilitySocket.register('addEffect', (...args) =>
-    API.effectInterface._effectHandler.addEffectArr([...args]),
+    API.effectInterface._effectHandler.addEffectArr(...args),
   );
   conditionalVisibilitySocket.register('removeEffect', (...args) =>
-    API.effectInterface._effectHandler.removeEffectArr([...args]),
+    API.effectInterface._effectHandler.removeEffectArr(...args),
   );
   // conditionalVisibilitySocket.register('addActorDataChanges', (...args) => API._actorUpdater.addActorDataChanges(...args));
   // conditionalVisibilitySocket.register('removeActorDataChanges', (...args) => API._actorUpdater.removeActorDataChanges(...args));
   conditionalVisibilitySocket.register('addEffectOnActor', (...args) =>
-    API.effectInterface._effectHandler.addEffectOnActorArr([...args]),
+    API.effectInterface._effectHandler.addEffectOnActorArr(...args),
   );
   conditionalVisibilitySocket.register('removeEffectOnActor', (...args) =>
-    API.effectInterface._effectHandler.removeEffectOnActorArr([...args]),
+    API.effectInterface._effectHandler.removeEffectOnActorArr(...args),
   );
   conditionalVisibilitySocket.register('removeEffectFromIdOnActor', (...args) =>
-    API.effectInterface._effectHandler.removeEffectFromIdOnActorArr([...args]),
+    API.effectInterface._effectHandler.removeEffectFromIdOnActorArr(...args),
   );
 }
 

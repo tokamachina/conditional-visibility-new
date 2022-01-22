@@ -6,7 +6,7 @@ import EffectInterface from './effects/effect-interface';
 import EffectHandler from './effects/effect-handler';
 import Effect from './effects/effect';
 import { StatusEffect, StatusSight } from './conditional-visibility-models';
-import { HOOKS } from './hooks';
+import HOOKS from './hooks';
 
 export default class API {
   static effectInterface: EffectInterface;
@@ -41,10 +41,13 @@ export default class API {
   // }
 
   static async _onRenderTokenConfig(inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('_onRenderTokenConfig | inAttributes must be of type array');
+    }
     const [tokenConfig, html, data] = inAttributes;
     const hookResult = Hooks.call(HOOKS.ON_RENDER_TOKEN_CONFIG, tokenConfig, html, data);
     if (hookResult === false) return;
-    return conditionalVisibilitySocket.executeAsGM(SOCKET_HANDLERS.ON_RENDER_TOKEN_CONFIG, tokenConfig, html, data);
+    return true; //conditionalVisibilitySocket.executeAsGM(SOCKET_HANDLERS.ON_RENDER_TOKEN_CONFIG, tokenConfig, html, data);
   }
 
   /**

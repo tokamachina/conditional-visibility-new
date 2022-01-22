@@ -2,7 +2,7 @@ import { registerLibwrappers } from './libwrapper';
 import { registerSocket, conditionalVisibilitySocket } from './socket';
 import { canvas, checkSystem, game } from './settings';
 import CONSTANTS from './constants';
-import { HOOKS } from './hooks';
+import HOOKS from './hooks';
 import { debug } from './lib/lib';
 import API from './api.js';
 import EffectInterface from './effects/effect-interface';

@@ -269,4 +269,32 @@ export default class EffectInterface {
 
     return this._socket.executeAsGM('addEffectOnActor', effectName, uuid, effect);
   }
+
+  /**
+   * Toggles the effect on the provided actor UUIDS as the GM via sockets
+   *
+   * @param {string} effectName - name of the effect to toggle
+   * @param {object} params - the effect parameters
+   * @param {string} params.overlay - name of the effect to toggle
+   * @param {string[]} params.uuids - UUIDS of the actors to toggle the effect on
+   * @returns {Promise} a promise that resolves when the GM socket function completes
+   */
+  async findEffectByName(effectName: string, { overlay = false, uuids = <string[]>[] } = {}) {
+    if (uuids.length == 0) {
+      uuids = this._foundryHelpers.getActorUuidsFromCanvas();
+    }
+
+    if (uuids.length == 0) {
+      ui.notifications?.error(`Please select or target a token to toggle ${effectName}`);
+      return;
+    }
+
+    const effect = this._effectHandler.findEffectByName(effectName);
+
+    if (!effect) {
+      ui.notifications?.error(`Effect ${effectName} was not found`);
+      return;
+    }
+    return effect;
+  }
 }

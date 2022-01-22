@@ -1,5 +1,7 @@
+import CONSTANTS from '../constants';
 import { game } from '../settings';
 import Effect from './effect';
+import EffectInterface from './effect-interface';
 
 /**
  * Handles the status effects present on the token HUD
@@ -35,10 +37,22 @@ export default class StatusEffects {
   _fetchStatusEffects(): any[] {
     return CONFIG.statusEffects //this._settings.statusEffectNames
       .map((name) => {
+        // const effect = this._customEffectsHandler
+        //   .getCustomEffects()
+        //   .find((effect) => effect.name == name);
+
+        // if (effect) return effect;
+
+        // return game.dfreds.effects.all.find((effect) => effect.name == name);
+
+        // return
+        //   <Effect>(<EffectInterface>game[CONSTANTS.MODULE_NAME].API.effectInterface)
+        //     .findEffectByName(name);
+
         const effect = <Effect>this._customEffects.find((effect: Effect) => effect.name == name.label);
         return effect;
       })
-      .filter((effect) => effect)
+      .filter((effect: Effect) => effect)
       .map((effect: Effect) => effect.convertToActiveEffectData());
   }
 
@@ -58,7 +72,11 @@ export default class StatusEffects {
       event.preventDefault();
       event.stopPropagation();
       const effectName = statusEffectId.replace('Convenient Effect: ', '');
-      game[this.moduleName].effectInterface.toggleEffect(effectName, token.actor.uuid);
+
+      game[CONSTANTS.MODULE_NAME].API.effectInterface.toggleEffect(effectName, {
+        overlay: args.length > 1 && args[1]?.overlay,
+        uuids: [token.actor.uuid],
+      });
     } else {
       wrapper(...args);
     }

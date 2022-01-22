@@ -39,9 +39,9 @@ function getGame(): Game {
   return game;
 }
 
-export function getAPI(): API {
-  return game[CONSTANTS.MODULE_NAME].API;
-}
+// export function getAPI(): API {
+//   return game[CONSTANTS.MODULE_NAME].API;
+// }
 
 export const CONDITIONAL_VISIBILITY_MODULE_NAME = CONSTANTS.MODULE_NAME;
 // export const CONDITIONAL_VISIBILITY_DEFAULT_STEALTH = 10;

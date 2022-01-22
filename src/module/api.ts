@@ -9,7 +9,9 @@ import { StatusEffect, StatusSight } from './conditional-visibility-models';
 import HOOKS from './hooks';
 
 export default class API {
-  static effectInterface: EffectInterface;
+  static get effectInterface(): EffectInterface {
+    return new EffectInterface(CONSTANTS.MODULE_NAME, conditionalVisibilitySocket);
+  }
 
   /**
    * The attributes used to track dynamic attributes in this system

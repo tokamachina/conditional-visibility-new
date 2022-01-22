@@ -169,7 +169,7 @@ export function dialogWarning(message, icon = 'fas fa-exclamation-triangle') {
     </p>`;
 }
 
-// export function getVisionCapabilities(srcToken:Token, ): VisionCapabilities {
+// export function getVisionCapabilities(srcToken: Token): VisionCapabilities {
 //   const visionCapabilities: VisionCapabilities = new VisionCapabilities();
 //   if (srcToken) {
 //     let _seeinvisible =
@@ -197,8 +197,6 @@ export function dialogWarning(message, icon = 'fas fa-exclamation-triangle') {
 //         srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.DEVILS_SIGHT)
 //       ) ?? 0;
 
-//       if()
-
 //     _seeinvisible = _seeinvisible < 0 ? 100000 : _seeinvisible;
 //     _blindsight = _blindsight < 0 ? 100000 : _blindsight;
 //     _tremorsense = _tremorsense < 0 ? 100000 : _tremorsense;
@@ -209,13 +207,15 @@ export function dialogWarning(message, icon = 'fas fa-exclamation-triangle') {
 //     visionCapabilities.seeobscured = Math.max(_blindsight, _tremorsense);
 //     visionCapabilities.seeindarkness = Math.max(_blindsight, _devilssight, _tremorsense, _truesight);
 
-//     //@ts-ignore
-//     if (srcToken?._movement !== null) {
-//       //@ts-ignore
-//       visionCapabilities.visionfrom = srcToken._movement.B;
-//     } else {
-//       visionCapabilities.visionfrom = srcToken?.position ?? { x: 0, y: 0 };
-//     }
+//     // //@ts-ignore
+//     // if (srcToken?._movement !== null) {
+//     //   //@ts-ignore
+//     //   visionCapabilities.visionfrom = srcToken._movement.B;
+//     // } else {
+//     //   visionCapabilities.visionfrom = srcToken?.position ?? { x: 0, y: 0 };
+//     // }
+//   } else {
+//     error('NO token found for get the visual capatibilities');
 //   }
 //   return visionCapabilities;
 // }

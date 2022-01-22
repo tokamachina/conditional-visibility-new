@@ -12,6 +12,7 @@ import CONSTANTS from '../constants';
 import ArrayMatrix from '../lib/javascript-array-matrix';
 
 export default {
+  HP: 'actorData.data.attributes.hp.value',
   /** Equivalent to the VisionLevel enum in the Pathfinder 2e system */
   // VISION_LEVEL: [
   //   'BLINDED',
@@ -81,26 +82,26 @@ export default {
     {
       id: StatusEffectStatusFlags.HIDDEN,
       visibilityId: StatusEffectStatusFlags.HIDDEN, //'hidden',
-      label: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.HIDDEN}`),
-      icon: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/newspaper.svg',
+      name: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.HIDDEN}`),
+      img: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/newspaper.svg',
     },
     {
       id: StatusEffectStatusFlags.INVISIBLE,
       visibilityId: StatusEffectStatusFlags.INVISIBLE, //'invisible',
-      label: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.INVISIBLE}`),
-      icon: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/unknown.svg',
+      name: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.INVISIBLE}`),
+      img: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/unknown.svg',
     },
     {
       id: StatusEffectStatusFlags.OBSCURED,
       visibilityId: StatusEffectStatusFlags.OBSCURED, //'obscured',
-      label: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.OBSCURED}`),
-      icon: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/foggy.svg',
+      name: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.OBSCURED}`),
+      img: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/foggy.svg',
     },
     {
       id: StatusEffectStatusFlags.IN_DARKNESS,
       visibilityId: StatusEffectStatusFlags.IN_DARKNESS, // 'indarkness',
-      label: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.IN_DARKNESS}`),
-      icon: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/moon.svg',
+      name: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.IN_DARKNESS}`),
+      img: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/moon.svg',
     },
   ],
   // LIGTH_VS_VISION: [

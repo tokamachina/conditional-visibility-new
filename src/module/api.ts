@@ -7,10 +7,16 @@ import EffectHandler from './effects/effect-handler';
 import Effect from './effects/effect';
 import { StatusEffect, StatusSight } from './conditional-visibility-models';
 import HOOKS from './hooks';
+import { EnhancedConditions } from './cub/enhanced-conditions';
 
 export default class API {
   static get effectInterface(): EffectInterface {
     return new EffectInterface(CONSTANTS.MODULE_NAME, conditionalVisibilitySocket);
+  }
+
+  static get enhancedConditions():EnhancedConditions{
+    //@ts-ignore
+    return game.cub;
   }
 
   /**

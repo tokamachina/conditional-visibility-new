@@ -53,16 +53,16 @@ function _ConditionalVisibilityOnMovementFrame(wrapped, ...args) {
   //ConditionalVisibility.INSTANCE.restrictVisibility(100);
 }
 
-function _npcVisionLevel(...args) {
-  const senses = this.data.data.traits.senses.value.split(',').map((s) => s.replace(/[\s-]+/g, '').toLowerCase());
-  return this.getCondition('blinded')
-    ? VisionLevelPF2e.BLINDED
-    : senses.includes('darkvision')
-    ? VisionLevelPF2e.DARKVISION
-    : senses.includes('lowlightvision')
-    ? VisionLevelPF2e.LOW_LIGHT_VISION
-    : VisionLevelPF2e.NORMAL;
-}
+// function _npcVisionLevel(...args) {
+//   const senses = this.data.data.traits.senses.value.split(',').map((s) => s.replace(/[\s-]+/g, '').toLowerCase());
+//   return this.getCondition('blinded')
+//     ? VisionLevelPF2e.BLINDED
+//     : senses.includes('darkvision')
+//     ? VisionLevelPF2e.DARKVISION
+//     : senses.includes('lowlightvision')
+//     ? VisionLevelPF2e.LOW_LIGHT_VISION
+//     : VisionLevelPF2e.NORMAL;
+// }
 
 // Since the Perfect Vision code effectively overrides the base system code, we'll change how we override depending on the module's presence.
 function _prepareNpcDerivedDataWithPerfectVision(wrapped, ...args) {

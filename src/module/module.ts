@@ -73,13 +73,13 @@ export const readyHooks = async (): Promise<void> => {
     //@ts-ignore
     return layer.__proto__.constructor.name === 'SightLayer';
   });
-  ConditionalVisibility.initialize(sightLayer, canvas.hud?.token);
+  // ConditionalVisibility.initialize(sightLayer, canvas.hud?.token);
   // Add any additional hooks if necessary
   Hooks.on("renderTokenConfig", (tokenConfig, html, data) => {
-      ConditionalVisibility.INSTANCE.onRenderTokenConfig(tokenConfig, html, data);
+      // ConditionalVisibility.INSTANCE.onRenderTokenConfig(tokenConfig, html, data);
   });
   Hooks.on("renderTokenHUD", (app, html, token) => {
-      ConditionalVisibility.INSTANCE.onRenderTokenHUD(app, html, token);
+      // ConditionalVisibility.INSTANCE.onRenderTokenHUD(app, html, token);
   });
 };
 

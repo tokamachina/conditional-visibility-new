@@ -39,11 +39,11 @@ function getGame(): Game {
   return game;
 }
 
-// export function getAPI(): API {
-//   return game[CONSTANTS.MODULE_NAME].API;
-// }
+export function getAPI(): API {
+  return game[CONSTANTS.MODULE_NAME].API;
+}
 
-export const CONDITIONAL_VISIBILITY_MODULE_NAME = CONSTANTS.MODULE_NAME;
+// export const CONSTANTS.MODULE_NAME = CONSTANTS.MODULE_NAME;
 // export const CONDITIONAL_VISIBILITY_DEFAULT_STEALTH = 10;
 
 function defaultSettings(apply = false) {
@@ -63,8 +63,8 @@ function defaultSettings(apply = false) {
       type: Array,
     },
     // visibilityDefaultValue: {
-    //   name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityDefaultValue.name`,
-    //   hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.setting.visibilityDefaultValue.hint`,
+    //   name: `${CONSTANTS.MODULE_NAME}.setting.visibilityDefaultValue.name`,
+    //   hint: `${CONSTANTS.MODULE_NAME}.setting.visibilityDefaultValue.hint`,
     //   scope: 'world',
     //   config: true,
     //   default: 10,
@@ -75,16 +75,16 @@ function defaultSettings(apply = false) {
 
 export const registerSettings = function (): void {
   game.settings.registerMenu(CONSTANTS.MODULE_NAME, 'resetAllSettings', {
-    name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Reset.name`,
-    hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Reset.hint`,
+    name: `${CONSTANTS.MODULE_NAME}.Setting.Reset.name`,
+    hint: `${CONSTANTS.MODULE_NAME}.Setting.Reset.hint`,
     icon: 'fas fa-coins',
     type: ResetSettingsDialog,
     restricted: true,
   });
 
   game.settings.registerMenu(CONSTANTS.MODULE_NAME, 'openDynamicAttributesEditor', {
-    name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Attributes.name`,
-    hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Attributes.hint`,
+    name: `${CONSTANTS.MODULE_NAME}.Setting.Attributes.name`,
+    hint: `${CONSTANTS.MODULE_NAME}.Setting.Attributes.hint`,
     icon: 'fas fa-coins',
     type: ConditionalVisibilityAttributeEditor,
     restricted: true,
@@ -97,8 +97,8 @@ export const registerSettings = function (): void {
   }
 
   game.settings.register(CONSTANTS.MODULE_NAME, 'debug', {
-    name: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Debug.name`,
-    hint: `${CONDITIONAL_VISIBILITY_MODULE_NAME}.Setting.Debug.hint`,
+    name: `${CONSTANTS.MODULE_NAME}.Setting.Debug.name`,
+    hint: `${CONSTANTS.MODULE_NAME}.Setting.Debug.hint`,
     scope: 'client',
     config: true,
     default: false,
@@ -139,15 +139,15 @@ class ResetSettingsDialog extends FormApplication {
     super(args);
     //@ts-ignore
     return new Dialog({
-      title: game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.ResetSettings.Title`),
+      title: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.ResetSettings.Title`),
       content:
         '<p style="margin-bottom:1rem;">' +
-        game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.ResetSettings.Content`) +
+        game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.ResetSettings.Content`) +
         '</p>',
       buttons: {
         confirm: {
           icon: '<i class="fas fa-check"></i>',
-          label: game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.ResetSettings.Confirm`),
+          label: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.ResetSettings.Confirm`),
           callback: async () => {
             await applyDefaultSettings();
             window.location.reload();
@@ -155,7 +155,7 @@ class ResetSettingsDialog extends FormApplication {
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.Cancel`),
+          label: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.Cancel`),
         },
       },
       default: 'cancel',
@@ -181,8 +181,8 @@ export async function checkSystem() {
     await game.settings.set(CONSTANTS.MODULE_NAME, 'systemNotFoundWarningShown', true);
 
     return Dialog.prompt({
-      title: game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.NoSystemFound.Title`),
-      content: dialogWarning(game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.NoSystemFound.Content`)),
+      title: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.NoSystemFound.Title`),
+      content: dialogWarning(game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.NoSystemFound.Content`)),
       callback: () => {},
     });
   }
@@ -193,12 +193,12 @@ export async function checkSystem() {
 
   if (game.settings.get(CONSTANTS.MODULE_NAME, 'systemNotFoundWarningShown')) {
     return new Dialog({
-      title: game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.SystemFound.Title`),
-      content: warn(game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.SystemFound.Content`), true),
+      title: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.SystemFound.Title`),
+      content: warn(game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.SystemFound.Content`), true),
       buttons: {
         confirm: {
           icon: '<i class="fas fa-check"></i>',
-          label: game.i18n.localize(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.Dialogs.SystemFound.Confirm`),
+          label: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.SystemFound.Confirm`),
           callback: () => {
             applyDefaultSettings();
           },

@@ -1,6 +1,6 @@
 import CONSTANTS from '../constants.js';
 import API from '../api.js';
-import { canvas, CONDITIONAL_VISIBILITY_MODULE_NAME, game } from '../settings';
+import { canvas, game } from '../settings';
 import { StatusEffectSightFlags, VisionCapabilities } from '../conditional-visibility-models.js';
 
 export function isGMConnected(): boolean {
@@ -16,33 +16,33 @@ export function wait(ms) {
 
 export function debug(msg, args = '') {
   if (game.settings.get(CONSTANTS.MODULE_NAME, 'debug')) {
-    console.log(`DEBUG | ${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${msg}`, args);
+    console.log(`DEBUG | ${CONSTANTS.MODULE_NAME} | ${msg}`, args);
   }
   return msg;
 }
 
 export function log(message) {
-  message = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${message}`;
+  message = `${CONSTANTS.MODULE_NAME} | ${message}`;
   console.log(message.replace('<br>', '\n'));
   return message;
 }
 
 export function notify(message) {
-  message = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${message}`;
+  message = `${CONSTANTS.MODULE_NAME} | ${message}`;
   ui.notifications?.notify(message);
   console.log(message.replace('<br>', '\n'));
   return message;
 }
 
 export function warn(warning, notify = false) {
-  warning = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${warning}`;
+  warning = `${CONSTANTS.MODULE_NAME} | ${warning}`;
   if (notify) ui.notifications?.warn(warning);
   console.warn(warning.replace('<br>', '\n'));
   return warning;
 }
 
 export function error(error, notify = true) {
-  error = `${CONDITIONAL_VISIBILITY_MODULE_NAME} | ${error}`;
+  error = `${CONSTANTS.MODULE_NAME} | ${error}`;
   if (notify) ui.notifications?.error(error);
   return new Error(error.replace('<br>', '\n'));
 }
@@ -174,27 +174,27 @@ export function dialogWarning(message, icon = 'fas fa-exclamation-triangle') {
 //   if (srcToken) {
 //     let _seeinvisible =
 //       <number>(
-//         srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.SEE_INVISIBLE)
+//         srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.SEE_INVISIBLE)
 //       ) ?? 0;
 
 //     let _blindsight =
 //       <number>(
-//         srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.BLIND_SIGHT)
+//         srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.BLIND_SIGHT)
 //       ) ?? 0;
 
 //     let _tremorsense =
 //       <number>(
-//         srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.TREMOR_SENSE)
+//         srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.TREMOR_SENSE)
 //       ) ?? 0;
 
 //     let _truesight =
 //       <number>(
-//         srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.TRUE_SIGHT)
+//         srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.TRUE_SIGHT)
 //       ) ?? 0;
 
 //     let _devilssight =
 //       <number>(
-//         srcToken?.data?.document?.getFlag(CONDITIONAL_VISIBILITY_MODULE_NAME, StatusEffectSightFlags.DEVILS_SIGHT)
+//         srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.DEVILS_SIGHT)
 //       ) ?? 0;
 
 //     _seeinvisible = _seeinvisible < 0 ? 100000 : _seeinvisible;

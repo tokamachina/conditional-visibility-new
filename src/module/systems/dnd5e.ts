@@ -1,7 +1,6 @@
 import Effect, { Constants } from '../effects/effect';
 import { EffectDefinitions } from '../conditional-visibility-effect-definition';
 import { i18n } from '../lib/lib';
-import { CONDITIONAL_VISIBILITY_MODULE_NAME } from '../settings';
 import {
   StatusEffect,
   StatusEffectSightFlags,
@@ -89,26 +88,26 @@ export default {
     {
       id: StatusEffectStatusFlags.HIDDEN,
       visibilityId: StatusEffectStatusFlags.HIDDEN, //'hidden',
-      name: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.HIDDEN}`),
-      img: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/newspaper.svg',
+      name: i18n(`${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.HIDDEN}`),
+      img: 'modules/' + CONSTANTS.MODULE_NAME + '/icons/newspaper.svg',
     },
     {
       id: StatusEffectStatusFlags.INVISIBLE,
       visibilityId: StatusEffectStatusFlags.INVISIBLE, //'invisible',
-      name: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.INVISIBLE}`),
-      img: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/unknown.svg',
+      name: i18n(`${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.INVISIBLE}`),
+      img: 'modules/' + CONSTANTS.MODULE_NAME + '/icons/unknown.svg',
     },
     {
       id: StatusEffectStatusFlags.OBSCURED,
       visibilityId: StatusEffectStatusFlags.OBSCURED, //'obscured',
-      name: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.OBSCURED}`),
-      img: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/foggy.svg',
+      name: i18n(`${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.OBSCURED}`),
+      img: 'modules/' + CONSTANTS.MODULE_NAME + '/icons/foggy.svg',
     },
     {
       id: StatusEffectStatusFlags.IN_DARKNESS,
       visibilityId: StatusEffectStatusFlags.IN_DARKNESS, // 'indarkness',
-      name: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.IN_DARKNESS}`),
-      img: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/moon.svg',
+      name: i18n(`${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.IN_DARKNESS}`),
+      img: 'modules/' + CONSTANTS.MODULE_NAME + '/icons/moon.svg',
     },
   ],
   // LIGTH_VS_VISION: [

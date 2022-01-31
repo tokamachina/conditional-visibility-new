@@ -2,7 +2,7 @@ import CONSTANTS from './constants';
 import { registerHotkeys } from './hotkeys';
 import { debug, isGMConnected } from './lib/lib';
 import { registerLibwrappers } from './libwrapper';
-import { checkSystem, CONDITIONAL_VISIBILITY_MODULE_NAME } from './settings';
+import { checkSystem } from './settings';
 import { canvas, game } from './settings';
 import { registerSocket } from './socket';
 import API from './api';

@@ -7,7 +7,6 @@ import {
 } from '../conditional-visibility-models';
 import CONSTANTS from '../constants';
 import { i18n } from '../lib/lib';
-import { CONDITIONAL_VISIBILITY_MODULE_NAME } from '../settings';
 
 export default {
   HP_ATTRIBUTE: 'data.attributes.hp.value',
@@ -45,20 +44,20 @@ export default {
     {
       id: StatusEffectStatusFlags.INVISIBLE,
       visibilityId: StatusEffectStatusFlags.INVISIBLE,
-      name: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.INVISIBLE}`),
+      name: i18n(`${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.INVISIBLE}`),
       img: 'systems/pf2e/icons/conditions/invisible.webp',
     },
     {
       id: StatusEffectStatusFlags.OBSCURED,
       visibilityId: StatusEffectStatusFlags.OBSCURED, //'obscured',
-      name: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.OBSCURED}`),
-      img: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/foggy.svg',
+      name: i18n(`${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.OBSCURED}`),
+      img: 'modules/' + CONSTANTS.MODULE_NAME + '/icons/foggy.svg',
     },
     {
       id: StatusEffectStatusFlags.IN_DARKNESS,
       visibilityId: StatusEffectStatusFlags.IN_DARKNESS, // 'indarkness',
-      name: i18n(`${CONDITIONAL_VISIBILITY_MODULE_NAME}.${StatusEffectStatusFlags.IN_DARKNESS}`),
-      img: 'modules/' + CONDITIONAL_VISIBILITY_MODULE_NAME + '/icons/moon.svg',
+      name: i18n(`${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.IN_DARKNESS}`),
+      img: 'modules/' + CONSTANTS.MODULE_NAME + '/icons/moon.svg',
     },
   ],
 };

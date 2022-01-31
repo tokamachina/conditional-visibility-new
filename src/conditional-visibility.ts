@@ -10,7 +10,7 @@
  * 					 determines how others may use and modify your module
  */
 // Import TypeScript modules
-import { checkSystem, CONDITIONAL_VISIBILITY_MODULE_NAME, registerSettings } from './module/settings';
+import { checkSystem, registerSettings } from './module/settings';
 import { canvas, game } from './module/settings';
 import { preloadTemplates } from './module/preloadTemplates';
 import { registerHotkeys } from './module/hotkeys';
@@ -28,7 +28,7 @@ import { initHooks, readyHooks, setupHooks } from './module/module';
 /* Initialize module					*/
 /* ------------------------------------ */
 Hooks.once('init', async function () {
-  log(' init ' + CONDITIONAL_VISIBILITY_MODULE_NAME);
+  log(' init ' + CONSTANTS.MODULE_NAME);
   // Assign custom classes and constants here
 
   // Register custom module settings
@@ -80,7 +80,7 @@ Hooks.once('ready', async function () {
 Hooks.once('libChangelogsReady', function () {
   //@ts-ignore
   libChangelogs.register(
-    CONDITIONAL_VISIBILITY_MODULE_NAME,
+    CONSTANTS.MODULE_NAME,
     `Big update integration levels. perfect vision, shared vision`,
     'minor',
   );

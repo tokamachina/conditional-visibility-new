@@ -1,5 +1,4 @@
 import FoundryHelpers from '../lib/foundry-helpers';
-import { conditionalVisibilitySocket } from './../socket';
 import Effect from './effect';
 import EffectHandler from './effect-handler';
 
@@ -99,7 +98,7 @@ export default class EffectInterface {
    * applied to
    * @returns {Promise<boolean>} true if the effect is applied, false otherwise
    */
-  async hasEffectApplied(effectName, uuid) {
+  async hasEffectApplied(effectName: string, uuid: string) {
     return this._effectHandler.hasEffectApplied(effectName, uuid);
   }
 
@@ -231,7 +230,10 @@ export default class EffectInterface {
    * @param {string} uuid - the uuid of the actor to remove the effect from
    */
   async removeEffectOnActor(effectName: string, uuid: string) {
-    return this._socket.executeAsGM('removeEffectOnActor', effectName, uuid);
+    return this._socket.executeAsGM('removeEffectOnActor', {
+      effectName: effectName,
+      uuid: uuid,
+    });
   }
 
   /**
@@ -242,7 +244,10 @@ export default class EffectInterface {
    * @param {string} uuid - the uuid of the actor to remove the effect from
    */
   async removeEffectFromIdOnActor(effectToRemoveId: string, uuid: string) {
-    return this._socket.executeAsGM('removeEffectFromIdOnActor', effectToRemoveId, uuid);
+    return this._socket.executeAsGM('removeEffectFromIdOnActor', {
+      effectToRemoveId: effectToRemoveId,
+      uuid: uuid,
+    });
   }
 
   /**
@@ -267,7 +272,16 @@ export default class EffectInterface {
     //   effect = await this._effectHandler.getNestedEffectSelection(effect);
     // }
 
-    return this._socket.executeAsGM('addEffectOnActor', effectName, uuid, effect);
+    return this._socket.executeAsGM(
+      'addEffectOnActor',
+      {
+        effectName: effect.name,
+        uuid: uuid,
+        origin: undefined,
+        overlay: false,
+      },
+      effect,
+    );
   }
 
   /**

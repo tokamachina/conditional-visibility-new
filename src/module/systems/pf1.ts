@@ -23,7 +23,7 @@ export default {
       path: 'data.traits.senses.blinded',
       img: 'systems/dnd5e/icons/skills/affliction_24.jpg',
       effect: EffectDefinitions.blinded(0),
-      pathOri:'data.attributes.conditions.blind'
+      pathOri: 'data.attributes.conditions.blind',
     },
     {
       id: StatusEffectSightFlags.LOW_LIGHT_VISION,

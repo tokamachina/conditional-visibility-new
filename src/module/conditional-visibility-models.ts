@@ -15,7 +15,7 @@ export interface StatusSight {
   path: string;
   img: string;
   effect: Effect;
-  pathOri?:string;
+  pathOri?: string;
 }
 
 export enum StatusEffectSightFlags {
@@ -69,56 +69,35 @@ export class VisionCapabilities {
       this.token = srcToken;
 
       const _darkvisionTmp =
-        <number>(
-          srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.DARKVISION)
-        ) ?? 0;
+        <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.DARKVISION) ?? 0;
 
       const _seeinvisibleTmp =
-        <number>(
-          srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.SEE_INVISIBLE)
-        ) ?? 0;
+        <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.SEE_INVISIBLE) ?? 0;
 
       const _blindsightTmp =
-        <number>(
-          srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.BLIND_SIGHT)
-        ) ?? 0;
+        <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.BLIND_SIGHT) ?? 0;
 
       const _tremorsenseTmp =
-        <number>(
-          srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.TREMOR_SENSE)
-        ) ?? 0;
+        <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.TREMOR_SENSE) ?? 0;
 
       const _truesightTmp =
-        <number>(
-          srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.TRUE_SIGHT)
-        ) ?? 0;
+        <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.TRUE_SIGHT) ?? 0;
 
       const _devilssightTmp =
-        <number>(
-          srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.DEVILS_SIGHT)
-        ) ?? 0;
+        <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.DEVILS_SIGHT) ?? 0;
 
       const _passivestealthTmp =
-        <number>(
-          srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.PASSIVE_STEALTH)
-        ) ?? 0;
+        <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.PASSIVE_STEALTH) ?? 0;
 
       const _passiveperceptionTmp =
-        <number>(
-          srcToken?.data?.document?.getFlag(
-            CONSTANTS.MODULE_NAME,
-            StatusEffectSightFlags.PASSIVE_PERCEPTION,
-          )
-        ) ?? 0;
+        <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.PASSIVE_PERCEPTION) ??
+        0;
 
       const _lowlightvisionTmp =
-        <number>(
-          srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.LOW_LIGHT_VISION)
-        ) ?? 0;
+        <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.LOW_LIGHT_VISION) ?? 0;
 
       const _blindedTmp =
-        <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.BLINDED) ??
-        0;
+        <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, StatusEffectSightFlags.BLINDED) ?? 0;
 
       this._darkvision = _darkvisionTmp < 0 ? 100000 : _darkvisionTmp;
       this._seeinvisible = _seeinvisibleTmp < 0 ? 100000 : _seeinvisibleTmp;

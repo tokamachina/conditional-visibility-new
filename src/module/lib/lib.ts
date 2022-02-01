@@ -3,6 +3,10 @@ import API from '../api.js';
 import { canvas, game } from '../settings';
 import { StatusEffectSightFlags, VisionCapabilities } from '../conditional-visibility-models.js';
 
+// =============================
+// Module Generic function
+// =============================
+
 export function isGMConnected(): boolean {
   return Array.from(<Users>game.users).find((user) => user.isGM && user.active) ? true : false;
 }
@@ -64,6 +68,18 @@ export const i18nFormat = (key: string, data = {}): string => {
 //   // 0 = none, warnings = 1, debug = 2, all = 3
 //   if (debugEnabled >= 3) CONFIG.debug.hooks = true;
 // };
+
+export function dialogWarning(message, icon = 'fas fa-exclamation-triangle') {
+  return `<p class="${CONSTANTS.MODULE_NAME}-dialog">
+        <i style="font-size:3rem;" class="${icon}"></i><br><br>
+        <strong style="font-size:1.2rem;">Item Piles</strong>
+        <br><br>${message}
+    </p>`;
+}
+
+// =============================
+// Module specific function
+// =============================
 
 export function getTokensAtLocation(position) {
   const tokens = [...(<Token[]>canvas.tokens?.placeables)];
@@ -159,14 +175,6 @@ export function hasNonzeroAttribute(target, attribute) {
   const actor = target instanceof TokenDocument ? target.actor : target;
   const attributeValue = Number(getProperty(actor.data, attribute) ?? 0);
   return hasProperty(actor.data, attribute) && attributeValue > 0;
-}
-
-export function dialogWarning(message, icon = 'fas fa-exclamation-triangle') {
-  return `<p class="${CONSTANTS.MODULE_NAME}-dialog">
-        <i style="font-size:3rem;" class="${icon}"></i><br><br>
-        <strong style="font-size:1.2rem;">Item Piles</strong>
-        <br><br>${message}
-    </p>`;
 }
 
 // export function getVisionCapabilities(srcToken: Token): VisionCapabilities {

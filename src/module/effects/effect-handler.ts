@@ -1,5 +1,5 @@
-import FoundryHelpers from '../lib/foundry-helpers';
 import { error, log } from '../lib/lib';
+import FoundryHelpers from '../lib/foundry-helpers';
 import { canvas, game } from '../settings';
 import Effect from './effect';
 
@@ -20,10 +20,6 @@ export default class EffectHandler {
     this.moduleName = moduleName;
     this._foundryHelpers = new FoundryHelpers();
   }
-
-  // log(...args: any[]): void {
-  //   console.log(`${this.moduleName} | `, ...args);
-  // }
 
   /**
    * Searches through the list of available effects and returns one matching the
@@ -122,10 +118,8 @@ export default class EffectHandler {
   async hasEffectApplied(effectName, uuid) {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
     return actor?.data?.effects?.some(
-      (activeEffect) =>
-        <boolean>activeEffect?.data?.flags?.isConvenient &&
-        activeEffect?.data?.label == effectName &&
-        !activeEffect?.data?.disabled,
+      // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
+      (activeEffect) => <string>activeEffect?.data?.label == effectName && !activeEffect?.data?.disabled,
     );
   }
 
@@ -160,10 +154,10 @@ export default class EffectHandler {
       (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && activeEffect?.data?.label == effectName,
     );
 
-    if (effectToRemove) {
-      await actor.deleteEmbeddedDocuments('ActiveEffect', [<string>effectToRemove.id]);
-      log(`Removed effect ${effectName} from ${actor.name} - ${actor.id}`);
-    }
+    if (!effectToRemove) return;
+
+    await actor.deleteEmbeddedDocuments('ActiveEffect', [<string>effectToRemove.id]);
+    log(`Removed effect ${effectName} from ${actor.name} - ${actor.id}`);
   }
 
   /**
@@ -194,6 +188,10 @@ export default class EffectHandler {
   async addEffect({ effectName, uuid, origin, overlay }) {
     const effect = this.findEffectByName(effectName);
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
+
+    if (!origin) {
+      origin = `Actor.${actor.data._id}`;
+    }
 
     // if (effect.name.startsWith('Exhaustion')) {
     //   await this._removeAllExhaustionEffects(uuid);
@@ -326,8 +324,8 @@ export default class EffectHandler {
   async hasEffectAppliedOnActor({ effectName, uuid }): Promise<boolean> {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
     return actor?.data?.effects?.some(
-      (activeEffect) =>
-        <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
+      // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
+      (activeEffect) => <string>activeEffect?.data?.label == effectName,
     );
   }
 
@@ -360,7 +358,8 @@ export default class EffectHandler {
   async hasEffectAppliedFromIdOnActor({ effectId, uuid }): Promise<boolean> {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
     return actor?.data?.effects?.some(
-      (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?._id == effectId,
+      // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?._id == effectId,
+      (activeEffect) => <string>activeEffect?.data?._id == effectId,
     );
   }
 
@@ -390,20 +389,18 @@ export default class EffectHandler {
    */
   async removeEffectOnActor({ effectName, uuid }) {
     const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
-    const effectToRemove = <ActiveEffect>(
-      actor.data.effects.find(
-        (activeEffect) =>
-          <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
-      )
+    const effectToRemove = <ActiveEffect>actor.data.effects.find(
+      // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
+      (activeEffect) => <string>activeEffect?.data?.label == effectName,
     );
 
-    if (effectToRemove) {
-      // actor.deleteEmbeddedDocuments('ActiveEffect', [<string>effectToRemove.id]);
-      // Why i need this ??? for avoid the double AE
-      await effectToRemove.update({ disabled: true });
-      await effectToRemove.delete();
-      log(`Removed effect ${effectName} from ${actor.name} - ${actor.id}`);
-    }
+    if (!effectToRemove) return;
+
+    // actor.deleteEmbeddedDocuments('ActiveEffect', [<string>effectToRemove.id]);
+    // Why i need this ??? for avoid the double AE
+    await effectToRemove.update({ disabled: true });
+    await effectToRemove.delete();
+    log(`Removed effect ${effectName} from ${actor.name} - ${actor.id}`);
   }
 
   /**
@@ -470,10 +467,12 @@ export default class EffectHandler {
    * @param {string} params.origin - the origin of the effect
    * @param {boolean} params.overlay - if the effect is an overlay or not
    */
-  async addEffectOnActor({ effectName, uuid, overlay }, effect: Effect | null) {
+  async addEffectOnActor({ effectName, uuid, origin, overlay }, effect: Effect | null) {
     if (effect) {
       const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
-      const origin = `Actor.${actor.data._id}`;
+      if (!origin) {
+        origin = `Actor.${actor.data._id}`;
+      }
       const activeEffectData = effect.convertToActiveEffectData({
         origin,
         overlay,
@@ -494,7 +493,7 @@ export default class EffectHandler {
     if (!Array.isArray(inAttributes)) {
       throw error('addEffectOnActorArr | inAttributes must be of type array');
     }
-    const [effectName, uuid, overlay, effect] = inAttributes;
-    return this.addEffectOnActor({ effectName, uuid, overlay }, effect);
+    const [effectName, uuid, origin, overlay, effect] = inAttributes;
+    return this.addEffectOnActor({ effectName, uuid, origin, overlay }, effect);
   }
 }

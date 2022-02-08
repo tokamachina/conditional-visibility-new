@@ -1,6 +1,7 @@
+import { StatusEffectSightFlags } from './conditional-visibility-models';
 import CONSTANTS from './constants';
 import Effect, { Constants } from './effects/effect';
-import { i18nFormat } from './lib/lib';
+import { i18n, i18nFormat } from './lib/lib';
 import { canvas } from './settings';
 
 /**
@@ -9,20 +10,58 @@ import { canvas } from './settings';
 export class EffectDefinitions {
   constructor() {}
 
-  //   /**
-  //    * Get all effects
-  //    *
-  //    * @returns {Effect[]} all the effects
-  //    */
-  //   get all() {
-  //     return [this._darkvision];
-  //   }
+  /**
+   * Get all effects
+   *
+   * @returns {Effect[]} all the effects
+   */
+  static all(distance = 0): Effect[] {
+    return [
+      EffectDefinitions.blinded(distance),
+      EffectDefinitions.blindsigth(distance),
+      EffectDefinitions.darkvision(distance),
+      EffectDefinitions.devilssight(distance),
+      EffectDefinitions.lowlightvision(distance),
+      // EffectDefinitions.seeinvisible(distance),
+      // EffectDefinitions.shadowEffect(distance),
+      EffectDefinitions.tremorsense(distance),
+      EffectDefinitions.truesight(distance),
+    ];
+  }
 
-  //   effect(name: string) {
-  //     return <Effect>this.all.find((effect: Effect) => {
-  //       return effect.name.toLowerCase() === name.toLowerCase();
-  //     });
-  //   }
+  static effect(name: string, distance = 0): Effect | undefined {
+    const effect = <Effect>EffectDefinitions.all(distance).find((effect: Effect) => {
+      return effect.name.toLowerCase() === name.toLowerCase();
+    });
+    if (effect?.customId == StatusEffectSightFlags.BLINDED) {
+      return EffectDefinitions.blinded(distance);
+    }
+    if (effect?.customId == StatusEffectSightFlags.BLIND_SIGHT) {
+      return EffectDefinitions.blindsigth(distance);
+    }
+    if (effect?.customId == StatusEffectSightFlags.DARKVISION) {
+      return EffectDefinitions.darkvision(distance);
+    }
+    if (effect?.customId == StatusEffectSightFlags.DEVILS_SIGHT) {
+      return EffectDefinitions.devilssight(distance);
+    }
+    if (effect?.customId == StatusEffectSightFlags.GREATER_DARKVISION) {
+      return EffectDefinitions.darkvision(120);
+    }
+    if (effect?.customId == StatusEffectSightFlags.LOW_LIGHT_VISION) {
+      return EffectDefinitions.lowlightvision(distance);
+    }
+    if (effect?.customId == StatusEffectSightFlags.SEE_INVISIBLE) {
+      return EffectDefinitions.seeinvisible(distance);
+    }
+    if (effect?.customId == StatusEffectSightFlags.TREMOR_SENSE) {
+      return EffectDefinitions.tremorsense(distance);
+    }
+    if (effect?.customId == StatusEffectSightFlags.TRUE_SIGHT) {
+      return EffectDefinitions.truesight(distance);
+    }
+    return undefined;
+  }
 
   // ===========================================
   // The source effect
@@ -30,8 +69,8 @@ export class EffectDefinitions {
 
   // static stealthpassive(number: number) {
   //   return new Effect({
-  //     name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.stealthpassive.name`, number),
-  //     description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.stealthpassive.description`, number),
+  //     name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.stealthpassive.name`, { number : number}),
+  //     description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.stealthpassive.description`, { number : number}),
   //     icon: '',
   //     // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
   //     transfer: true,
@@ -48,9 +87,16 @@ export class EffectDefinitions {
 
   static darkvision(number: number) {
     return new Effect({
-      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.darkvision.name`, number),
-      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.darkvision.description`, number),
-      icon: 'systems/dnd5e/icons/spells/evil-eye-red-1.jpg',
+      customId: StatusEffectSightFlags.DARKVISION,
+      name:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.darkvision.name2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.darkvision.name`),
+      description:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.darkvision.description2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.darkvision.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/evil-eye-red-1.jpg`,
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
       changes: [
@@ -74,9 +120,16 @@ export class EffectDefinitions {
 
   static blindsigth(number: number) {
     return new Effect({
-      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.name`, number),
-      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.description`, number),
-      icon: 'systems/dnd5e/icons/skills/affliction_24.jpg',
+      customId: StatusEffectSightFlags.BLIND_SIGHT,
+      name:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.name2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.name`),
+      description:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.description2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/affliction_24.jpg`,
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
       changes: [
@@ -92,9 +145,16 @@ export class EffectDefinitions {
 
   static tremorsense(number: number) {
     return new Effect({
-      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.tremorsense.name`, number),
-      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.tremorsense.description`, number),
-      icon: 'systems/dnd5e/icons/skills/ice_15.jpg',
+      customId: StatusEffectSightFlags.TREMOR_SENSE,
+      name:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.tremorsense.name2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.tremorsense.name`),
+      description:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.tremorsense.description2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.tremorsense.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/ice_15.jpg`,
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
       changes: [
@@ -110,9 +170,16 @@ export class EffectDefinitions {
 
   static truesight(number) {
     return new Effect({
-      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.truesight.name`, number),
-      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.truesight.description`, number),
-      icon: 'systems/dnd5e/icons/skills/emerald_11.jpg',
+      customId: StatusEffectSightFlags.TRUE_SIGHT,
+      name:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.truesight.name2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.truesight.name`),
+      description:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.truesight.description2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.truesight.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/emerald_11.jpg`,
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
       changes: [
@@ -128,9 +195,16 @@ export class EffectDefinitions {
 
   static seeinvisible(number) {
     return new Effect({
-      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.seeinvisible.name`, number),
-      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.seeinvisible.description`, number),
-      icon: 'systems/dnd5e/icons/skills/shadow_11.jpg',
+      customId: StatusEffectSightFlags.SEE_INVISIBLE,
+      name:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.seeinvisible.name2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.seeinvisible.name`),
+      description:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.seeinvisible.description2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.seeinvisible.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/shadow_11.jpg`,
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
       changes: [
@@ -146,9 +220,16 @@ export class EffectDefinitions {
 
   static devilssight(number) {
     return new Effect({
-      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.devilssight.name`, number),
-      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.devilssight.description`, number),
-      icon: 'systems/dnd5e/icons/skills/blue_17.jpg',
+      customId: StatusEffectSightFlags.DEVILS_SIGHT,
+      name:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.devilssight.name2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.devilssight.name`),
+      description:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.devilssight.description2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.devilssight.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/blue_17.jpg`,
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
       changes: [
@@ -164,9 +245,16 @@ export class EffectDefinitions {
 
   static lowlightvision(number) {
     return new Effect({
-      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.lowlightvision.name`, number),
-      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.lowlightvision.description`, number),
-      icon: 'systems/dnd5e/icons/skills/violet_09.jpg',
+      customId: StatusEffectSightFlags.LOW_LIGHT_VISION,
+      name:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.lowlightvision.name2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.lowlightvision.name`),
+      description:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.lowlightvision.description2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.lowlightvision.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/violet_09.jpg`,
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
       changes: [
@@ -196,9 +284,16 @@ export class EffectDefinitions {
 
   static blinded(number) {
     return new Effect({
-      name: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blinded.name`, number),
-      description: i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blinded.description`, number),
-      icon: 'systems/dnd5e/icons/skills/light_01.jpg',
+      customId: StatusEffectSightFlags.BLINDED,
+      name:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blinded.name2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.blinded.name`),
+      description:
+        number && number > 0
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blinded.description2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.blinded.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/light_01.jpg`,
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
       changes: [],
@@ -279,73 +374,74 @@ export class EffectDefinitions {
     return result;
   }
 
-  /**
-   * This also includes automatic shadow creation for token elevation.
-   * This section requires Token Magic Fx to function.
-   * Changing the elevation of a token over 5ft will automatically set a shadow effect "below" the token,
-   * this is change in distance based on the elevation value.
-   * @param tokenInstance
-   * @param elevation
-   */
-  static async shadowEffect(tokenInstance: Token) {
-    const elevation: number = getProperty(tokenInstance.data, 'elevation');
-    //const tokenInstance = canvas.tokens?.get(tokenID);
-    const tokenMagicEffectId = CONSTANTS.MODULE_NAME + '-Shadows';
-    const twist = {
-      filterType: 'transform',
-      filterId: tokenMagicEffectId,
-      twRadiusPercent: 100,
-      padding: 10,
-      animated: {
-        twRotation: {
-          animType: 'sinOscillation',
-          val1: -(elevation / 10),
-          val2: +(elevation / 10),
-          loopDuration: 5000,
-        },
-      },
-    };
-    const shadow = {
-      filterType: 'shadow',
-      filterId: tokenMagicEffectId,
-      rotation: 35,
-      blur: 2,
-      quality: 5,
-      distance: elevation * 1.5,
-      alpha: Math.min(1 / ((elevation - 10) / 10), 0.7),
-      padding: 10,
-      shadowOnly: false,
-      color: 0x000000,
-      zOrder: 6000,
-      animated: {
-        blur: {
-          active: true,
-          loopDuration: 5000,
-          animType: 'syncCosOscillation',
-          val1: 2,
-          val2: 2.5,
-        },
-        rotation: {
-          active: true,
-          loopDuration: 5000,
-          animType: 'syncSinOscillation',
-          val1: 33,
-          val2: 33 + elevation * 0.8,
-        },
-      },
-    };
-    //const shadowSetting = game.settings.get('condition-automation', 'shadows');
-    // let params = [shadow];
-    //if (shadowSetting === 'bulge'){
-    // params = [shadow, twist];
-    //}
-    const params = [shadow, twist];
-    const filter = elevation > 5 ? true : false;
-    //@ts-ignore
-    await tokenInstance.TMFXdeleteFilters(tokenMagicEffectId);
-    if (filter) {
-      //@ts-ignore
-      await TokenMagic.addUpdateFilters(tokenInstance, params);
-    }
-  }
+  // /**
+  //  * This also includes automatic shadow creation for token elevation.
+  //  * This section requires Token Magic Fx to function.
+  //  * Changing the elevation of a token over 5ft will automatically set a shadow effect "below" the token,
+  //  * this is change in distance based on the elevation value.
+  //  * @param tokenInstance
+  //  * @param elevation
+  //  */
+  // static async shadowEffect(tokenInstance: Token) {
+  //   //const elevation: number = getProperty(tokenInstance.data, 'elevation');
+  //   const elevation: number = getElevationToken(tokenInstance);
+  //   //const tokenInstance = canvas.tokens?.get(tokenID);
+  //   const tokenMagicEffectId = CONSTANTS.MODULE_NAME + '-Shadows';
+  //   const twist = {
+  //     filterType: 'transform',
+  //     filterId: tokenMagicEffectId,
+  //     twRadiusPercent: 100,
+  //     padding: 10,
+  //     animated: {
+  //       twRotation: {
+  //         animType: 'sinOscillation',
+  //         val1: -(elevation / 10),
+  //         val2: +(elevation / 10),
+  //         loopDuration: 5000,
+  //       },
+  //     },
+  //   };
+  //   const shadow = {
+  //     filterType: 'shadow',
+  //     filterId: tokenMagicEffectId,
+  //     rotation: 35,
+  //     blur: 2,
+  //     quality: 5,
+  //     distance: elevation * 1.5,
+  //     alpha: Math.min(1 / ((elevation - 10) / 10), 0.7),
+  //     padding: 10,
+  //     shadowOnly: false,
+  //     color: 0x000000,
+  //     zOrder: 6000,
+  //     animated: {
+  //       blur: {
+  //         active: true,
+  //         loopDuration: 5000,
+  //         animType: 'syncCosOscillation',
+  //         val1: 2,
+  //         val2: 2.5,
+  //       },
+  //       rotation: {
+  //         active: true,
+  //         loopDuration: 5000,
+  //         animType: 'syncSinOscillation',
+  //         val1: 33,
+  //         val2: 33 + elevation * 0.8,
+  //       },
+  //     },
+  //   };
+  //   //const shadowSetting = game.settings.get('condition-automation', 'shadows');
+  //   // let params = [shadow];
+  //   //if (shadowSetting === 'bulge'){
+  //   // params = [shadow, twist];
+  //   //}
+  //   const params = [shadow, twist];
+  //   const filter = elevation > 5 ? true : false;
+  //   //@ts-ignore
+  //   await tokenInstance.TMFXdeleteFilters(tokenMagicEffectId);
+  //   if (filter) {
+  //     //@ts-ignore
+  //     await TokenMagic.addUpdateFilters(tokenInstance, params);
+  //   }
+  // }
 }

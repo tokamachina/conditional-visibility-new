@@ -11,7 +11,10 @@ export default class StatusEffects {
   moduleName: string;
 
   constructor(moduleName) {
-    if (!game[moduleName].effects) {
+    if (!game[moduleName]) {
+      game[moduleName] = {};
+    }
+    if (!game[moduleName]?.effects) {
       game[moduleName].effects = {};
     }
     if (!game[moduleName].effects.customEffects) {

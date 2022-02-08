@@ -1,7 +1,9 @@
-import { error, log } from '../lib/lib';
+import { error, i18n, log } from '../lib/lib';
 import FoundryHelpers from '../lib/foundry-helpers';
 import { canvas, game } from '../settings';
 import Effect from './effect';
+import EmbeddedCollection from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs';
+import { ActorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 
 export default class EffectHandler {
   _customEffects: Effect[];
@@ -9,66 +11,19 @@ export default class EffectHandler {
   _foundryHelpers: FoundryHelpers;
 
   constructor(moduleName: string) {
-    //@ts-ignore
-    if (!game[moduleName].effects) {
+    if (!game[moduleName]) {
+      game[moduleName] = {};
+    }
+    if (!game[moduleName]?.effects) {
       game[moduleName].effects = {};
     }
     if (!game[moduleName].effects.customEffects) {
       game[moduleName].effects.customEffects = [];
     }
-    this._customEffects = <Effect[]>game[moduleName].effects.customEffects;
+    this._customEffects = <Effect[]>game[moduleName].effects.customEffects || [];
     this.moduleName = moduleName;
     this._foundryHelpers = new FoundryHelpers();
   }
-
-  /**
-   * Searches through the list of available effects and returns one matching the
-   * effect name. Prioritizes finding custom effects first.
-   *
-   * @param {string} effectName - the effect name to search for
-   * @returns {Effect} the found effect
-   */
-  findEffectByName(effectName) {
-    // const effect = this._customEffectsHandler
-    //   .getCustomEffects()
-    //   .find((effect) => effect.name == effectName);
-
-    // if (effect) return effect;
-
-    // return game.dfreds.effects.all.find((effect) => effect.name == effectName);
-    const effect = <Effect>this._customEffects.find((effect: Effect) => effect.name == effectName);
-    return effect;
-  }
-
-  // /**
-  //  * Prompts the user to select a nested effect from the choices available
-  //  *
-  //  * @param {Effect} effect - the parent effect
-  //  * @returns {Effect} the chosen nested effect
-  //  */
-  // async getNestedEffectSelection(effect) {
-  //   const content = await renderTemplate(
-  //     'modules/dfreds-convenient-effects/templates/nested-effects-dialog.html',
-  //     { parentEffect: effect }
-  //   );
-  //   const choice = await Dialog.prompt(
-  //     {
-  //       title: effect.name,
-  //       content: content,
-  //       label: 'Select Effect',
-  //       callback: (html) => {
-  //         const htmlChoice = html.find('select[name="effect-choice"]').val();
-  //         return htmlChoice;
-  //       },
-  //       rejectClose: false,
-  //     },
-  //     { width: 300 }
-  //   );
-
-  //   return effect.nestedEffects.find(
-  //     (nestedEffect) => nestedEffect.name == choice
-  //   );
-  // }
 
   /**
    * Toggles an effect on or off by name on an actor by UUID
@@ -85,7 +40,7 @@ export default class EffectHandler {
       } else {
         const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
         const origin = `Actor.${actor.data._id}`;
-        await this.addEffect({ effectName, uuid, origin, overlay });
+        await this.addEffect({ effectName, effectData: null, uuid, origin, overlay });
       }
     }
   }
@@ -151,7 +106,8 @@ export default class EffectHandler {
   async removeEffect({ effectName, uuid }) {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
     const effectToRemove = actor.data.effects.find(
-      (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && activeEffect?.data?.label == effectName,
+      //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && activeEffect?.data?.label == effectName,
+      (activeEffect) => activeEffect?.data?.label == effectName,
     );
 
     if (!effectToRemove) return;
@@ -181,17 +137,32 @@ export default class EffectHandler {
    *
    * @param {object} params - the effect parameters
    * @param {string} params.effectName - the name of the effect to add
+   * @param {object} params.effectData - the effect data to add if effectName is not provided
    * @param {string} params.uuid - the uuid of the actor to add the effect to
    * @param {string} params.origin - the origin of the effect
    * @param {boolean} params.overlay - if the effect is an overlay or not
    */
-  async addEffect({ effectName, uuid, origin, overlay }) {
-    const effect = this.findEffectByName(effectName);
+  async addEffect({ effectName, effectData, uuid, origin, overlay }) {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
+    let effect = <Effect>this._findEffectByName(effectName, actor);
+
+    if (!effect && effectData) {
+      effect = new Effect(effectData);
+    }
 
     if (!origin) {
       origin = `Actor.${actor.data._id}`;
     }
+    effect.origin = origin;
+    effect.overlay = overlay;
+
+    // let effect = game.dfreds.effectInterface.findEffectByName(effectName);
+
+    // if (!effect && effectData) {
+    //   effect = new Effect(effectData);
+    // }
+
+    // const actor = await this._foundryHelpers.getActorByUuid(uuid);
 
     // if (effect.name.startsWith('Exhaustion')) {
     //   await this._removeAllExhaustionEffects(uuid);
@@ -260,6 +231,44 @@ export default class EffectHandler {
   // Additional feature for retrocompatibility
   // ============================================================
 
+  /**
+   * Searches through the list of available effects and returns one matching the
+   * effect name. Prioritizes finding custom effects first.
+   *
+   * @param {string} effectName - the effect name to search for
+   * @returns {Effect} the found effect
+   */
+  _findEffectByName(effectName: string, actor: Actor) {
+    if (!effectName) {
+      return null;
+    }
+    // const effect = this._customEffectsHandler
+    //   .getCustomEffects()
+    //   .find((effect) => effect.name == effectName);
+
+    // if (effect) return effect;
+
+    // return game.dfreds.effects.all.find((effect) => effect.name == effectName);
+    let effect = <Effect>this._customEffects.find((effect: Effect) => effect.name == effectName);
+    if (!effect) {
+      const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects;
+      // regex expression to match all non-alphanumeric characters in string
+      const regex = /[^A-Za-z0-9]/g;
+      for (const effectEntity of actorEffects) {
+        const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+        if (!effectNameToSet) {
+          continue;
+        }
+        // use replace() method to match and remove all the non-alphanumeric characters
+        const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
+        if (effectNameToCheckOnActor.toLowerCase().startsWith(effectName.toLowerCase())) {
+          effect = this.convertToEffectClass(effectEntity);
+        }
+      }
+    }
+    return effect;
+  }
+
   convertToEffectClass(effect: ActiveEffect): Effect {
     const atlChanges = effect.data.changes.filter((changes) => changes.key.startsWith('ATL'));
     const tokenMagicChanges = effect.data.changes.filter((changes) => changes.key === 'macro.tokenMagic');
@@ -290,11 +299,34 @@ export default class EffectHandler {
    * @param {string} effectName - the effect name to search for
    * @returns {Effect} the found effect
    */
-  async findEffectByNameOnActor({ effectName, uuid }): Promise<ActiveEffect> {
+  async findEffectByNameOnActor(effectName, uuid): Promise<Effect | null> {
+    if (effectName) {
+      effectName = i18n(effectName);
+    }
     const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
-    return await (<ActiveEffect>(
-      actor?.data?.effects?.find((activeEffect) => <string>activeEffect?.data?.label == effectName)
-    ));
+    // return await (<ActiveEffect>(
+    //   actor?.data?.effects?.find((activeEffect) => <string>activeEffect?.data?.label == effectName)
+    // ));
+    let effect: Effect | null = null;
+    if (!effectName) {
+      return effect;
+    }
+    const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects;
+    // regex expression to match all non-alphanumeric characters in string
+    const regex = /[^A-Za-z0-9]/g;
+    for (const effectEntity of actorEffects) {
+      const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+      if (!effectNameToSet) {
+        continue;
+      }
+      // use replace() method to match and remove all the non-alphanumeric characters
+      const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
+      if (effectNameToCheckOnActor.toLowerCase().startsWith(effectName.toLowerCase())) {
+        effect = this.convertToEffectClass(effectEntity);
+        break;
+      }
+    }
+    return effect;
   }
 
   /**
@@ -304,12 +336,12 @@ export default class EffectHandler {
    * @param {string} effectName - the effect name to search for
    * @returns {Effect} the found effect
    */
-  async findEffectByNameOnActorArr(...inAttributes: any[]): Promise<ActiveEffect> {
+  async findEffectByNameOnActorArr(...inAttributes: any[]): Promise<Effect | null> {
     if (!Array.isArray(inAttributes)) {
       throw error('findEffectByNameOnActorArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    return this.findEffectByNameOnActor({ effectName, uuid });
+    return this.findEffectByNameOnActor(effectName, uuid);
   }
 
   /**
@@ -321,7 +353,10 @@ export default class EffectHandler {
    * applied to
    * @returns {boolean} true if the effect is applied, false otherwise
    */
-  async hasEffectAppliedOnActor({ effectName, uuid }): Promise<boolean> {
+  async hasEffectAppliedOnActor(effectName, uuid): Promise<boolean> {
+    if (effectName) {
+      effectName = i18n(effectName);
+    }
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
     return actor?.data?.effects?.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
@@ -343,7 +378,7 @@ export default class EffectHandler {
       throw error('hasEffectAppliedOnActorArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    return this.hasEffectAppliedOnActor({ effectName, uuid });
+    return this.hasEffectAppliedOnActor(effectName, uuid);
   }
 
   /**
@@ -355,7 +390,7 @@ export default class EffectHandler {
    * applied to
    * @returns {boolean} true if the effect is applied, false otherwise
    */
-  async hasEffectAppliedFromIdOnActor({ effectId, uuid }): Promise<boolean> {
+  async hasEffectAppliedFromIdOnActor(effectId, uuid): Promise<boolean> {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
     return actor?.data?.effects?.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?._id == effectId,
@@ -377,7 +412,7 @@ export default class EffectHandler {
       throw error('hasEffectAppliedFromIdOnActorArr | inAttributes must be of type array');
     }
     const [effectId, uuid] = inAttributes;
-    return this.hasEffectAppliedFromIdOnActor({ effectId, uuid });
+    return this.hasEffectAppliedFromIdOnActor(effectId, uuid);
   }
 
   /**
@@ -387,7 +422,10 @@ export default class EffectHandler {
    * @param {string} effectName - the name of the effect to remove
    * @param {string} uuid - the uuid of the actor to remove the effect from
    */
-  async removeEffectOnActor({ effectName, uuid }) {
+  async removeEffectOnActor(effectName, uuid) {
+    if (effectName) {
+      effectName = i18n(effectName);
+    }
     const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
     const effectToRemove = <ActiveEffect>actor.data.effects.find(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
@@ -415,7 +453,7 @@ export default class EffectHandler {
       throw error('removeEffectOnActorArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    return this.removeEffectOnActor({ effectName, uuid });
+    return this.removeEffectOnActor(effectName, uuid);
   }
 
   /**
@@ -425,16 +463,14 @@ export default class EffectHandler {
    * @param {string} effectId - the id of the effect to remove
    * @param {string} uuid - the uuid of the actor to remove the effect from
    */
-  async removeEffectFromIdOnActor({ effectToRemoveId, uuid }) {
+  async removeEffectFromIdOnActor(effectToRemoveId, uuid) {
     if (effectToRemoveId) {
       const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
       //actor.deleteEmbeddedDocuments('ActiveEffect', [<string>effectToRemoveId]);
       // Why i need this ??? for avoid the double AE
-      const effectToRemove = <ActiveEffect>(
-        actor.data.effects.find(
-          (activeEffect) =>
-            <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectToRemoveId,
-        )
+      const effectToRemove = <ActiveEffect>actor.data.effects.find(
+        //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectToRemoveId,
+        (activeEffect) => <string>activeEffect.id == effectToRemoveId,
       );
       await effectToRemove.update({ disabled: true });
       await effectToRemove.delete();
@@ -454,7 +490,7 @@ export default class EffectHandler {
       throw error('removeEffectFromIdOnActor | inAttributes must be of type array');
     }
     const [effectToRemoveId, uuid] = inAttributes;
-    return this.removeEffectFromIdOnActor({ effectToRemoveId, uuid });
+    return this.removeEffectFromIdOnActor(effectToRemoveId, uuid);
   }
 
   /**
@@ -467,7 +503,10 @@ export default class EffectHandler {
    * @param {string} params.origin - the origin of the effect
    * @param {boolean} params.overlay - if the effect is an overlay or not
    */
-  async addEffectOnActor({ effectName, uuid, origin, overlay }, effect: Effect | null) {
+  async addEffectOnActor(effectName, uuid, origin, overlay, effect: Effect | null) {
+    if (effectName) {
+      effectName = i18n(effectName);
+    }
     if (effect) {
       const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
       if (!origin) {
@@ -494,6 +533,6 @@ export default class EffectHandler {
       throw error('addEffectOnActorArr | inAttributes must be of type array');
     }
     const [effectName, uuid, origin, overlay, effect] = inAttributes;
-    return this.addEffectOnActor({ effectName, uuid, origin, overlay }, effect);
+    return this.addEffectOnActor(effectName, uuid, origin, overlay, effect);
   }
 }

@@ -1,29 +1,20 @@
 import { registerLibwrappers } from './libwrapper';
 import { registerSocket, conditionalVisibilitySocket } from './socket';
-import { canvas, checkSystem, game } from './settings';
+
 import CONSTANTS from './constants';
 import HOOKS from './hooks';
 import { debug } from './lib/lib';
 import API from './api.js';
 import EffectInterface from './effects/effect-interface';
 import { registerHotkeys } from './hotkeys';
+import { canvas, game } from './settings';
+import { checkSystem } from './settings';
 
 export const initHooks = async (): Promise<void> => {
   // registerSettings();
   registerLibwrappers();
 
   Hooks.once('socketlib.ready', registerSocket);
-  // Hooks.on('canvasReady', module._canvasReady);
-  // Hooks.on('preCreateToken', module._preCreatePile);
-  // Hooks.on('createToken', module._createPile);
-  // Hooks.on('deleteToken', module._deletePile);
-  // Hooks.on('dropCanvasData', module._dropCanvasData);
-  // Hooks.on('updateActor', module._pileAttributeChanged);
-  // Hooks.on('createItem', module._pileInventoryChanged);
-  // Hooks.on('updateItem', module._pileInventoryChanged);
-  // Hooks.on('deleteItem', module._pileInventoryChanged);
-  // Hooks.on('getActorSheetHeaderButtons', module._insertItemPileHeaderButtons);
-  // Hooks.on('renderTokenHUD', module._renderPileHUD);
 
   if (game.settings.get(CONSTANTS.MODULE_NAME, 'debugHooks')) {
     for (const hook of Object.values(HOOKS)) {
@@ -49,10 +40,9 @@ export const setupHooks = async (): Promise<void> => {
   // setup all the hooks
 
   //@ts-ignore
-  window.ConditionalVisibility.API.effectInterface = new EffectInterface(
-    CONSTANTS.MODULE_NAME,
-    conditionalVisibilitySocket,
-  );
+  window.ConditionalVisibility.API.effectInterface = new EffectInterface(CONSTANTS.MODULE_NAME);
+  //@ts-ignore
+  window.ConditionalVisibility.API.effectInterface.initialize();
 
   if (game[CONSTANTS.MODULE_NAME]) {
     game[CONSTANTS.MODULE_NAME] = {};
@@ -69,14 +59,11 @@ export const readyHooks = async (): Promise<void> => {
   registerHotkeys();
   Hooks.callAll(HOOKS.READY);
 
-  const sightLayer = canvas.layers.find((layer) => {
-    //@ts-ignore
-    return layer.__proto__.constructor.name === 'SightLayer';
-  });
   // ConditionalVisibility.initialize(sightLayer, canvas.hud?.token);
   // Add any additional hooks if necessary
   Hooks.on('renderTokenConfig', (tokenConfig, html, data) => {
     // ConditionalVisibility.INSTANCE.onRenderTokenConfig(tokenConfig, html, data);
+    module.onRenderTokenConfig(tokenConfig, html, data);
   });
   Hooks.on('renderTokenHUD', (app, html, token) => {
     // ConditionalVisibility.INSTANCE.onRenderTokenHUD(app, html, token);

@@ -1,5 +1,6 @@
 import API from './api.js';
 import CONSTANTS from './constants.js';
+import { getFirstPlayerTokenSelected, log, shouldIncludeVision } from './lib/lib.js';
 import { canvas, game } from './settings';
 
 export function registerLibwrappers() {
@@ -10,13 +11,13 @@ export function registerLibwrappers() {
   //     return wrapped(...args);
   // }, 'MIXED' /* optional, since this is the default type */);
 
-  //@ts-ignore
-  libWrapper.register(
-    CONSTANTS.MODULE_NAME,
-    'Token.prototype._onMovementFrame',
-    _ConditionalVisibilityOnMovementFrame,
-    'WRAPPER',
-  );
+  // //@ts-ignore
+  // libWrapper.register(
+  //   CONSTANTS.MODULE_NAME,
+  //   'Token.prototype._onMovementFrame',
+  //   _ConditionalVisibilityOnMovementFrame,
+  //   'WRAPPER',
+  // );
 
   // maniplulation and make some assumptions about the data.
   // libWrapper.register(
@@ -26,70 +27,68 @@ export function registerLibwrappers() {
   //     "OVERRIDE"
   // );
 
-  // The Pathfinder 2e system and Perfect Vision both ignore NPCs for vision settings. Since the Perfect Vision
-  // code effectively overrides the base system code, we'll change how we override depending on the module's presence.
-  if (game.modules.get('perfect-vision')?.active) {
-    //@ts-ignore
-    libWrapper.register(
-      CONSTANTS.MODULE_NAME,
-      'CONFIG.Token.documentClass.prototype.prepareDerivedData',
-      _prepareNpcDerivedDataWithPerfectVision,
-      'WRAPPER',
-    );
-  } else {
-    //@ts-ignore
-    libWrapper.register(
-      CONSTANTS.MODULE_NAME,
-      'CONFIG.Token.documentClass.prototype.prepareDerivedData',
-      _prepareNpcDerivedData,
-      'WRAPPER',
-    );
-  }
+  // // The Pathfinder 2e system and Perfect Vision both ignore NPCs for vision settings. Since the Perfect Vision
+  // // code effectively overrides the base system code, we'll change how we override depending on the module's presence.
+  // if (game.modules.get('perfect-vision')?.active) {
+  //   //@ts-ignore
+  //   libWrapper.register(
+  //     CONSTANTS.MODULE_NAME,
+  //     'CONFIG.Token.documentClass.prototype.prepareDerivedData',
+  //     _prepareNpcDerivedDataWithPerfectVision,
+  //     'WRAPPER',
+  //   );
+  // } else {
+  //   //@ts-ignore
+  //   libWrapper.register(
+  //     CONSTANTS.MODULE_NAME,
+  //     'CONFIG.Token.documentClass.prototype.prepareDerivedData',
+  //     _prepareNpcDerivedData,
+  //     'WRAPPER',
+  //   );
+  // }
+
+  //@ts-ignore
+  libWrapper.register(CONSTANTS.MODULE_NAME, 'SightLayer.prototype.testVisibility', evTestVisibility, 'WRAPPER');
 }
 
-function _ConditionalVisibilityOnMovementFrame(wrapped, ...args) {
-  wrapped(...args);
-  // Update the token copy
-  //ConditionalVisibility.INSTANCE.restrictVisibility(100);
-}
-
-// function _npcVisionLevel(...args) {
-//   const senses = this.data.data.traits.senses.value.split(',').map((s) => s.replace(/[\s-]+/g, '').toLowerCase());
-//   return this.getCondition('blinded')
-//     ? VisionLevelPF2e.BLINDED
-//     : senses.includes('darkvision')
-//     ? VisionLevelPF2e.DARKVISION
-//     : senses.includes('lowlightvision')
-//     ? VisionLevelPF2e.LOW_LIGHT_VISION
-//     : VisionLevelPF2e.NORMAL;
-// }
-
-// Since the Perfect Vision code effectively overrides the base system code, we'll change how we override depending on the module's presence.
-function _prepareNpcDerivedDataWithPerfectVision(wrapped, ...args) {
-  wrapped(args);
-
-  if (!(this.initialized && this.actor && this.scene)) return;
-
-  if (this.scene.rulesBasedVision && this.actor.type === 'npc') {
-    this.data.dimSight = this.data._source.dimSight = this.hasLowLightVision ? 10000 : 0;
-    this.data.brightSight = this.data._source.brightSight = this.hasDarkvision ? 10000 : 0;
-
-    const isBlinded = this.actor.visionLevel === 0;
-
-    setProperty(this.data, 'flags.perfect-vision.sightLimit', isBlinded ? 0 : null);
-    setProperty(this.data._source, 'flags.perfect-vision.sightLimit', isBlinded ? 0 : null);
+export function evTestVisibility(wrapped, point, { tolerance = 2, object = null } = {}) {
+  const res = wrapped(point, { tolerance: tolerance, object: object });
+  // need a token object
+  if (!object) {
+    return res;
   }
-}
-
-function _prepareNpcDerivedData(wrapped, ...args) {
-  wrapped(args);
-
-  if (!(this.initialized && this.actor && this.scene)) return;
-
-  if (this.scene.rulesBasedVision && this.actor.type === 'npc') {
-    const hasDarkvision = this.hasDarkvision && (this.scene.isDark || this.scene.isDimlyLit);
-    const hasLowLightVision = (this.hasLowLightVision || this.hasDarkvision) && this.scene.isDimlyLit;
-    const isBlinded = game;
-    this.data.brightSight = this.data._source.brightSight = hasDarkvision || hasLowLightVision ? 1000 : 0;
+  // Assume for the moment that the base function tests only infinite walls based on fov / los.
+  // If so, then if a token is not seen, elevation will not change that.
+  if (!res) {
+    return res;
   }
+  const tokenToCheckIfIsVisible = <Token>object;
+  // this.sources is a map of selected tokens (may be size 0) all tokens
+  // contribute to the vision so iterate through the tokens
+  if (!this.sources || this.sources.size === 0) {
+    return res;
+  }
+  const visible_to_sources = [...this.sources].map((s) => {
+    // get the token elevation
+    const controlledToken = <Token>s.object;
+    // if any terrain blocks, then the token is not visible for that sight source
+    // const is_visible = !terrains_block.reduce((total, curr) => total || curr, false);
+    const is_visible = shouldIncludeVision(controlledToken, tokenToCheckIfIsVisible);
+    // log(`terrains ${is_visible ? 'do not block' : 'do block'}`, terrains_block);
+    return is_visible;
+  }); // [...this.sources].forEach
+
+  const sourcesNames = <string[]>this.sources.contents.map((e) => {
+    return e.object.data.name;
+  });
+
+  // if any source has vision to the token, the token is visible
+  const is_visible = visible_to_sources.reduce((total, curr) => total || curr, false);
+  log(
+    `target ${tokenToCheckIfIsVisible.data.name} ${
+      is_visible ? 'is visible' : 'is not visible'
+    } to sources ${sourcesNames.join(',')}`,
+  );
+
+  return is_visible;
 }

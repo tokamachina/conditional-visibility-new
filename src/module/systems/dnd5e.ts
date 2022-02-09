@@ -1,5 +1,3 @@
-import Effect, { Constants } from '../effects/effect';
-import { EffectDefinitions } from '../conditional-visibility-effect-definition';
 import {
   StatusEffect,
   StatusEffectSightFlags,
@@ -7,7 +5,6 @@ import {
   StatusSight,
 } from '../conditional-visibility-models';
 import CONSTANTS from '../constants';
-import ArrayMatrix from '../lib/javascript-array-matrix';
 
 export default {
   HP_ATTRIBUTE: 'data.attributes.hp.value',
@@ -129,25 +126,25 @@ export default {
       id: StatusEffectStatusFlags.HIDDEN,
       visibilityId: StatusEffectStatusFlags.HIDDEN, //'hidden',
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.HIDDEN}`,
-      img: 'modules/' + CONSTANTS.MODULE_NAME + '/icons/newspaper.svg',
+      img: `modules/${CONSTANTS.MODULE_NAME}/icons/newspaper.svg`,
     },
     {
       id: StatusEffectStatusFlags.INVISIBLE,
       visibilityId: StatusEffectStatusFlags.INVISIBLE, //'invisible',
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.INVISIBLE}`,
-      img: 'modules/' + CONSTANTS.MODULE_NAME + '/icons/unknown.svg',
+      img: `modules/${CONSTANTS.MODULE_NAME}/icons/unknown.svg`,
     },
     {
       id: StatusEffectStatusFlags.OBSCURED,
       visibilityId: StatusEffectStatusFlags.OBSCURED, //'obscured',
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.OBSCURED}`,
-      img: 'modules/' + CONSTANTS.MODULE_NAME + '/icons/foggy.svg',
+      img: `modules/${CONSTANTS.MODULE_NAME}/icons/foggy.svg`,
     },
     {
       id: StatusEffectStatusFlags.IN_DARKNESS,
       visibilityId: StatusEffectStatusFlags.IN_DARKNESS, // 'indarkness',
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.IN_DARKNESS}`,
-      img: 'modules/' + CONSTANTS.MODULE_NAME + '/icons/moon.svg',
+      img: `modules/${CONSTANTS.MODULE_NAME}/icons/moon.svg`,
     },
   ],
   // LIGTH_VS_VISION: [

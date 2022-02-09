@@ -1,13 +1,10 @@
 import CONSTANTS from './constants';
-import { conditionalVisibilitySocket, SOCKET_HANDLERS } from './socket';
-import { canvas, game } from './settings';
 import { error } from './lib/lib';
 import EffectInterface from './effects/effect-interface';
-import EffectHandler from './effects/effect-handler';
-import Effect from './effects/effect';
 import { StatusEffect, StatusSight } from './conditional-visibility-models';
 import HOOKS from './hooks';
 import { EnhancedConditions } from './cub/enhanced-conditions';
+import { canvas, game } from './settings';
 
 export default class API {
   // static get effectInterface(): EffectInterface {

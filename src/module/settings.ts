@@ -1,6 +1,5 @@
 import API from './api';
 import CONSTANTS from './constants';
-import { ConditionalVisibilityAttributeEditor } from './formapplications/conditionalVisibilityAttributeEditor';
 import { dialogWarning, warn } from './lib/lib';
 import { SYSTEMS } from './systems';
 
@@ -82,13 +81,13 @@ export const registerSettings = function (): void {
     restricted: true,
   });
 
-  game.settings.registerMenu(CONSTANTS.MODULE_NAME, 'openDynamicAttributesEditor', {
-    name: `${CONSTANTS.MODULE_NAME}.Setting.Attributes.name`,
-    hint: `${CONSTANTS.MODULE_NAME}.Setting.Attributes.hint`,
-    icon: 'fas fa-coins',
-    type: ConditionalVisibilityAttributeEditor,
-    restricted: true,
-  });
+  // game.settings.registerMenu(CONSTANTS.MODULE_NAME, 'openDynamicAttributesEditor', {
+  //   name: `${CONSTANTS.MODULE_NAME}.Setting.Attributes.name`,
+  //   hint: `${CONSTANTS.MODULE_NAME}.Setting.Attributes.hint`,
+  //   icon: 'fas fa-coins',
+  //   type: ConditionalVisibilityAttributeEditor,
+  //   restricted: true,
+  // });
 
   const settings = defaultSettings();
   for (const [name, data] of Object.entries(settings)) {

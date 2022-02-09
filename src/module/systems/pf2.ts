@@ -6,7 +6,6 @@ import {
   StatusSight,
 } from '../conditional-visibility-models';
 import CONSTANTS from '../constants';
-import { i18n } from '../lib/lib';
 
 export default {
   HP_ATTRIBUTE: 'data.attributes.hp.value',

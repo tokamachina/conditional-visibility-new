@@ -1,4 +1,3 @@
-import { getTokensAtLocation } from './lib/lib';
 import API from './api';
 import { canvas, game } from './settings';
 

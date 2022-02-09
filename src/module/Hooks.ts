@@ -7,7 +7,10 @@ import { canvas, game } from './settings';
 import { registerSocket } from './socket';
 import API from './api';
 
-const prefix = (str) => (strs, ...exprs) => `${str}-${strs.reduce((a, c, i) => a + exprs[i - 1] + c)}`
+const prefix =
+  (str) =>
+  (strs, ...exprs) =>
+    `${str}-${strs.reduce((a, c, i) => a + exprs[i - 1] + c)}`;
 const module = prefix(CONSTANTS.MODULE_NAME);
 
 const HOOKS = {

@@ -4,54 +4,16 @@ import { getFirstPlayerTokenSelected, log, shouldIncludeVision } from './lib/lib
 import { canvas, game } from './settings';
 
 export function registerLibwrappers() {
-  // libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype._onClickLeft2', function (wrapped, ...args) {
-  //     if (API.isValidItemPile(this.document) && game.keyboard.downKeys.has("ControlLeft")) {
-  //         return API._itemPileClicked(this.document);
-  //     }
-  //     return wrapped(...args);
-  // }, 'MIXED' /* optional, since this is the default type */);
-
-  // //@ts-ignore
-  // libWrapper.register(
-  //   CONSTANTS.MODULE_NAME,
-  //   'Token.prototype._onMovementFrame',
-  //   _ConditionalVisibilityOnMovementFrame,
-  //   'WRAPPER',
-  // );
-
-  // maniplulation and make some assumptions about the data.
-  // libWrapper.register(
-  //     CONSTANTS.MODULE_NAME,
-  //     "CONFIG.PF2E.Actor.documentClasses.npc.prototype.visionLevel",
-  //     _npcVisionLevel,
-  //     "OVERRIDE"
-  // );
-
-  // // The Pathfinder 2e system and Perfect Vision both ignore NPCs for vision settings. Since the Perfect Vision
-  // // code effectively overrides the base system code, we'll change how we override depending on the module's presence.
-  // if (game.modules.get('perfect-vision')?.active) {
-  //   //@ts-ignore
-  //   libWrapper.register(
-  //     CONSTANTS.MODULE_NAME,
-  //     'CONFIG.Token.documentClass.prototype.prepareDerivedData',
-  //     _prepareNpcDerivedDataWithPerfectVision,
-  //     'WRAPPER',
-  //   );
-  // } else {
-  //   //@ts-ignore
-  //   libWrapper.register(
-  //     CONSTANTS.MODULE_NAME,
-  //     'CONFIG.Token.documentClass.prototype.prepareDerivedData',
-  //     _prepareNpcDerivedData,
-  //     'WRAPPER',
-  //   );
-  // }
-
   //@ts-ignore
-  libWrapper.register(CONSTANTS.MODULE_NAME, 'SightLayer.prototype.testVisibility', evTestVisibility, 'WRAPPER');
+  libWrapper.register(
+    CONSTANTS.MODULE_NAME,
+    'SightLayer.prototype.testVisibility',
+    sightLayerPrototypeTestVisibilityHandler,
+    'WRAPPER',
+  );
 }
 
-export function evTestVisibility(wrapped, point, { tolerance = 2, object = null } = {}) {
+export function sightLayerPrototypeTestVisibilityHandler(wrapped, point, { tolerance = 2, object = null } = {}) {
   const res = wrapped(point, { tolerance: tolerance, object: object });
   // need a token object
   if (!object) {
@@ -71,11 +33,10 @@ export function evTestVisibility(wrapped, point, { tolerance = 2, object = null 
   const visible_to_sources = [...this.sources].map((s) => {
     // get the token elevation
     const controlledToken = <Token>s.object;
-    // if any terrain blocks, then the token is not visible for that sight source
-    // const is_visible = !terrains_block.reduce((total, curr) => total || curr, false);
+    // if any active effects blocks, then the token is not visible for that sight source
     const is_visible = shouldIncludeVision(controlledToken, tokenToCheckIfIsVisible);
     // log(`terrains ${is_visible ? 'do not block' : 'do block'}`, terrains_block);
-    return is_visible;
+    return is_visible ?? false;
   }); // [...this.sources].forEach
 
   const sourcesNames = <string[]>this.sources.contents.map((e) => {

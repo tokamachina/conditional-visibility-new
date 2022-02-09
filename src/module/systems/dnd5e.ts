@@ -1,22 +1,8 @@
-import {
-  StatusEffect,
-  StatusEffectSightFlags,
-  StatusEffectStatusFlags,
-  StatusSight,
-} from '../conditional-visibility-models';
+import { StatusEffectSightFlags, StatusEffectStatusFlags, StatusSight } from '../conditional-visibility-models';
 import CONSTANTS from '../constants';
 
 export default {
   HP_ATTRIBUTE: 'data.attributes.hp.value',
-  /** Equivalent to the VisionLevel enum in the Pathfinder 2e system */
-  // VISION_LEVEL: [
-  //   'BLINDED',
-  //   'NORMAL',
-  //   'DARKVISION',
-  //   'SUNLIGHT_SENSITIVITY',
-  //   'BLINDSIGHT',
-  //   'TREMORSENSE',
-  // ],
   /**
    * The set of possible sensory perception types which an Actor may have.
    * @enum {string}
@@ -121,52 +107,26 @@ export default {
       checkElevation: false,
     },
   ],
-  CONDITIONS: <StatusEffect[]>[
+  CONDITIONS: <StatusSight[]>[
     {
       id: StatusEffectStatusFlags.HIDDEN,
-      visibilityId: StatusEffectStatusFlags.HIDDEN, //'hidden',
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.HIDDEN}`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/newspaper.svg`,
     },
     {
       id: StatusEffectStatusFlags.INVISIBLE,
-      visibilityId: StatusEffectStatusFlags.INVISIBLE, //'invisible',
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.INVISIBLE}`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/unknown.svg`,
     },
     {
       id: StatusEffectStatusFlags.OBSCURED,
-      visibilityId: StatusEffectStatusFlags.OBSCURED, //'obscured',
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.OBSCURED}`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/foggy.svg`,
     },
     {
       id: StatusEffectStatusFlags.IN_DARKNESS,
-      visibilityId: StatusEffectStatusFlags.IN_DARKNESS, // 'indarkness',
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.IN_DARKNESS}`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/moon.svg`,
     },
   ],
-  // LIGTH_VS_VISION: [
-  //   { color: 'Blue', size: 'Small', sku: '123' },
-  //   { color: 'Blue', size: 'Medium', sku: '124' },
-  //   { color: 'Red', size: 'Medium', sku: '125' },
-  //   { color: 'Blue', size: 'Large', sku: '126' },
-  //   { color: 'Red', size: 'Large', sku: '127' },
-  //   { color: 'Green', size: 'Large', sku: '128' }
-  // ]
-  //   {
-  //     brightlight : {
-  //       BLINDED: 'BLINDED',
-  //       NORMAL: '',
-  //       DARKVISION: '',
-  //       SUNLIGHT_SENSITIVITY: '',
-  //       BLINDSIGHT: '',
-  //       TREMORSENSE: 'TREMORSENSE',
-  //     },
-  //     dimlight: { apples: 0, oranges: 10, bananas: 0, melons: 0 },
-  //     darkness: { apples: 0, oranges: 0, bananas: 0, melons: 5 },
-  //     magicaldarkness
-  //   }
-  // ],
 };

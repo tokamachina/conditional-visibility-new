@@ -1,10 +1,5 @@
 import { EffectDefinitions } from '../conditional-visibility-effect-definition';
-import {
-  StatusEffect,
-  StatusEffectSightFlags,
-  StatusEffectStatusFlags,
-  StatusSight,
-} from '../conditional-visibility-models';
+import { StatusEffectSightFlags, StatusEffectStatusFlags, StatusSight } from '../conditional-visibility-models';
 import CONSTANTS from '../constants';
 
 export default {
@@ -69,6 +64,28 @@ export default {
       visionLevelMin: 0,
       visionLevelMax: 4,
       checkElevation: false,
+    },
+  ],
+  CONDITIONS: <StatusSight[]>[
+    {
+      id: StatusEffectStatusFlags.HIDDEN,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.HIDDEN}`,
+      img: `modules/${CONSTANTS.MODULE_NAME}/icons/newspaper.svg`,
+    },
+    {
+      id: StatusEffectStatusFlags.INVISIBLE,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.INVISIBLE}`,
+      img: `modules/${CONSTANTS.MODULE_NAME}/icons/unknown.svg`,
+    },
+    {
+      id: StatusEffectStatusFlags.OBSCURED,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.OBSCURED}`,
+      img: `modules/${CONSTANTS.MODULE_NAME}/icons/foggy.svg`,
+    },
+    {
+      id: StatusEffectStatusFlags.IN_DARKNESS,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.IN_DARKNESS}`,
+      img: `modules/${CONSTANTS.MODULE_NAME}/icons/moon.svg`,
     },
   ],
 };

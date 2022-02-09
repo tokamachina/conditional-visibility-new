@@ -1,5 +1,5 @@
 import API from './api';
-import { StatusEffectSightFlags, StatusSight } from './conditional-visibility-models';
+import { StatusEffectSightFlags, StatusEffectStatusFlags, StatusSight } from './conditional-visibility-models';
 import CONSTANTS from './constants';
 import Effect, { Constants } from './effects/effect';
 import { i18n, i18nFormat, warn } from './lib/lib';
@@ -452,8 +452,36 @@ export class EffectDefinitions {
     });
   }
 
-  // ===========================================
+  // =================================================
   // The target effect
+  // =================================================
+
+  static invisible() {
+    const effectSight = API.CONDITIONS.find((a: StatusSight) => {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      return a.id
+        .replace(EffectDefinitions.regex, '')
+        .toLowerCase()
+        .startsWith(StatusEffectStatusFlags.INVISIBLE.replace(EffectDefinitions.regex, '').toLowerCase());
+    });
+    if (!effectSight) {
+      warn(`Cannot find for system '${game.system.id}' the status with id '${StatusEffectStatusFlags.INVISIBLE}'`);
+      return;
+    }
+    return new Effect({
+      customId: StatusEffectStatusFlags.INVISIBLE,
+      name: i18n(`${CONSTANTS.MODULE_NAME}.effects.invisible.name`),
+      description: i18n(`${CONSTANTS.MODULE_NAME}.effects.invisible.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/invisible.svg`,
+      // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
+      transfer: true,
+      changes: [],
+      atlChanges: [],
+    });
+  }
+
+  // ===========================================
+  // Utility Effect
   // =============================================
 
   static _createAtlEffectKey(key) {

@@ -2,12 +2,12 @@ import CONSTANTS from './constants';
 import Effect from './effects/effect';
 import { error } from './lib/lib';
 
-export interface StatusEffect {
-  id: string;
-  visibilityId: string;
-  name: string;
-  img: string;
-}
+// export interface StatusEffect {
+//   id: string;
+//   visibilityId: string;
+//   name: string;
+//   img: string;
+// }
 
 export interface StatusSight {
   id: string;

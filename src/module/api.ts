@@ -1,7 +1,7 @@
 import CONSTANTS from './constants';
 import { error } from './lib/lib';
 import EffectInterface from './effects/effect-interface';
-import { StatusEffect, StatusSight } from './conditional-visibility-models';
+import { StatusSight } from './conditional-visibility-models';
 import HOOKS from './hooks';
 import { EnhancedConditions } from './cub/enhanced-conditions';
 import { canvas, game } from './settings';
@@ -32,7 +32,7 @@ export default class API {
    *
    * @returns {array}
    */
-  static get CONDITIONS(): StatusEffect[] {
+  static get CONDITIONS(): StatusSight[] {
     return <any[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
   }
 

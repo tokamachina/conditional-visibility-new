@@ -10,9 +10,11 @@ import HOOKS from './hooks';
 import { EnhancedConditions } from './cub/enhanced-conditions';
 
 export default class API {
-  static get effectInterface(): EffectInterface {
-    return new EffectInterface(CONSTANTS.MODULE_NAME, conditionalVisibilitySocket);
-  }
+  // static get effectInterface(): EffectInterface {
+  //   return new EffectInterface(CONSTANTS.MODULE_NAME);
+  // }
+
+  static effectInterface: EffectInterface;
 
   static get enhancedConditions(): EnhancedConditions {
     //@ts-ignore

@@ -10,12 +10,6 @@ import { i18n } from '../lib/lib';
 
 export default {
   HP_ATTRIBUTE: 'data.attributes.hp.value',
-  // VISION_LEVEL: {
-  //   BLINDED: 0,
-  //   NORMAL: 1,
-  //   LOW_LIGHT_VISION: 2,
-  //   DARKVISION: 3,
-  // },
   SENSES: <StatusSight[]>[
     {
       id: StatusEffectSightFlags.NONE,

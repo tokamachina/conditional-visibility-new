@@ -137,9 +137,9 @@ export class VisionCapabilities {
     }
   }
 
-  canSee(statusEffectSight: StatusEffectSightFlags) {
-    // TODO
-  }
+  // canSee(statusEffectSight: StatusEffectSightFlags) {
+  //   // TODO
+  // }
 
   canSeeInvisible() {
     return Math.max(this._seeinvisible, this._blindsight, this._tremorsense, this._truesight, this._devilssight);

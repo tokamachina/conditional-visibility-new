@@ -1,8 +1,9 @@
-import { StatusEffectSightFlags } from './conditional-visibility-models';
+import API from './api';
+import { StatusEffectSightFlags, StatusSight } from './conditional-visibility-models';
 import CONSTANTS from './constants';
 import Effect, { Constants } from './effects/effect';
-import { i18n, i18nFormat } from './lib/lib';
-import { canvas } from './settings';
+import { i18n, i18nFormat, warn } from './lib/lib';
+import { canvas, game } from './settings';
 
 /**
  * Defines all of the effect definitions
@@ -10,23 +11,50 @@ import { canvas } from './settings';
 export class EffectDefinitions {
   constructor() {}
 
+  // regex expression to match all non-alphanumeric characters in string
+  private static regex = /[^A-Za-z0-9]/g;
+
   /**
    * Get all effects
    *
    * @returns {Effect[]} all the effects
    */
   static all(distance = 0): Effect[] {
-    return [
-      EffectDefinitions.blinded(distance),
-      EffectDefinitions.blindsigth(distance),
-      EffectDefinitions.darkvision(distance),
-      EffectDefinitions.devilssight(distance),
-      EffectDefinitions.lowlightvision(distance),
-      // EffectDefinitions.seeinvisible(distance),
-      // EffectDefinitions.shadowEffect(distance),
-      EffectDefinitions.tremorsense(distance),
-      EffectDefinitions.truesight(distance),
-    ];
+    const effects:Effect[] = [];
+    const blinded = EffectDefinitions.blinded(distance);
+    if(blinded){
+      effects.push(blinded);
+    }
+    const blindsight = EffectDefinitions.blindsigth(distance);
+    if(blindsight){
+      effects.push(blindsight);
+    }
+    const darkvision = EffectDefinitions.darkvision(distance);
+    if(darkvision){
+      effects.push(darkvision);
+    }
+    const devilssight = EffectDefinitions.devilssight(distance);
+    if(devilssight){
+      effects.push(devilssight);
+    }
+    const lowlightvision = EffectDefinitions.lowlightvision(distance);
+    if(lowlightvision){
+      effects.push(lowlightvision);
+    }
+    const seeinvisible = EffectDefinitions.seeinvisible(distance);
+    if(seeinvisible){
+      effects.push(seeinvisible);
+    }
+    // EffectDefinitions.shadowEffect(distance),
+    const tremorsense = EffectDefinitions.tremorsense(distance);
+    if(tremorsense){
+      effects.push(tremorsense);
+    }
+    const truesight = EffectDefinitions.truesight(distance);
+    if(truesight){
+      effects.push(truesight);
+    }
+    return effects;
   }
 
   static effect(name: string, distance = 0): Effect | undefined {
@@ -86,6 +114,14 @@ export class EffectDefinitions {
   // }
 
   static darkvision(number: number) {
+    const effectSight = API.SENSES.find((a: StatusSight) => {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      return a.id.replace(EffectDefinitions.regex, '').toLowerCase().startsWith(StatusEffectSightFlags.DARKVISION.replace(EffectDefinitions.regex, '').toLowerCase());
+    });
+    if(!effectSight){
+      warn(`Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSightFlags.DARKVISION}'`);
+      return;
+    }
     return new Effect({
       customId: StatusEffectSightFlags.DARKVISION,
       name:
@@ -101,9 +137,9 @@ export class EffectDefinitions {
       transfer: true,
       changes: [
         {
-          key: 'data.attributes.senses.darkvision',
+          key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@data.attributes.senses.darkvision`,
+          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -119,6 +155,14 @@ export class EffectDefinitions {
   }
 
   static blindsigth(number: number) {
+    const effectSight = API.SENSES.find((a: StatusSight) => {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      return a.id.replace(EffectDefinitions.regex, '').toLowerCase().startsWith(StatusEffectSightFlags.DARKVISION.replace(EffectDefinitions.regex, '').toLowerCase());
+    });
+    if(!effectSight){
+      warn(`Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSightFlags.DARKVISION}'`);
+      return;
+    }
     return new Effect({
       customId: StatusEffectSightFlags.BLIND_SIGHT,
       name:
@@ -134,9 +178,9 @@ export class EffectDefinitions {
       transfer: true,
       changes: [
         {
-          key: 'data.attributes.senses.blindsight',
+          key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@data.attributes.senses.blindsight`,
+          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -144,6 +188,14 @@ export class EffectDefinitions {
   }
 
   static tremorsense(number: number) {
+    const effectSight = API.SENSES.find((a: StatusSight) => {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      return a.id.replace(EffectDefinitions.regex, '').toLowerCase().startsWith(StatusEffectSightFlags.DARKVISION.replace(EffectDefinitions.regex, '').toLowerCase());
+    });
+    if(!effectSight){
+      warn(`Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSightFlags.DARKVISION}'`);
+      return;
+    }
     return new Effect({
       customId: StatusEffectSightFlags.TREMOR_SENSE,
       name:
@@ -159,9 +211,9 @@ export class EffectDefinitions {
       transfer: true,
       changes: [
         {
-          key: 'data.attributes.senses.tremorsense',
+          key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@data.attributes.senses.tremorsense`,
+          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -169,6 +221,14 @@ export class EffectDefinitions {
   }
 
   static truesight(number) {
+    const effectSight = API.SENSES.find((a: StatusSight) => {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      return a.id.replace(EffectDefinitions.regex, '').toLowerCase().startsWith(StatusEffectSightFlags.DARKVISION.replace(EffectDefinitions.regex, '').toLowerCase());
+    });
+    if(!effectSight){
+      warn(`Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSightFlags.DARKVISION}'`);
+      return;
+    }
     return new Effect({
       customId: StatusEffectSightFlags.TRUE_SIGHT,
       name:
@@ -184,9 +244,9 @@ export class EffectDefinitions {
       transfer: true,
       changes: [
         {
-          key: 'data.attributes.senses.truesight',
+          key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@data.attributes.senses.truesight`,
+          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -194,6 +254,14 @@ export class EffectDefinitions {
   }
 
   static seeinvisible(number) {
+    const effectSight = API.SENSES.find((a: StatusSight) => {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      return a.id.replace(EffectDefinitions.regex, '').toLowerCase().startsWith(StatusEffectSightFlags.DARKVISION.replace(EffectDefinitions.regex, '').toLowerCase());
+    });
+    if(!effectSight){
+      warn(`Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSightFlags.DARKVISION}'`);
+      return;
+    }
     return new Effect({
       customId: StatusEffectSightFlags.SEE_INVISIBLE,
       name:
@@ -209,9 +277,9 @@ export class EffectDefinitions {
       transfer: true,
       changes: [
         {
-          key: 'data.attributes.senses.seeinvisible',
+          key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@data.attributes.senses.seeinvisible`,
+          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -219,6 +287,14 @@ export class EffectDefinitions {
   }
 
   static devilssight(number) {
+    const effectSight = API.SENSES.find((a: StatusSight) => {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      return a.id.replace(EffectDefinitions.regex, '').toLowerCase().startsWith(StatusEffectSightFlags.DARKVISION.replace(EffectDefinitions.regex, '').toLowerCase());
+    });
+    if(!effectSight){
+      warn(`Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSightFlags.DARKVISION}'`);
+      return;
+    }
     return new Effect({
       customId: StatusEffectSightFlags.DEVILS_SIGHT,
       name:
@@ -234,9 +310,9 @@ export class EffectDefinitions {
       transfer: true,
       changes: [
         {
-          key: 'data.attributes.senses.devilssight',
+          key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@data.attributes.senses.devilssight`,
+          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -244,6 +320,14 @@ export class EffectDefinitions {
   }
 
   static lowlightvision(number) {
+    const effectSight = API.SENSES.find((a: StatusSight) => {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      return a.id.replace(EffectDefinitions.regex, '').toLowerCase().startsWith(StatusEffectSightFlags.DARKVISION.replace(EffectDefinitions.regex, '').toLowerCase());
+    });
+    if(!effectSight){
+      warn(`Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSightFlags.DARKVISION}'`);
+      return;
+    }
     return new Effect({
       customId: StatusEffectSightFlags.LOW_LIGHT_VISION,
       name:
@@ -259,9 +343,9 @@ export class EffectDefinitions {
       transfer: true,
       changes: [
         {
-          key: 'data.attributes.senses.lowlightvision',
+          key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@data.attributes.senses.lowlightvision`,
+          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -283,6 +367,14 @@ export class EffectDefinitions {
   }
 
   static blinded(number) {
+    const effectSight = API.SENSES.find((a: StatusSight) => {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      return a.id.replace(EffectDefinitions.regex, '').toLowerCase().startsWith(StatusEffectSightFlags.DARKVISION.replace(EffectDefinitions.regex, '').toLowerCase());
+    });
+    if(!effectSight){
+      warn(`Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSightFlags.DARKVISION}'`);
+      return;
+    }
     return new Effect({
       customId: StatusEffectSightFlags.BLINDED,
       name:

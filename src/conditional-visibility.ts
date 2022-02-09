@@ -67,8 +67,6 @@ Hooks.once('ready', async function () {
   //   warn(`Requires a GM to be connected for players to be able to loot item piles.`, true);
   // }
 
-  checkSystem();
-  registerHotkeys();
   // Do anything once the module is ready
   readyHooks();
 });

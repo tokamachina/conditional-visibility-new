@@ -242,7 +242,9 @@ function getElevationPlaceableObject(placeableObject: any): number {
   }
   const base_elevation =
     //@ts-ignore
-    typeof _levels !== 'undefined' && _levels?.advancedLOS && (placeableObject instanceof Token || placeableObject instanceof TokenDocument)
+    typeof _levels !== 'undefined' &&
+    _levels?.advancedLOS &&
+    (placeableObject instanceof Token || placeableObject instanceof TokenDocument)
       ? //@ts-ignore
         _levels.getTokenLOSheight(token)
       : base.elevation ??

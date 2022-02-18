@@ -5,7 +5,6 @@
   "conditional-visibility.settings.useEagleEye.name": "Use eagle eye (Experimental)",
   "conditional-visibility.settings.useEagleEye.hint": "A embedded version of the module https://github.com/trioderegion/eagle-eye/",
 
-
   "conditional-visibility.setting.reset.name": "Reset settings to default",
   "conditional-visibility.setting.reset.label": "Reset Settings To Default",
   "conditional-visibility.setting.reset.hint": "This will reset all of the settings of back to the active game system's default.",

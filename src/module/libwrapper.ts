@@ -39,7 +39,9 @@ export function registerLibwrappers() {
   }
 }
 
-export function sightLayerPrototypeTestVisibilityHandler(wrapped, point, { tolerance = 2, object = null } = {}) {
+// export function sightLayerPrototypeTestVisibilityHandler(wrapped, point, { tolerance = 2, object = null } = {}) {
+export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
+  const [point, { tolerance = 2, object = null } = {}] = args;
   const res = wrapped(point, { tolerance: tolerance, object: object });
   // need a token object
   if (!object) {
@@ -56,7 +58,19 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, point, { toler
   if (!this.sources || this.sources.size === 0) {
     return res;
   }
-  const visible_to_sources = [...this.sources].map((s) => {
+
+  const uniqueIds = new Set();
+  const mySources = this.sources.filter(element => {
+    const isDuplicate = uniqueIds.has(element.key);
+
+    uniqueIds.add(element.key);
+
+    if (!isDuplicate) {
+      return true;
+    }
+  });
+
+  const visible_to_sources = [...mySources].map((s) => {
     // get the token elevation
     const controlledToken = <Token>s.object;
     // if any active effects blocks, then the token is not visible for that sight source
@@ -65,7 +79,7 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, point, { toler
     return is_visible ?? false;
   }); // [...this.sources].forEach
 
-  const sourcesNames = <string[]>this.sources.contents.map((e) => {
+  const sourcesNames = <string[]>mySources.map((e) => {
     return e.object.data.name;
   });
 
@@ -82,7 +96,7 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, point, { toler
 
 // ============= Eagle Eye  ==============================
 
-export const isVisibleHandler = function (wrapped) {
+export const isVisibleHandler = function (wrapped, ...args) {
   const gm = game.user?.isGM;
   if (this.data.hidden) {
     return gm;
@@ -107,10 +121,8 @@ export const isVisibleHandler = function (wrapped) {
   return canvas.sight.testVisibility(this.center, { tolerance, object: this });
 };
 
-export const updateVisionSourceHandler = function (
-  wrapped,
-  { defer = false, deleted = false, skipUpdateFog = false } = {},
-) {
+export const updateVisionSourceHandler = function (wrapped, ...args) {
+  const [{ defer = false, deleted = false, skipUpdateFog = false } = {}] = args;
   if (!this.vision2) {
     //@ts-ignore
     this.vision2 = new VisionSource(this);
@@ -182,8 +194,10 @@ export const updateVisionSourceHandler = function (
   }
 
   // Schedule a perception update
-  if (!defer && (isVisionSource || deleted))
+  if (!defer && (isVisionSource || deleted)){
     canvas.perception.schedule({
       sight: { refresh: true, noUpdateFog: skipUpdateFog },
     });
+  }
+  return wrapped(...args);
 };

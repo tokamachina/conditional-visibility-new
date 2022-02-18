@@ -93,8 +93,8 @@ export function registerSocket() {
   conditionalVisibilitySocket.register('removeEffectFromIdOnActor', (...args) =>
     API.effectInterface._effectHandler.removeEffectFromIdOnActorArr(...args),
   );
-  conditionalVisibilitySocket.register('toggleEffectByUuid', (...args) =>
-    API.effectInterface._effectHandler.toggleEffectByUuidArr(...args),
+  conditionalVisibilitySocket.register('toggleEffectFromIdOnActor', (...args) =>
+    API.effectInterface._effectHandler.toggleEffectFromIdOnActorArr(...args),
   );
 }
 

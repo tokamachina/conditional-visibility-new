@@ -1,9 +1,9 @@
 {
-  "conditional-visibility.settings.autoStealth.name": "Auto hide on stealth rolls",
-  "conditional-visibility.settings.autoStealth.hint": "On supported game systems, set the hidden condition on a token's stealth roll",
+  "conditional-visibility.setting.autoStealth.name": "Auto hide on stealth rolls",
+  "conditional-visibility.setting.autoStealth.hint": "On supported game systems, set the hidden condition on a token's stealth roll",
 
-  "conditional-visibility.settings.useEagleEye.name": "Use eagle eye (Experimental)",
-  "conditional-visibility.settings.useEagleEye.hint": "A embedded version of the module https://github.com/trioderegion/eagle-eye/",
+  "conditional-visibility.setting.useEagleEye.name": "Use eagle eye (Experimental)",
+  "conditional-visibility.setting.useEagleEye.hint": "A embedded version of the module https://github.com/trioderegion/eagle-eye/",
 
   "conditional-visibility.setting.reset.name": "Reset settings to default",
   "conditional-visibility.setting.reset.label": "Reset Settings To Default",

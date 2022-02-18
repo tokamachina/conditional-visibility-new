@@ -1,7 +1,10 @@
-import FoundryHelpers from '../lib/foundry-helpers';
+import FoundryHelpers from './foundry-helpers';
 import { registerSocket } from '../socket';
 import Effect from './effect';
 import EffectHandler from './effect-handler';
+import { game } from '../settings';
+import { isGMConnected } from '../lib/lib';
+import { ActiveEffectData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 
 /**
  * Interface for working with effects and executing them as a GM via sockets
@@ -54,31 +57,22 @@ export default class EffectInterface {
   //   );
   // }
 
-  /**
-   * Searches through the list of available effects and returns one matching the
-   * effect name. Prioritizes finding custom effects first.
-   *
-   * @param {string} effectName - the effect name to search for
-   * @returns {Effect} the found effect
-   */
-  /**
-   * Toggles the effect on the provided actor UUIDS as the GM via sockets
-   *
-   * @param {string} effectName - name of the effect to toggle
-   * @param {object} params - the effect parameters
-   * @param {string} params.overlay - name of the effect to toggle
-   * @param {string[]} params.uuids - UUIDS of the actors to toggle the effect on
-   * @returns {Promise} a promise that resolves when the GM socket function completes
-   */
-  async findEffectByName(effectName: string) {
-    const effect = this.findEffectByName(effectName);
+  // /**
+  //  * Searches through the list of available effects and returns one matching the
+  //  * effect name. Prioritizes finding custom effects first.
+  //  *
+  //  * @param {string} effectName - the effect name to search for
+  //  * @returns {Effect} the found effect
+  //  */
+  // async findEffectByName(effectName: string) {
+  //   const effect = this.findEffectByName(effectName);
 
-    if (!effect) {
-      ui.notifications?.error(`Effect ${effectName} was not found`);
-      return;
-    }
-    return effect;
-  }
+  //   if (!effect) {
+  //     ui.notifications?.error(`Effect ${effectName} was not found`);
+  //     return;
+  //   }
+  //   return effect;
+  // }
 
   /**
    * Toggles the effect on the provided actor UUIDS as the GM via sockets
@@ -99,19 +93,19 @@ export default class EffectInterface {
       return;
     }
 
-    const effect = this.findEffectByName(effectName);
+    // const effect = this.findEffectByName(effectName);
 
-    if (!effect) {
-      ui.notifications?.error(`Effect ${effectName} was not found`);
-      return;
-    }
+    // if (!effect) {
+    //   ui.notifications?.error(`Effect ${effectName} was not found`);
+    //   return;
+    // }
 
     // if (effect.nestedEffects.length > 0) {
     //   effect = await this.getNestedEffectSelection(effect);
     //   if (!effect) return; // dialog closed without selecting one
     // }
 
-    return this._socket.executeAsGM('toggleEffect', effect.name, {
+    return this._socket.executeAsGM('toggleEffect', effectName, {
       overlay,
       uuids,
     });
@@ -139,12 +133,12 @@ export default class EffectInterface {
    * @returns {Promise} a promise that resolves when the GM socket function completes
    */
   async removeEffect({ effectName, uuid }) {
-    const effect = this.findEffectByName(effectName);
+    // const effect = this.findEffectByName(effectName);
 
-    if (!effect) {
-      ui.notifications?.error(`Effect ${effectName} could not be found`);
-      return;
-    }
+    // if (!effect) {
+    //   ui.notifications?.error(`Effect ${effectName} could not be found`);
+    //   return;
+    // }
 
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
 
@@ -158,7 +152,7 @@ export default class EffectInterface {
     // }
 
     return this._socket.executeAsGM('removeEffect', {
-      effectName: effect.name,
+      effectName: effectName,
       uuid,
     });
   }
@@ -173,12 +167,12 @@ export default class EffectInterface {
    * @returns {Promise} a promise that resolves when the GM socket function completes
    */
   async addEffect({ effectName, uuid, origin }) {
-    const effect = this.findEffectByName(effectName);
+    // const effect = this.findEffectByName(effectName);
 
-    if (!effect) {
-      ui.notifications?.error(`Effect ${effectName} could not be found`);
-      return;
-    }
+    // if (!effect) {
+    //   ui.notifications?.error(`Effect ${effectName} could not be found`);
+    //   return;
+    // }
 
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
 
@@ -192,7 +186,7 @@ export default class EffectInterface {
     // }
 
     return this._socket.executeAsGM('addEffect', {
-      effectName: effect.name,
+      effectName: effectName,
       uuid,
       origin,
     });
@@ -283,9 +277,9 @@ export default class EffectInterface {
   //   );
   // }
 
-  // =====================================
-  // Additional
-  // =====================================
+  // ============================================================
+  // Additional feature for retrocompatibility
+  // ============================================================
 
   /**
    * Checks to see if any of the current active effects applied to the actor
@@ -304,7 +298,7 @@ export default class EffectInterface {
    * Checks to see if any of the current active effects applied to the actor
    * with the given UUID match the effect name and are a convenient effect
    *
-   * @param {string} effectName - the name of the effect to check
+   * @param {string} effectId - the id of the effect to check
    * @param {string} uuid - the uuid of the actor to see if the effect is
    * applied to
    * @returns {boolean} true if the effect is applied, false otherwise
@@ -321,18 +315,26 @@ export default class EffectInterface {
    * @param {string} uuid - the uuid of the actor to remove the effect from
    */
   async removeEffectOnActor(effectName: string, uuid: string) {
-    return this._socket.executeAsGM('removeEffectOnActor', effectName, uuid);
+    if (isGMConnected()) {
+      return this._socket.executeAsGM('removeEffectOnActor', effectName, uuid);
+    } else {
+      return this._effectHandler.removeEffectOnActor(effectName, uuid);
+    }
   }
 
   /**
    * Removes the effect with the provided name from an actor matching the
    * provided UUID
    *
-   * @param {string} effectName - the name of the effect to remove
+   * @param {string} effectId - the id of the effect to remove
    * @param {string} uuid - the uuid of the actor to remove the effect from
    */
-  async removeEffectFromIdOnActor(effectToRemoveId: string, uuid: string) {
-    return this._socket.executeAsGM('removeEffectFromIdOnActor', effectToRemoveId, uuid);
+  async removeEffectFromIdOnActor(effectId: string, uuid: string) {
+    if (isGMConnected()) {
+      return this._socket.executeAsGM('removeEffectFromIdOnActor', effectId, uuid);
+    } else {
+      return this._effectHandler.removeEffectFromIdOnActor(effectId, uuid);
+    }
   }
 
   /**
@@ -356,51 +358,92 @@ export default class EffectInterface {
     // if (effect.nestedEffects.length > 0) {
     //   effect = await this.getNestedEffectSelection(effect);
     // }
-
-    return this._socket.executeAsGM('addEffectOnActor', effect.name, uuid, undefined, false, effect);
+    if (isGMConnected()) {
+      return this._socket.executeAsGM('addEffectOnActor', effect.name, uuid, undefined, false, effect);
+    } else {
+      return this._effectHandler.addEffectOnActor(effect.name, uuid, undefined, false, effect);
+    }
   }
 
-  async toggleEffectByUuid(effectId: string, alwaysDelete = false) {
+  async toggleEffectFromIdOnActor(
+    effectId: string,
+    uuid: string,
+    alwaysDelete: boolean,
+    forceEnabled?: boolean,
+    forceDisabled?: boolean,
+  ) {
     if (effectId.length == 0) {
       ui.notifications?.error(`Please select or target a active effect to toggle ${effectId}`);
       return;
     }
 
-    const effect = <ActiveEffect>await fromUuid(effectId);
+    const actor = <Actor>game.actors?.get(uuid);
+    const effect = <ActiveEffect>actor.effects.find((entity: ActiveEffect) => {
+      return <string>entity.id == effectId;
+    });
 
     if (!effect) {
       ui.notifications?.error(`Effect ${effectId} was not found`);
       return;
     }
 
-    return this._socket.executeAsGM('toggleEffectByUuid', effect.id, alwaysDelete);
+    if (isGMConnected()) {
+      return this._socket.executeAsGM(
+        'toggleEffectFromIdOnActor',
+        effectId,
+        uuid,
+        alwaysDelete,
+        forceEnabled,
+        forceDisabled,
+      );
+    } else {
+      return this._effectHandler.toggleEffectFromIdOnActor(effectId, uuid, alwaysDelete, forceEnabled, forceDisabled);
+    }
+  }
+
+  /**
+   * Adds the effect with the provided name to an actor matching the provided
+   * UUID
+   *
+   * @param {string} uuid - the uuid of the actor to add the effect to
+   * @param {string} activeEffectData - the name of the effect to add
+   */
+  async addActiveEffectOnActor(uuid, activeEffectData: ActiveEffectData) {
+    if (isGMConnected()) {
+      return this._socket.executeAsGM('addActiveEffectOnActor', uuid, activeEffectData);
+    } else {
+      return this._effectHandler.addActiveEffectOnActor(uuid, activeEffectData);
+    }
   }
 
   /**
    * Toggles the effect on the provided actor UUIDS as the GM via sockets
    *
    * @param {string} effectName - name of the effect to toggle
-   * @param {object} params - the effect parameters
-   * @param {string} params.overlay - name of the effect to toggle
-   * @param {string[]} params.uuids - UUIDS of the actors to toggle the effect on
+   * @param {string} uuid - UUID of the actor to toggle the effect on
    * @returns {Promise} a promise that resolves when the GM socket function completes
    */
-  async findEffectByNameOnActor(effectName: string, overlay = false, uuids = <string[]>[]) {
-    if (uuids.length == 0) {
-      uuids = this._foundryHelpers.getActorUuidsFromCanvas();
-    }
+  async findEffectByNameOnActor(effectName: string, uuid): Promise<ActiveEffect | null> {
+    // if (uuids.length == 0) {
+    //   uuids = this._foundryHelpers.getActorUuidsFromCanvas();
+    // }
 
-    if (uuids.length == 0) {
-      ui.notifications?.error(`Please select or target a token to toggle ${effectName}`);
-      return;
-    }
+    // if (uuids.length == 0) {
+    //   ui.notifications?.error(`Please select or target a token to toggle ${effectName}`);
+    //   return null;
+    // }
 
-    const effect = this.findEffectByName(effectName);
+    // const effect = this.findEffectByName(effectName);
 
-    if (!effect) {
-      ui.notifications?.error(`Effect ${effectName} was not found`);
-      return;
+    // if (!effect) {
+    //   ui.notifications?.error(`Effect ${effectName} was not found`);
+    //   return null;
+    // }
+    // return effect;
+    if (isGMConnected()) {
+      return this._socket.executeAsGM('findEffectByNameOnActor', effectName, uuid);
+    } else {
+      return this._effectHandler.findEffectByNameOnActor(effectName, uuid);
     }
-    return effect;
   }
 }

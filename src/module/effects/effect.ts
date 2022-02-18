@@ -87,7 +87,8 @@ export default class Effect {
       }),
       origin: origin ? origin : this.origin ? this.origin : '', // MOD 4535992
       transfer: this.transfer ?? false,
-      changes: this.changes,
+      //changes: this.changes, // MOD 4535992
+      changes: this._handleIntegrations(),
     };
   }
 
@@ -142,6 +143,20 @@ export default class Effect {
 
     return undefined;
   }
+
+  // =============================================
+
+  _handleIntegrations() {
+    const arrChanges = this.changes || [];
+    if (this.atlChanges.length > 0) {
+      arrChanges.push(...this.atlChanges);
+    }
+
+    if (this.tokenMagicChanges.length > 0) {
+      arrChanges.push(...this.tokenMagicChanges);
+    }
+    return arrChanges;
+  }
 }
 
 /**
@@ -152,6 +167,7 @@ export class Constants {
     COLD_FIRE: '#389888',
     FIRE: '#f98026',
     WHITE: '#ffffff',
+    MOON_TOUCHED: '#f4f1c9',
   };
 
   static SECONDS = {

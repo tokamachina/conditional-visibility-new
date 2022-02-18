@@ -5,6 +5,7 @@ import { StatusSight } from './conditional-visibility-models';
 import HOOKS from './hooks';
 import { EnhancedConditions } from './cub/enhanced-conditions';
 import { canvas, game } from './settings';
+import Effect from './effects/effect';
 
 export default class API {
   // static get effectInterface(): EffectInterface {
@@ -109,5 +110,44 @@ export default class API {
       }
     });
     return game.settings.set(CONSTANTS.MODULE_NAME, 'conditions', inAttributes);
+  }
+
+  static async addEffect(actorId: string, effectName: string, effect: Effect) {
+    const result = await API.effectInterface.addEffectOnActor(effectName, <string>actorId, effect);
+    return result;
+  }
+
+  static async findEffectByNameOnActor(actorId: string, effectName: string): Promise<ActiveEffect | null> {
+    return await API.effectInterface.findEffectByNameOnActor(effectName, <string>actorId);
+  }
+
+  static async hasEffectAppliedOnActor(actorId: string, effectName: string) {
+    return await API.effectInterface.hasEffectAppliedOnActor(effectName, <string>actorId);
+  }
+
+  static async hasEffectAppliedFromIdOnActor(actorId: string, effectId: string) {
+    return await API.effectInterface.hasEffectAppliedFromIdOnActor(effectId, <string>actorId);
+  }
+
+  static async toggleEffectOnActor(
+    actorId: string,
+    effectId: string,
+    alwaysDelete: boolean,
+    forceEnabled?: boolean,
+    forceDisabled?: boolean,
+  ) {
+    const result = await API.effectInterface.toggleEffectFromIdOnActor(
+      effectId,
+      <string>actorId,
+      alwaysDelete,
+      forceEnabled,
+      forceDisabled,
+    );
+    return result;
+  }
+
+  static async addActiveEffectOnActor(actorId: string, activeEffect: ActiveEffect) {
+    const result = API.effectInterface.addActiveEffectOnActor(<string>actorId, activeEffect.data);
+    return result;
   }
 }

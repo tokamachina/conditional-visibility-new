@@ -61,7 +61,7 @@ export const registerSettings = function (): void {
     scope: 'world',
     config: false,
     //@ts-ignore
-    default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.SENSES : [],
+    default: SYSTEMS.DATA ? SYSTEMS.DATA.SENSES : [],
     type: Array,
   });
 
@@ -69,7 +69,7 @@ export const registerSettings = function (): void {
     scope: 'world',
     config: false,
     //@ts-ignore
-    default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.CONDITIONS : [],
+    default: SYSTEMS.DATA ? SYSTEMS.DATA.CONDITIONS : [],
     type: Array,
   });
 

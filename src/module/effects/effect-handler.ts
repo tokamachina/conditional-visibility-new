@@ -1,9 +1,12 @@
 import { error, i18n, log } from '../lib/lib';
-import FoundryHelpers from '../lib/foundry-helpers';
+import FoundryHelpers from './foundry-helpers';
 import { canvas, game } from '../settings';
 import Effect from './effect';
 import EmbeddedCollection from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs';
-import { ActorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
+import {
+  ActiveEffectData,
+  ActorData,
+} from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 
 export default class EffectHandler {
   _customEffects: Effect[];
@@ -39,7 +42,7 @@ export default class EffectHandler {
         await this.removeEffect({ effectName, uuid });
       } else {
         const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
-        const origin = `Actor.${actor.data._id}`;
+        const origin = `Actor.${actor.id}`;
         await this.addEffect({ effectName, effectData: null, uuid, origin, overlay });
       }
     }
@@ -72,10 +75,11 @@ export default class EffectHandler {
    */
   async hasEffectApplied(effectName, uuid) {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
-    return actor?.data?.effects?.some(
+    const isApplied = actor?.data?.effects?.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
       (activeEffect) => <string>activeEffect?.data?.label == effectName && !activeEffect?.data?.disabled,
     );
+    return isApplied;
   }
 
   /**
@@ -151,7 +155,7 @@ export default class EffectHandler {
     }
 
     if (!origin) {
-      origin = `Actor.${actor.data._id}`;
+      origin = `Actor.${actor.id}`;
     }
     effect.origin = origin;
     effect.overlay = overlay;
@@ -219,11 +223,11 @@ export default class EffectHandler {
     }
   }
 
-  _addAtlChangesToEffect(effect) {
+  _addAtlChangesToEffect(effect: Effect) {
     effect.changes.push(...effect.atlChanges);
   }
 
-  _addTokenMagicChangesToEffect(effect) {
+  _addTokenMagicChangesToEffect(effect: Effect) {
     effect.changes.push(...effect.tokenMagicChanges);
   }
 
@@ -299,7 +303,7 @@ export default class EffectHandler {
    * @param {string} effectName - the effect name to search for
    * @returns {Effect} the found effect
    */
-  async findEffectByNameOnActor(effectName, uuid): Promise<Effect | null> {
+  async findEffectByNameOnActor(effectName: string, uuid: string): Promise<ActiveEffect | null> {
     if (effectName) {
       effectName = i18n(effectName);
     }
@@ -307,7 +311,7 @@ export default class EffectHandler {
     // return await (<ActiveEffect>(
     //   actor?.data?.effects?.find((activeEffect) => <string>activeEffect?.data?.label == effectName)
     // ));
-    let effect: Effect | null = null;
+    let effect: ActiveEffect | null = null;
     if (!effectName) {
       return effect;
     }
@@ -322,7 +326,8 @@ export default class EffectHandler {
       // use replace() method to match and remove all the non-alphanumeric characters
       const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
       if (effectNameToCheckOnActor.toLowerCase().startsWith(effectName.toLowerCase())) {
-        effect = this.convertToEffectClass(effectEntity);
+        // effect = this.convertToEffectClass(effectEntity);
+        effect = effectEntity;
         break;
       }
     }
@@ -336,7 +341,7 @@ export default class EffectHandler {
    * @param {string} effectName - the effect name to search for
    * @returns {Effect} the found effect
    */
-  async findEffectByNameOnActorArr(...inAttributes: any[]): Promise<Effect | null> {
+  async findEffectByNameOnActorArr(...inAttributes: any[]): Promise<ActiveEffect | null> {
     if (!Array.isArray(inAttributes)) {
       throw error('findEffectByNameOnActorArr | inAttributes must be of type array');
     }
@@ -358,10 +363,11 @@ export default class EffectHandler {
       effectName = i18n(effectName);
     }
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
-    return actor?.data?.effects?.some(
+    const isApplied = actor?.data?.effects?.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
       (activeEffect) => <string>activeEffect?.data?.label == effectName,
     );
+    return isApplied;
   }
 
   /**
@@ -392,10 +398,11 @@ export default class EffectHandler {
    */
   async hasEffectAppliedFromIdOnActor(effectId, uuid): Promise<boolean> {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
-    return actor?.data?.effects?.some(
+    const isApplied = actor?.data?.effects?.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?._id == effectId,
-      (activeEffect) => <string>activeEffect?.data?._id == effectId,
+      (activeEffect) => <string>activeEffect?.id == effectId,
     );
+    return isApplied;
   }
 
   /**
@@ -463,14 +470,14 @@ export default class EffectHandler {
    * @param {string} effectId - the id of the effect to remove
    * @param {string} uuid - the uuid of the actor to remove the effect from
    */
-  async removeEffectFromIdOnActor(effectToRemoveId, uuid) {
-    if (effectToRemoveId) {
+  async removeEffectFromIdOnActor(effectId, uuid) {
+    if (effectId) {
       const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
       //actor.deleteEmbeddedDocuments('ActiveEffect', [<string>effectToRemoveId]);
       // Why i need this ??? for avoid the double AE
       const effectToRemove = <ActiveEffect>actor.data.effects.find(
-        //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectToRemoveId,
-        (activeEffect) => <string>activeEffect.id == effectToRemoveId,
+        //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectId,
+        (activeEffect) => <string>activeEffect.id == effectId,
       );
       await effectToRemove.update({ disabled: true });
       await effectToRemove.delete();
@@ -489,8 +496,8 @@ export default class EffectHandler {
     if (!Array.isArray(inAttributes)) {
       throw error('removeEffectFromIdOnActor | inAttributes must be of type array');
     }
-    const [effectToRemoveId, uuid] = inAttributes;
-    return this.removeEffectFromIdOnActor(effectToRemoveId, uuid);
+    const [effectId, uuid] = inAttributes;
+    return this.removeEffectFromIdOnActor(effectId, uuid);
   }
 
   /**
@@ -510,7 +517,7 @@ export default class EffectHandler {
     if (effect) {
       const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
       if (!origin) {
-        origin = `Actor.${actor.data._id}`;
+        origin = `Actor.${actor.id}`;
       }
       const activeEffectData = effect.convertToActiveEffectData({
         origin,
@@ -539,8 +546,17 @@ export default class EffectHandler {
   /**
    * @href https://github.com/ElfFriend-DnD/foundryvtt-temp-effects-as-statuses/blob/main/scripts/temp-effects-as-statuses.js
    */
-  async toggleEffectByUuid(uuid: string, alwaysDelete = false) {
-    const effect = <ActiveEffect>await fromUuid(uuid);
+  async toggleEffectFromIdOnActor(
+    effectId: string,
+    uuid: string,
+    alwaysDelete: boolean,
+    forceEnabled?: boolean,
+    forceDisabled?: boolean,
+  ) {
+    const actor = <Actor>game.actors?.get(uuid);
+    const effect = <ActiveEffect>actor.effects.find((entity: ActiveEffect) => {
+      return <string>entity.id == effectId;
+    });
     // nuke it if it has a statusId
     // brittle assumption
     // provides an option to always do this
@@ -548,20 +564,55 @@ export default class EffectHandler {
       const deleted = await effect.delete();
       return !!deleted;
     }
-
-    // otherwise toggle its disabled status
-    const updated = await effect.update({
-      disabled: !effect.data.disabled,
-    });
+    let updated;
+    if (forceEnabled && effect.data.disabled) {
+      updated = await effect.update({
+        disabled: false,
+      });
+    } else if (forceDisabled && !effect.data.disabled) {
+      updated = await effect.update({
+        disabled: true,
+      });
+    } else {
+      // otherwise toggle its disabled status
+      updated = await effect.update({
+        disabled: !effect.data.disabled,
+      });
+    }
 
     return !!updated;
   }
 
-  async toggleEffectByUuidArr(...inAttributes) {
+  async toggleEffectFromIdOnActorArr(...inAttributes) {
     if (!Array.isArray(inAttributes)) {
       throw error('addEffectOnActorArr | inAttributes must be of type array');
     }
-    const [uuid, alwaysDelete] = inAttributes;
-    return this.toggleEffectByUuid(uuid, alwaysDelete);
+    const [effectId, uuid, alwaysDelete, forceEnabled, forceDisabled] = inAttributes;
+    return this.toggleEffectFromIdOnActor(effectId, uuid, alwaysDelete, forceEnabled, forceDisabled);
+  }
+
+  /**
+   * Adds the effect with the provided name to an actor matching the provided
+   * UUID
+   *
+   * @param {string} uuid - the uuid of the actor to add the effect to
+   * @param {string} activeEffectData - the name of the effect to add
+   */
+  async addActiveEffectOnActor(uuid, activeEffectData: ActiveEffectData) {
+    if (activeEffectData) {
+      const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
+      activeEffectData.origin = `Actor.${actor.id}`;
+      //@ts-ignore
+      actor.createEmbeddedDocuments('ActiveEffect', [activeEffectData]);
+      log(`Added effect ${activeEffectData.label} to ${actor.name} - ${actor.id}`);
+    }
+  }
+
+  async addActiveEffectOnActorArr(...inAttributes) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('addActiveEffectOnActorArr | inAttributes must be of type array');
+    }
+    const [uuid, activeEffectData] = inAttributes;
+    return this.addActiveEffectOnActor(uuid, activeEffectData);
   }
 }

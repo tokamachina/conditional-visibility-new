@@ -74,7 +74,7 @@ export const i18nFormat = (key: string, data = {}): string => {
 export function dialogWarning(message, icon = 'fas fa-exclamation-triangle') {
   return `<p class="${CONSTANTS.MODULE_NAME}-dialog">
         <i style="font-size:3rem;" class="${icon}"></i><br><br>
-        <strong style="font-size:1.2rem;">Item Piles</strong>
+        <strong style="font-size:1.2rem;">${CONSTANTS.MODULE_NAME}</strong>
         <br><br>${message}
     </p>`;
 }
@@ -242,7 +242,7 @@ function getElevationPlaceableObject(placeableObject: any): number {
   }
   const base_elevation =
     //@ts-ignore
-    typeof _levels !== 'undefined' && _levels?.advancedLOS
+    typeof _levels !== 'undefined' && _levels?.advancedLOS && (placeableObject instanceof Token || placeableObject instanceof TokenDocument)
       ? //@ts-ignore
         _levels.getTokenLOSheight(token)
       : base.elevation ??

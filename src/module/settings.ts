@@ -51,28 +51,6 @@ export const registerSettings = function (): void {
     restricted: true,
   });
 
-  // const settings = defaultSettings();
-  // for (const [name, data] of Object.entries(settings)) {
-  //   //@ts-ignore
-  //   game.settings.register(CONSTANTS.MODULE_NAME, name, data);
-  // }
-
-  game.settings.register(CONSTANTS.MODULE_NAME, 'senses', {
-    scope: 'world',
-    config: false,
-    //@ts-ignore
-    default: SYSTEMS.DATA ? SYSTEMS.DATA.SENSES : [],
-    type: Array,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_NAME, 'conditions', {
-    scope: 'world',
-    config: false,
-    //@ts-ignore
-    default: SYSTEMS.DATA ? SYSTEMS.DATA.CONDITIONS : [],
-    type: Array,
-  });
-
   // =====================================================================
 
   game.settings.register(CONSTANTS.MODULE_NAME, 'useEagleEye', {
@@ -116,12 +94,14 @@ export const registerSettings = function (): void {
     type: Boolean,
   });
 
-  //   game.settings.register(CONSTANTS.MODULE_NAME, 'monksActiveTilesDropItemWarning', {
-  //     scope: 'world',
-  //     config: false,
-  //     default: false,
-  //     type: Boolean,
-  //   });
+  const settings = defaultSettings();
+  for (const [name, data] of Object.entries(settings)) {
+    game.settings.register(CONSTANTS.MODULE_NAME, name, data);
+  }
+
+  // for (const [name, data] of Object.entries(otherSettings)) {
+  //     game.settings.register(CONSTANTS.MODULE_NAME, name, data);
+  // }
 };
 
 class ResetSettingsDialog extends FormApplication<FormApplicationOptions, object, any> {
@@ -161,6 +141,10 @@ class ResetSettingsDialog extends FormApplication<FormApplicationOptions, object
 async function applyDefaultSettings() {
   const settings = defaultSettings(true);
   for (const [name, data] of Object.entries(settings)) {
+    await game.settings.set(CONSTANTS.MODULE_NAME, name, data.default);
+  }
+  const settings2 = otherSettings(true);
+  for (const [name, data] of Object.entries(settings2)) {
     //@ts-ignore
     await game.settings.set(CONSTANTS.MODULE_NAME, name, data.default);
   }
@@ -190,6 +174,46 @@ function defaultSettings(apply = false) {
     //   default: 10,
     //   type: Number,
     // },
+  };
+}
+
+function otherSettings(apply = false) {
+  return {
+    debug: {
+      name: `${CONSTANTS.MODULE_NAME}.setting.debug.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.debug.hint`,
+      scope: 'client',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+
+    debugHooks: {
+      name: `${CONSTANTS.MODULE_NAME}.setting.debugHooks.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.debugHooks.hint`,
+      scope: 'world',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
+
+    systemFound: {
+      name: `${CONSTANTS.MODULE_NAME}.setting.systemFound.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.systemFound.hint`,
+      scope: 'world',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
+
+    systemNotFoundWarningShown: {
+      name: `${CONSTANTS.MODULE_NAME}.setting.systemNotFoundWarningShown.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.systemNotFoundWarningShown.hint`,
+      scope: 'world',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
   };
 }
 

@@ -60,7 +60,7 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
   }
 
   const uniqueIds = new Set();
-  const mySources = this.sources.filter(element => {
+  const mySources = this.sources.filter((element) => {
     const isDuplicate = uniqueIds.has(element.key);
 
     uniqueIds.add(element.key);
@@ -194,7 +194,7 @@ export const updateVisionSourceHandler = function (wrapped, ...args) {
   }
 
   // Schedule a perception update
-  if (!defer && (isVisionSource || deleted)){
+  if (!defer && (isVisionSource || deleted)) {
     canvas.perception.schedule({
       sight: { refresh: true, noUpdateFog: skipUpdateFog },
     });

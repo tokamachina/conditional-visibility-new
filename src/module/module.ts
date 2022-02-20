@@ -76,10 +76,12 @@ export const readyHooks = async (): Promise<void> => {
   // });
 
   Hooks.on('updateToken', (document: TokenDocument, change, options, userId) => {
-    const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(<Token>document.object);
-    if (sourceVisionCapabilities.hasSenses()) {
-      const sourceVisionLevels = getSensesFromToken(<Token>document.object);
-      prepareActiveEffectForConditionalVisibility(<Token>document.object, sourceVisionCapabilities);
+    if(change.flags && change.flags[CONSTANTS.MODULE_NAME]){
+      const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(<Token>document.object);
+      if (sourceVisionCapabilities.hasSenses()) {
+        const sourceVisionLevels = getSensesFromToken(<Token>document.object);
+        prepareActiveEffectForConditionalVisibility(<Token>document.object, sourceVisionCapabilities);
+      }
     }
   });
 };

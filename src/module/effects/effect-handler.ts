@@ -75,12 +75,13 @@ export default class EffectHandler {
    */
   async hasEffectApplied(effectName: string, uuid: string) {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
+    const regex = /[^A-Za-z0-9]/g;
     const isApplied = actor?.data?.effects?.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
       (activeEffect) => {
         if (
           (activeEffect?.data?.label.toLowerCase() == effectName.toLowerCase() ||
-            activeEffect?.data?.label.toLowerCase().startsWith(effectName.toLowerCase())) &&
+            activeEffect?.data?.label.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase())) &&
           !activeEffect?.data?.disabled
         ) {
           return true;
@@ -274,8 +275,7 @@ export default class EffectHandler {
           continue;
         }
         // use replace() method to match and remove all the non-alphanumeric characters
-        const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
-        if (effectNameToCheckOnActor.toLowerCase().startsWith(effectName.toLowerCase())) {
+        if (effectNameToSet.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase())) {
           effect = Effect.convertToEffectClass(effectEntity);
         }
       }
@@ -334,8 +334,7 @@ export default class EffectHandler {
         continue;
       }
       // use replace() method to match and remove all the non-alphanumeric characters
-      const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
-      if (effectNameToCheckOnActor.toLowerCase().startsWith(effectName.toLowerCase())) {
+      if (effectNameToSet.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase())) {
         // effect = this.convertToEffectClass(effectEntity);
         effect = effectEntity;
         break;
@@ -373,12 +372,13 @@ export default class EffectHandler {
       effectName = i18n(effectName);
     }
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
+    const regex = /[^A-Za-z0-9]/g;
     const isApplied = actor?.data?.effects?.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
       (activeEffect) => {
         if (
-          (activeEffect?.data?.label.toLowerCase() == effectName.toLowerCase() ||
-            activeEffect?.data?.label.toLowerCase().startsWith(effectName.toLowerCase())) &&
+          (activeEffect?.data?.label.replace(regex, '').toLowerCase() == effectName.replace(regex, '').toLowerCase() ||
+            activeEffect?.data?.label.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase())) &&
           !activeEffect?.data?.disabled
         ) {
           return true;

@@ -69,7 +69,7 @@ export default {
     {
       id: StatusEffectSenseFlags.SEE_INVISIBLE,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.SEE_INVISIBLE}`,
-      path: 'data.attributes.senses.seeinvisible',
+      path: 'data.attributes.senses.seeinvisible', // data.attributes.senses.special
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/shadow_11.jpg`,
       //effect: EffectDefinitions.seeinvisible(0),
       visionLevelMin: 0,
@@ -99,7 +99,7 @@ export default {
     {
       id: StatusEffectSenseFlags.DEVILS_SIGHT,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.DEVILS_SIGHT}`,
-      path: 'data.attributes.senses.devilssight',
+      path: 'data.attributes.senses.devilssight', // data.attributes.senses.special
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/blue_17.jpg`,
       //effect: EffectDefinitions.devilssight(0),
       visionLevelMin: 0,

@@ -75,6 +75,10 @@ export function registerSocket() {
   conditionalVisibilitySocket.register('toggleEffectFromIdOnActor', (...args) =>
     API.effectInterface._effectHandler.toggleEffectFromIdOnActorArr(...args),
   );
+  conditionalVisibilitySocket.register('findEffectByNameOnActor', (...args) =>
+    API.effectInterface._effectHandler.findEffectByNameOnActorArr(...args),
+  );
+  return conditionalVisibilitySocket;
 }
 
 async function callHook(inHookName, ...args) {

@@ -132,15 +132,17 @@ export class VisionCapabilities {
       API.SENSES.forEach((statusSight) => {
         const statusEffect = <StatusEffect>{
           visionLevelValue: <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id) ?? 0,
+          statusSight: statusSight
         };
         this.senses.set(statusSight.id, statusEffect);
       });
 
-      // CONDTIONS
+      // CONDITIONS
 
       API.CONDITIONS.forEach((statusSight) => {
         const statusEffect = <StatusEffect>{
           visionLevelValue: <number>srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id) ?? 0,
+          statusSight: statusSight
         };
         this.conditions.set(statusSight.id, statusEffect);
       });

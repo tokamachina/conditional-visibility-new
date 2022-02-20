@@ -207,125 +207,43 @@ export async function prepareActiveEffectForConditionalVisibility(
     return;
   }
 
-  const regex = /[^A-Za-z0-9]/g;
-  const actor = <Actor>sourceToken.document.getActor();
+  // const actor = <Actor>sourceToken.document.getActor();
 
   for (const [key, sense] of visionCapabilities.retrieveSenses()) {
-    // // use replace() method to match and remove all the non-alphanumeric characters
-    // const effectNameToCheckOnActor = <string>sense.statusSight?.name.replace(regex, '');
-    // if (!(await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor))) {
-    //   await API.addEffectConditionalVisibility(
-    //     actor,
-    //     effectNameToCheckOnActor,
-    //     sense.visionDistanceValue,
-    //     sense.visionDistanceValue,
-    //   );
-    // }
     // use replace() method to match and remove all the non-alphanumeric characters
-    const effectNameToCheckOnActor = <string>sense.statusSight?.name.replace(regex, '');
-    if (!(await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor))) {
-      await API.addEffectConditionalVisibility(
-        <string>sourceToken.actor?.id,
-        effectNameToCheckOnActor,
-        sense.visionDistanceValue,
-        sense.visionDistanceValue,
-      );
+    const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
+    if(sense.visionLevelValue && sense.visionLevelValue != 0){
+      if (!await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)) {
+        await API.addEffectConditionalVisibility(
+          <string>sourceToken.actor?.id,
+          effectNameToCheckOnActor,
+          sense.visionDistanceValue,
+          sense.visionLevelValue,
+        );
+      } else {
+        // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
+        const activeEffectToRemove = <ActiveEffect>(
+          await API.findEffectByNameOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)
+        );
+        if(activeEffectToRemove){
+          await API.removeEffectFromIdOnActor(<string>sourceToken.actor?.id, <string>activeEffectToRemove.id);
+        }
+        await API.addEffectConditionalVisibility(
+          <string>sourceToken.actor?.id,
+          effectNameToCheckOnActor,
+          sense.visionDistanceValue,
+          sense.visionLevelValue,
+        );
+      }
     } else {
-      // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
-      const activeEffectToRemove = <ActiveEffect>(
-        await API.findEffectByNameOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)
-      );
-      await API.removeEffectFromIdOnActor(<string>sourceToken.actor?.id, <string>activeEffectToRemove.id);
-      await API.addEffectConditionalVisibility(
-        <string>sourceToken.actor?.id,
-        effectNameToCheckOnActor,
-        sense.visionDistanceValue,
-        sense.visionDistanceValue,
-      );
+      if (await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)) {
+        const activeEffectToRemove = <ActiveEffect>(
+          await API.findEffectByNameOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)
+        );
+        await API.removeEffectFromIdOnActor(<string>sourceToken.actor?.id, <string>activeEffectToRemove.id);
+      }
     }
   }
-
-  // let visionLevelValue: number | undefined;
-  // let visionDistanceValue: number | undefined;
-  // let statuSightToCheck: StatusSight | undefined;
-
-  // const actor = <Actor>sourceToken.document.getActor();
-  // const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects;
-  // for (const effectEntity of actorEffects) {
-  //   const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
-  //   if (!effectNameToSet) {
-  //     continue;
-  //   }
-  //   // use replace() method to match and remove all the non-alphanumeric characters
-  //   const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
-  //   const effectSight = Array.from(visionCapabilities.retrieveSenses().values()).find((a: StatusEffect) => {
-  //     return effectNameToCheckOnActor.toLowerCase().startsWith(<string>a.statusSight?.id.toLowerCase());
-  //   });
-  //   // if is a AE with the label of the module (no id sorry)
-  //   if (effectSight) {
-  //     const distance = getDistanceFromActiveEffect(effectEntity);
-  //     //Look up for ATCV to manage vision level
-  //     // TODO
-  //     // TODO for now every active effect can have only one ATCV key ate the time not sure if manage
-  //     // TODO
-  //     const atcvValue = Number(
-  //       effectEntity.data.changes.find((aee) => {
-  //         if (aee.key.toLowerCase().startsWith(('ATCV.' + effectSight.id).toLowerCase())) {
-  //           return aee.value;
-  //         }
-  //       }),
-  //     );
-  //     visionDistanceValue = distance;
-  //     visionLevelValue = atcvValue;
-  //     statuSightToCheck = effectSight;
-  //     break;
-  //   }
-  // }
-  // if (statuSightToCheck) {
-  //   const visionCapabilitiesVisionlevel = visionCapabilities.retrieveSenseValue(<string>statuSightToCheck?.id);
-  //   if (!visionCapabilitiesVisionlevel || visionCapabilitiesVisionlevel != 0) {
-  //     visionLevelValue = visionCapabilitiesVisionlevel;
-  //   }
-
-  //   if (!visionLevelValue || visionLevelValue == 0) {
-  //     // use replace() method to match and remove all the non-alphanumeric characters
-  //     const effectNameToCheckOnActor = <string>statuSightToCheck?.name.replace(regex, '');
-  //     if (await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)) {
-  //       const activeEffect = <ActiveEffect>(
-  //         await API.findEffectByNameOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)
-  //       );
-  //       const effect = Effect.convertToEffectClass(activeEffect);
-  //       const effectChangeData = effect.atcvChanges.find((k) => {
-  //         return k.key == 'ATCV.' + statuSightToCheck?.id;
-  //       });
-  //       visionLevelValue = Number(effectChangeData?.value);
-  //     }
-  //   }
-  // }
-  // if (visionLevelValue && visionLevelValue > 0) {
-  //   // use replace() method to match and remove all the non-alphanumeric characters
-  //   const effectNameToCheckOnActor = <string>statuSightToCheck?.name.replace(regex, '');
-  //   if (!(await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor))) {
-  //     await API.addEffectConditionalVisibility(
-  //       <string>sourceToken.actor?.id,
-  //       effectNameToCheckOnActor,
-  //       visionDistanceValue,
-  //       visionLevelValue,
-  //     );
-  //   } else {
-  //     // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
-  //     const activeEffectToRemove = <ActiveEffect>(
-  //       await API.findEffectByNameOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)
-  //     );
-  //     await API.removeEffectFromIdOnActor(<string>sourceToken.actor?.id, <string>activeEffectToRemove.id);
-  //     await API.addEffectConditionalVisibility(
-  //       <string>sourceToken.actor?.id,
-  //       effectNameToCheckOnActor,
-  //       visionDistanceValue,
-  //       visionLevelValue,
-  //     );
-  //   }
-  // }
 }
 
 export function getSensesFromToken(token: Token): StatusEffect[] {
@@ -354,7 +272,7 @@ function _getActiveEffectsFromToken(token: Token, statusSights: StatusSight[]): 
     // use replace() method to match and remove all the non-alphanumeric characters
     const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
     const effectSight = statusSights.find((a: StatusSight) => {
-      return effectNameToCheckOnActor.toLowerCase().startsWith(a.id.toLowerCase());
+      return effectNameToCheckOnActor.replace(regex, '').toLowerCase().startsWith(a.id.replace(regex, '').toLowerCase());
     });
     // if is a AE with the label of the module (no id sorry)
     if (effectSight) {
@@ -390,6 +308,7 @@ function _getActiveEffectsFromToken(token: Token, statusSights: StatusSight[]): 
 }
 
 export function getVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effectSight: StatusSight): number {
+  const regex = /[^A-Za-z0-9]/g;
   //Look up for ATCV to manage vision level
   // TODO for now every active effect can have only one ATCV key ate the time not sure if manage
   let atcvValue = 0;
@@ -399,7 +318,7 @@ export function getVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effec
   }
   atcvValue = Number(
     effectEntity.data.changes.find((aee) => {
-      if (aee.key.toLowerCase().startsWith(('ATCV.' + effectSight.id).toLowerCase())) {
+      if (aee.key.replace(regex, '').toLowerCase().startsWith(('ATCV.' + effectSight.id).replace(regex, '').toLowerCase())) {
         return aee.value;
       }
     }),
@@ -408,6 +327,7 @@ export function getVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effec
 }
 
 export function getDistanceFromActiveEffect(effectEntity: ActiveEffect): number {
+  const regex = /[^A-Za-z0-9]/g;
   let distance = 0;
   const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
   if (!effectNameToSet) {

@@ -65,9 +65,9 @@ export const readyHooks = async (): Promise<void> => {
     // ConditionalVisibility.INSTANCE.onRenderTokenConfig(tokenConfig, html, data);
     module.onRenderTokenConfig(tokenConfig, html, data);
   });
-  Hooks.on('renderTokenHUD', (app, html, token) => {
-    // ConditionalVisibility.INSTANCE.onRenderTokenHUD(app, html, token);
-  });
+  // Hooks.on('renderTokenHUD', (app, html, token) => {
+  //   // ConditionalVisibility.INSTANCE.onRenderTokenHUD(app, html, token);
+  // });
 };
 
 const module = {

@@ -1,11 +1,12 @@
 import CONSTANTS from './constants';
-import { error } from './lib/lib';
+import { error, i18n, warn } from './lib/lib';
 import EffectInterface from './effects/effect-interface';
 import { StatusSight } from './conditional-visibility-models';
 import HOOKS from './hooks';
 import { EnhancedConditions } from './cub/enhanced-conditions';
 import { canvas, game } from './settings';
 import Effect from './effects/effect';
+import { EffectDefinitions } from './conditional-visibility-effect-definition';
 
 export default class API {
   // static get effectInterface(): EffectInterface {
@@ -48,15 +49,15 @@ export default class API {
   //     .map((str) => str.trim().toLowerCase());
   // }
 
-  static async _onRenderTokenConfig(...inAttributes: any[]) {
-    if (!Array.isArray(inAttributes)) {
-      throw error('_onRenderTokenConfig | inAttributes must be of type array');
-    }
-    const [tokenConfig, html, data] = inAttributes;
-    const hookResult = Hooks.call(HOOKS.ON_RENDER_TOKEN_CONFIG, tokenConfig, html, data);
-    if (hookResult === false) return;
-    return true; //conditionalVisibilitySocket.executeAsGM(SOCKET_HANDLERS.ON_RENDER_TOKEN_CONFIG, tokenConfig, html, data);
-  }
+  // static async _onRenderTokenConfig(...inAttributes: any[]) {
+  //   if (!Array.isArray(inAttributes)) {
+  //     throw error('_onRenderTokenConfig | inAttributes must be of type array');
+  //   }
+  //   const [tokenConfig, html, data] = inAttributes;
+  //   const hookResult = Hooks.call(HOOKS.ON_RENDER_TOKEN_CONFIG, tokenConfig, html, data);
+  //   if (hookResult === false) return;
+  //   return true; //conditionalVisibilitySocket.executeAsGM(SOCKET_HANDLERS.ON_RENDER_TOKEN_CONFIG, tokenConfig, html, data);
+  // }
 
   /**
    * Sets the attributes used to track dynamic attributes in this system
@@ -112,7 +113,7 @@ export default class API {
     return game.settings.set(CONSTANTS.MODULE_NAME, 'conditions', inAttributes);
   }
 
-  static async addEffect(actorId: string, effectName: string, effect: Effect) {
+  static async addEffectOnActor(actorId: string, effectName: string, effect: Effect) {
     const result = await API.effectInterface.addEffectOnActor(effectName, <string>actorId, effect);
     return result;
   }
@@ -129,7 +130,7 @@ export default class API {
     return await API.effectInterface.hasEffectAppliedFromIdOnActor(effectId, <string>actorId);
   }
 
-  static async toggleEffectOnActor(
+  static async toggleEffectFromIdOnActor(
     actorId: string,
     effectId: string,
     alwaysDelete: boolean,
@@ -149,5 +150,56 @@ export default class API {
   static async addActiveEffectOnActor(actorId: string, activeEffect: ActiveEffect) {
     const result = API.effectInterface.addActiveEffectOnActor(<string>actorId, activeEffect.data);
     return result;
+  }
+
+  static async removeEffectOnActor(actorId: string, effectName: string) {
+    const result = await API.effectInterface.removeEffectOnActor(effectName, <string>actorId);
+    return result;
+  }
+
+  static async removeEffectFromIdOnActor(actorId: string, effectId: string) {
+    const result = await API.effectInterface.removeEffectFromIdOnActor(effectId, <string>actorId);
+    return result;
+  }
+
+  // =======================================================================================
+
+  static async addEffectConditionalVisibility(
+    actorNameOrId: string,
+    effectName: string,
+    distance: number | undefined,
+    visionLevel: number | undefined,
+  ) {
+    const actor = <Actor>game.actors?.get(actorNameOrId) || <Actor>game.actors?.getName(actorNameOrId);
+
+    if (!actor) {
+      warn(`No actor found with reference '${actorNameOrId}'`, true);
+    }
+
+    if (!distance) {
+      distance = 0;
+    }
+
+    if (!visionLevel) {
+      visionLevel = 0;
+    }
+
+    let effect: Effect | undefined = undefined;
+    const sensesOrderByName = <StatusSight[]>API.SENSES.sort((a, b) => a.name.localeCompare(b.name));
+    sensesOrderByName.forEach((a: StatusSight) => {
+      if (a.id == effectName || i18n(a.name) == effectName) {
+        effect = <Effect>EffectDefinitions.all(distance, visionLevel).find((e: Effect) => {
+          return e.customId == a.id;
+        });
+      }
+    });
+
+    if (!effect) {
+      warn(`No effect found with reference '${effectName}'`, true);
+    }
+
+    if (actor && effect) {
+      await API.effectInterface.addEffectOnActor(effectName, <string>actor.id, effect);
+    }
   }
 }

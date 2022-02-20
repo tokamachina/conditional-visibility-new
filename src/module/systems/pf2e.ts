@@ -1,13 +1,13 @@
 import { EffectDefinitions } from '../conditional-visibility-effect-definition';
-import { StatusEffectSightFlags, StatusEffectStatusFlags, StatusSight } from '../conditional-visibility-models';
+import { StatusEffectSenseFlags, StatusEffectConditionFlags, StatusSight } from '../conditional-visibility-models';
 import CONSTANTS from '../constants';
 
 export default {
   HP_ATTRIBUTE: 'data.attributes.hp.value',
   SENSES: <StatusSight[]>[
     {
-      id: StatusEffectSightFlags.NONE,
-      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSightFlags.NONE}`,
+      id: StatusEffectSenseFlags.NONE,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.NONE}`,
       path: '',
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/light_01.jpg`,
       //effect: undefined,
@@ -16,8 +16,8 @@ export default {
       checkElevation: false,
     },
     {
-      id: StatusEffectSightFlags.NORMAL,
-      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSightFlags.NORMAL}`,
+      id: StatusEffectSenseFlags.NORMAL,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.NORMAL}`,
       path: 'data.traits.senses.blinded',
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/light_02.jpg`,
       //effect: EffectDefinitions.blinded(0),
@@ -26,8 +26,8 @@ export default {
       checkElevation: false,
     },
     {
-      id: StatusEffectSightFlags.BLINDED,
-      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSightFlags.BLINDED}`,
+      id: StatusEffectSenseFlags.BLINDED,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.BLINDED}`,
       path: 'data.traits.senses.blinded',
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/affliction_24.jpg`,
       //effect: EffectDefinitions.blinded(0),
@@ -36,8 +36,8 @@ export default {
       checkElevation: false,
     },
     {
-      id: StatusEffectSightFlags.LOW_LIGHT_VISION,
-      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSightFlags.LOW_LIGHT_VISION}`,
+      id: StatusEffectSenseFlags.LOW_LIGHT_VISION,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.LOW_LIGHT_VISION}`,
       path: 'data.traits.senses.lowlightvision',
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/violet_09.jpg`,
       //effect: EffectDefinitions.lowlightvision(0),
@@ -46,8 +46,8 @@ export default {
       checkElevation: false,
     },
     {
-      id: StatusEffectSightFlags.DARKVISION,
-      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSightFlags.DARKVISION}`,
+      id: StatusEffectSenseFlags.DARKVISION,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.DARKVISION}`,
       path: 'data.traits.senses.darkvision',
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/evil-eye-red-1.jpg`,
       //effect: EffectDefinitions.darkvision(0),
@@ -56,8 +56,8 @@ export default {
       checkElevation: false,
     },
     {
-      id: StatusEffectSightFlags.GREATER_DARKVISION,
-      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSightFlags.GREATER_DARKVISION}`,
+      id: StatusEffectSenseFlags.GREATER_DARKVISION,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.GREATER_DARKVISION}`,
       path: 'data.traits.senses.greaterdarkvision',
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/evil-eye-eerie-1.jpg`,
       //effect: EffectDefinitions.darkvision(120),
@@ -68,23 +68,23 @@ export default {
   ],
   CONDITIONS: <StatusSight[]>[
     {
-      id: StatusEffectStatusFlags.HIDDEN,
-      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.HIDDEN}`,
+      id: StatusEffectConditionFlags.HIDDEN,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.HIDDEN}`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/newspaper.svg`,
     },
     {
-      id: StatusEffectStatusFlags.INVISIBLE,
-      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.INVISIBLE}`,
+      id: StatusEffectConditionFlags.INVISIBLE,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.INVISIBLE}`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/unknown.svg`,
     },
     {
-      id: StatusEffectStatusFlags.OBSCURED,
-      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.OBSCURED}`,
+      id: StatusEffectConditionFlags.OBSCURED,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.OBSCURED}`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/foggy.svg`,
     },
     {
-      id: StatusEffectStatusFlags.IN_DARKNESS,
-      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectStatusFlags.IN_DARKNESS}`,
+      id: StatusEffectConditionFlags.IN_DARKNESS,
+      name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.IN_DARKNESS}`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/moon.svg`,
     },
   ],

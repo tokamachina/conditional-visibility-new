@@ -73,11 +73,21 @@ export default class EffectHandler {
    * applied to
    * @returns {boolean} true if the effect is applied, false otherwise
    */
-  async hasEffectApplied(effectName, uuid) {
+  async hasEffectApplied(effectName: string, uuid: string) {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
     const isApplied = actor?.data?.effects?.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
-      (activeEffect) => <string>activeEffect?.data?.label == effectName && !activeEffect?.data?.disabled,
+      (activeEffect) => {
+        if (
+          (activeEffect?.data?.label.toLowerCase() == effectName.toLowerCase() ||
+            activeEffect?.data?.label.toLowerCase().startsWith(effectName.toLowerCase())) &&
+          !activeEffect?.data?.disabled
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      },
     );
     return isApplied;
   }
@@ -266,35 +276,35 @@ export default class EffectHandler {
         // use replace() method to match and remove all the non-alphanumeric characters
         const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
         if (effectNameToCheckOnActor.toLowerCase().startsWith(effectName.toLowerCase())) {
-          effect = this.convertToEffectClass(effectEntity);
+          effect = Effect.convertToEffectClass(effectEntity);
         }
       }
     }
     return effect;
   }
 
-  convertToEffectClass(effect: ActiveEffect): Effect {
-    const atlChanges = effect.data.changes.filter((changes) => changes.key.startsWith('ATL'));
-    const tokenMagicChanges = effect.data.changes.filter((changes) => changes.key === 'macro.tokenMagic');
-    const changes = effect.data.changes.filter(
-      (change) => !change.key.startsWith('ATL') && change.key !== 'macro.tokenMagic',
-    );
+  // convertToEffectClass(effect: ActiveEffect): Effect {
+  //   const atlChanges = effect.data.changes.filter((changes) => changes.key.startsWith('ATL'));
+  //   const tokenMagicChanges = effect.data.changes.filter((changes) => changes.key === 'macro.tokenMagic');
+  //   const changes = effect.data.changes.filter(
+  //     (change) => !change.key.startsWith('ATL') && change.key !== 'macro.tokenMagic',
+  //   );
 
-    return new Effect({
-      customId: <string>effect.id,
-      name: effect.data.label,
-      description: <string>effect.data.flags.customEffectDescription,
-      icon: <string>effect.data.icon,
-      tint: <string>effect.data.tint,
-      seconds: effect.data.duration.seconds,
-      rounds: effect.data.duration.rounds,
-      turns: effect.data.duration.turns,
-      flags: effect.data.flags,
-      changes,
-      atlChanges,
-      tokenMagicChanges,
-    });
-  }
+  //   return new Effect({
+  //     customId: <string>effect.id,
+  //     name: effect.data.label,
+  //     description: <string>effect.data.flags.customEffectDescription,
+  //     icon: <string>effect.data.icon,
+  //     tint: <string>effect.data.tint,
+  //     seconds: effect.data.duration.seconds,
+  //     rounds: effect.data.duration.rounds,
+  //     turns: effect.data.duration.turns,
+  //     flags: effect.data.flags,
+  //     changes,
+  //     atlChanges,
+  //     tokenMagicChanges,
+  //   });
+  // }
 
   /**
    * Searches through the list of available effects and returns one matching the
@@ -365,7 +375,17 @@ export default class EffectHandler {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
     const isApplied = actor?.data?.effects?.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
-      (activeEffect) => <string>activeEffect?.data?.label == effectName,
+      (activeEffect) => {
+        if (
+          (activeEffect?.data?.label.toLowerCase() == effectName.toLowerCase() ||
+            activeEffect?.data?.label.toLowerCase().startsWith(effectName.toLowerCase())) &&
+          !activeEffect?.data?.disabled
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      },
     );
     return isApplied;
   }

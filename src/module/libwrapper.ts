@@ -1,6 +1,6 @@
 import API from './api';
 import CONSTANTS from './constants';
-import { getFirstPlayerTokenSelected, log, shouldIncludeVision } from './lib/lib';
+import { debug, log, shouldIncludeVision } from './lib/lib';
 import { canvas, game } from './settings';
 
 export function registerLibwrappers() {
@@ -85,7 +85,7 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
 
   // if any source has vision to the token, the token is visible
   const is_visible = visible_to_sources.reduce((total, curr) => total || curr, false);
-  log(
+  debug(
     `target ${tokenToCheckIfIsVisible.data.name} ${
       is_visible ? 'is visible' : 'is not visible'
     } to sources ${sourcesNames.join(',')}`,

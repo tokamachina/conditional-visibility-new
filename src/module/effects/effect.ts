@@ -1,3 +1,4 @@
+import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
 import { game } from '../settings';
 
 /**
@@ -15,14 +16,15 @@ export default class Effect {
   isDynamic = false;
   isViewable = true;
   flags: any;
-  changes: any[] = [];
-  atlChanges: any[] = [];
-  tokenMagicChanges: any[] = [];
+  changes: EffectChangeData[] = [];
+  atlChanges: EffectChangeData[] = [];
+  tokenMagicChanges: EffectChangeData[] = [];
   nestedEffects: Effect[] = [];
   transfer = false;
   // ADDED FROM 4535992
   origin = '';
   overlay = false;
+  atcvChanges: EffectChangeData[] = [];
   // END ADDED FROM 4535992
 
   constructor({
@@ -42,6 +44,7 @@ export default class Effect {
     tokenMagicChanges = <any[]>[],
     nestedEffects = <Effect[]>[],
     transfer = false,
+    atcvChanges = <any[]>[],
   }) {
     this.customId = customId;
     this.name = name;
@@ -59,6 +62,7 @@ export default class Effect {
     this.tokenMagicChanges = tokenMagicChanges;
     this.nestedEffects = nestedEffects;
     this.transfer = transfer;
+    this.atcvChanges = atcvChanges;
   }
 
   /**
@@ -155,7 +159,36 @@ export default class Effect {
     if (this.tokenMagicChanges.length > 0) {
       arrChanges.push(...this.tokenMagicChanges);
     }
+
+    if (this.atcvChanges.length > 0) {
+      arrChanges.push(...this.atcvChanges);
+    }
     return arrChanges;
+  }
+
+  static convertToEffectClass(effect: ActiveEffect): Effect {
+    const atlChanges = effect.data.changes.filter((changes) => changes.key.startsWith('ATL'));
+    const tokenMagicChanges = effect.data.changes.filter((changes) => changes.key === 'macro.tokenMagic');
+    const atcvChanges = effect.data.changes.filter((changes) => changes.key.startsWith('ATCV'));
+    const changes = effect.data.changes.filter(
+      (change) => !change.key.startsWith('ATL') && change.key !== 'macro.tokenMagic' && !change.key.startsWith('ATCV'),
+    );
+
+    return new Effect({
+      customId: <string>effect.id,
+      name: effect.data.label,
+      description: <string>effect.data.flags.customEffectDescription,
+      icon: <string>effect.data.icon,
+      tint: <string>effect.data.tint,
+      seconds: effect.data.duration.seconds,
+      rounds: effect.data.duration.rounds,
+      turns: effect.data.duration.turns,
+      flags: effect.data.flags,
+      changes,
+      atlChanges,
+      tokenMagicChanges,
+      atcvChanges,
+    });
   }
 }
 

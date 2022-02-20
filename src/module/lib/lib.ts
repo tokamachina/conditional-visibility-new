@@ -11,6 +11,7 @@ import {
 import EmbeddedCollection from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs';
 import { ActorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import Effect from '../effects/effect.js';
+import StatusEffects from '../effects/status-effects.js';
 
 // =============================
 // Module Generic function
@@ -117,13 +118,13 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   // 1 - Preparation of the active effect
   // =========================================
 
-  const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(sourceToken);
   const sourceVisionLevels = getSensesFromToken(sourceToken);
-  prepareActiveEffectForConditionalVisibility(sourceToken, sourceVisionCapabilities, API.SENSES);
+  // const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(sourceToken);
+  // prepareActiveEffectForConditionalVisibility(sourceToken, sourceVisionCapabilities, API.SENSES);
 
-  const targetVisionCapabilities: VisionCapabilities = new VisionCapabilities(targetToken);
   const targetVisionLevels = getConditionsFromToken(targetToken);
-  prepareActiveEffectForConditionalVisibility(targetToken, targetVisionCapabilities, API.CONDITIONS);
+  // const targetVisionCapabilities: VisionCapabilities = new VisionCapabilities(targetToken);
+  // prepareActiveEffectForConditionalVisibility(targetToken, targetVisionCapabilities, API.CONDITIONS);
   // TODO manage the multi condition on target
   const targetVisionLevel = targetVisionLevels[0];
 
@@ -198,95 +199,36 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   return canYouSeeMe;
 }
 
-async function prepareActiveEffectForConditionalVisibility(
+export async function prepareActiveEffectForConditionalVisibility(
   sourceToken: Token,
   visionCapabilities: VisionCapabilities,
-  statusEffectSights: StatusSight[],
 ) {
-  let visionLevelValue: number | undefined;
-  let visionDistanceValue: number | undefined;
-  let statuSightToCheck: StatusSight | undefined;
-  // const visionCapabilities: VisionCapabilities = new VisionCapabilities(sourceToken);
+  if (!visionCapabilities.hasSenses()) {
+    return;
+  }
 
   const regex = /[^A-Za-z0-9]/g;
-
   const actor = <Actor>sourceToken.document.getActor();
-  const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects;
-  for (const effectEntity of actorEffects) {
-    const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
-    if (!effectNameToSet) {
-      continue;
-    }
-    // use replace() method to match and remove all the non-alphanumeric characters
-    const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
-    const effectSight = statusEffectSights.find((a: StatusSight) => {
-      return effectNameToCheckOnActor.toLowerCase().startsWith(a.id.toLowerCase());
-    });
-    // if is a AE with the label of the module (no id sorry)
-    if (effectSight) {
-      //Look up for ATL dim and bright sight to manage distance
-      const dimSight = Number(
-        effectEntity.data.changes.find((aee) => {
-          if (aee.key == 'ATL.dimSight') {
-            return aee.value;
-          }
-        }),
-      );
-      const brightSight = Number(
-        effectEntity.data.changes.find((aee) => {
-          if (aee.key == 'ATL.brightSight') {
-            return aee.value;
-          }
-        }),
-      );
-      const distance = Math.max(brightSight, dimSight);
 
-      //Look up for ATCV to manage vision level
-      // TODO
-      // TODO for now every active effect can have only one ATCV key ate the time not sure if manage
-      // TODO
-      const atcvValue = Number(
-        effectEntity.data.changes.find((aee) => {
-          if (aee.key.toLowerCase().startsWith(('ATCV.' + effectSight.id).toLowerCase())) {
-            return aee.value;
-          }
-        }),
-      );
-      visionDistanceValue = distance;
-      visionLevelValue = atcvValue;
-      statuSightToCheck = effectSight;
-      break;
-    }
-  }
-
-  const visionCapabilitiesVisionlevel = visionCapabilities.retrieveSense(<string>statuSightToCheck?.id);
-  if (!visionCapabilitiesVisionlevel || visionCapabilitiesVisionlevel != 0) {
-    visionLevelValue = visionCapabilitiesVisionlevel;
-  }
-
-  if (!visionLevelValue || visionLevelValue == 0) {
+  for (const [key, sense] of visionCapabilities.retrieveSenses()) {
+    // // use replace() method to match and remove all the non-alphanumeric characters
+    // const effectNameToCheckOnActor = <string>sense.statusSight?.name.replace(regex, '');
+    // if (!(await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor))) {
+    //   await API.addEffectConditionalVisibility(
+    //     actor,
+    //     effectNameToCheckOnActor,
+    //     sense.visionDistanceValue,
+    //     sense.visionDistanceValue,
+    //   );
+    // }
     // use replace() method to match and remove all the non-alphanumeric characters
-    const effectNameToCheckOnActor = <string>statuSightToCheck?.name.replace(regex, '');
-    if (await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)) {
-      const activeEffect = <ActiveEffect>(
-        await API.findEffectByNameOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)
-      );
-      const effect = Effect.convertToEffectClass(activeEffect);
-      const effectChangeData = effect.atcvChanges.find((k) => {
-        return k.key == 'ATCV.' + statuSightToCheck?.id;
-      });
-      visionLevelValue = Number(effectChangeData?.value);
-    }
-  }
-  if (visionLevelValue && visionLevelValue > 0) {
-    // use replace() method to match and remove all the non-alphanumeric characters
-    const effectNameToCheckOnActor = StatusEffectSenseFlags.DARKVISION.replace(regex, '');
+    const effectNameToCheckOnActor = <string>sense.statusSight?.name.replace(regex, '');
     if (!(await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor))) {
       await API.addEffectConditionalVisibility(
         <string>sourceToken.actor?.id,
         effectNameToCheckOnActor,
-        visionDistanceValue,
-        visionLevelValue,
+        sense.visionDistanceValue,
+        sense.visionDistanceValue,
       );
     } else {
       // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
@@ -297,18 +239,100 @@ async function prepareActiveEffectForConditionalVisibility(
       await API.addEffectConditionalVisibility(
         <string>sourceToken.actor?.id,
         effectNameToCheckOnActor,
-        visionDistanceValue,
-        visionLevelValue,
+        sense.visionDistanceValue,
+        sense.visionDistanceValue,
       );
     }
   }
+
+  // let visionLevelValue: number | undefined;
+  // let visionDistanceValue: number | undefined;
+  // let statuSightToCheck: StatusSight | undefined;
+
+  // const actor = <Actor>sourceToken.document.getActor();
+  // const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects;
+  // for (const effectEntity of actorEffects) {
+  //   const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+  //   if (!effectNameToSet) {
+  //     continue;
+  //   }
+  //   // use replace() method to match and remove all the non-alphanumeric characters
+  //   const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
+  //   const effectSight = Array.from(visionCapabilities.retrieveSenses().values()).find((a: StatusEffect) => {
+  //     return effectNameToCheckOnActor.toLowerCase().startsWith(<string>a.statusSight?.id.toLowerCase());
+  //   });
+  //   // if is a AE with the label of the module (no id sorry)
+  //   if (effectSight) {
+  //     const distance = getDistanceFromActiveEffect(effectEntity);
+  //     //Look up for ATCV to manage vision level
+  //     // TODO
+  //     // TODO for now every active effect can have only one ATCV key ate the time not sure if manage
+  //     // TODO
+  //     const atcvValue = Number(
+  //       effectEntity.data.changes.find((aee) => {
+  //         if (aee.key.toLowerCase().startsWith(('ATCV.' + effectSight.id).toLowerCase())) {
+  //           return aee.value;
+  //         }
+  //       }),
+  //     );
+  //     visionDistanceValue = distance;
+  //     visionLevelValue = atcvValue;
+  //     statuSightToCheck = effectSight;
+  //     break;
+  //   }
+  // }
+  // if (statuSightToCheck) {
+  //   const visionCapabilitiesVisionlevel = visionCapabilities.retrieveSenseValue(<string>statuSightToCheck?.id);
+  //   if (!visionCapabilitiesVisionlevel || visionCapabilitiesVisionlevel != 0) {
+  //     visionLevelValue = visionCapabilitiesVisionlevel;
+  //   }
+
+  //   if (!visionLevelValue || visionLevelValue == 0) {
+  //     // use replace() method to match and remove all the non-alphanumeric characters
+  //     const effectNameToCheckOnActor = <string>statuSightToCheck?.name.replace(regex, '');
+  //     if (await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)) {
+  //       const activeEffect = <ActiveEffect>(
+  //         await API.findEffectByNameOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)
+  //       );
+  //       const effect = Effect.convertToEffectClass(activeEffect);
+  //       const effectChangeData = effect.atcvChanges.find((k) => {
+  //         return k.key == 'ATCV.' + statuSightToCheck?.id;
+  //       });
+  //       visionLevelValue = Number(effectChangeData?.value);
+  //     }
+  //   }
+  // }
+  // if (visionLevelValue && visionLevelValue > 0) {
+  //   // use replace() method to match and remove all the non-alphanumeric characters
+  //   const effectNameToCheckOnActor = <string>statuSightToCheck?.name.replace(regex, '');
+  //   if (!(await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor))) {
+  //     await API.addEffectConditionalVisibility(
+  //       <string>sourceToken.actor?.id,
+  //       effectNameToCheckOnActor,
+  //       visionDistanceValue,
+  //       visionLevelValue,
+  //     );
+  //   } else {
+  //     // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
+  //     const activeEffectToRemove = <ActiveEffect>(
+  //       await API.findEffectByNameOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)
+  //     );
+  //     await API.removeEffectFromIdOnActor(<string>sourceToken.actor?.id, <string>activeEffectToRemove.id);
+  //     await API.addEffectConditionalVisibility(
+  //       <string>sourceToken.actor?.id,
+  //       effectNameToCheckOnActor,
+  //       visionDistanceValue,
+  //       visionLevelValue,
+  //     );
+  //   }
+  // }
 }
 
-function getSensesFromToken(token: Token): StatusEffect[] {
+export function getSensesFromToken(token: Token): StatusEffect[] {
   return _getActiveEffectsFromToken(token, API.SENSES);
 }
 
-function getConditionsFromToken(token: Token): StatusEffect[] {
+export function getConditionsFromToken(token: Token): StatusEffect[] {
   return _getActiveEffectsFromToken(token, API.CONDITIONS);
 }
 
@@ -349,33 +373,8 @@ function _getActiveEffectsFromToken(token: Token, statusSights: StatusSight[]): 
       ) {
         hasOnlyEffectsWithCheckElevationTrue = false;
       }
-
-      //Look up for ATL dim and bright sight to manage distance
-      const dimSight = Number(
-        effectEntity.data.changes.find((aee) => {
-          if (aee.key == 'ATL.dimSight') {
-            return aee.value;
-          }
-        }),
-      );
-      const brightSight = Number(
-        effectEntity.data.changes.find((aee) => {
-          if (aee.key == 'ATL.brightSight') {
-            return aee.value;
-          }
-        }),
-      );
-      const distance = Math.max(brightSight, dimSight);
-
-      //Look up for ATCV to manage vision level
-      // TODO for now every active effect can have only one ATCV key ate the time not sure if manage
-      const atcvValue = Number(
-        effectEntity.data.changes.find((aee) => {
-          if (aee.key.toLowerCase().startsWith(('ATCV.' + effectSight.id).toLowerCase())) {
-            return aee.value;
-          }
-        }),
-      );
+      const distance = getDistanceFromActiveEffect(effectEntity);
+      const atcvValue = getVisionLevelFromActiveEffect(effectEntity, effectSight);
 
       statusEffects.push({
         visionLevelMinIndex: min,
@@ -388,6 +387,52 @@ function _getActiveEffectsFromToken(token: Token, statusSights: StatusSight[]): 
     }
   }
   return statusEffects;
+}
+
+export function getVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effectSight: StatusSight): number {
+  //Look up for ATCV to manage vision level
+  // TODO for now every active effect can have only one ATCV key ate the time not sure if manage
+  let atcvValue = 0;
+  const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+  if (!effectNameToSet) {
+    return atcvValue;
+  }
+  atcvValue = Number(
+    effectEntity.data.changes.find((aee) => {
+      if (aee.key.toLowerCase().startsWith(('ATCV.' + effectSight.id).toLowerCase())) {
+        return aee.value;
+      }
+    }),
+  );
+  return atcvValue;
+}
+
+export function getDistanceFromActiveEffect(effectEntity: ActiveEffect): number {
+  let distance = 0;
+  const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+  if (!effectNameToSet) {
+    return distance;
+  }
+  // if is a AE with the label of the module (no id sorry)
+  //Look up for ATL dim and bright sight to manage distance
+  const dimSight = Number(
+    effectEntity.data.changes.find((aee) => {
+      if (aee.key == 'ATL.dimSight') {
+        return aee.value;
+      }
+    }),
+  );
+  const brightSight = Number(
+    effectEntity.data.changes.find((aee) => {
+      if (aee.key == 'ATL.brightSight') {
+        return aee.value;
+      }
+    }),
+  );
+  if (brightSight || dimSight) {
+    distance = Math.max(brightSight, dimSight);
+  }
+  return distance;
 }
 
 // ========================================================================================

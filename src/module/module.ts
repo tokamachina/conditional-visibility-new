@@ -3,12 +3,18 @@ import { registerSocket, conditionalVisibilitySocket } from './socket';
 
 import CONSTANTS from './constants';
 import HOOKS from './hooks';
-import { debug } from './lib/lib';
+import {
+  debug,
+  getConditionsFromToken,
+  getSensesFromToken,
+  prepareActiveEffectForConditionalVisibility,
+} from './lib/lib';
 import API from './api.js';
 import EffectInterface from './effects/effect-interface';
 import { registerHotkeys } from './hotkeys';
 import { canvas, game } from './settings';
 import { checkSystem } from './settings';
+import { VisionCapabilities } from './conditional-visibility-models';
 
 export const initHooks = async (): Promise<void> => {
   // registerSettings();
@@ -68,6 +74,14 @@ export const readyHooks = async (): Promise<void> => {
   // Hooks.on('renderTokenHUD', (app, html, token) => {
   //   // ConditionalVisibility.INSTANCE.onRenderTokenHUD(app, html, token);
   // });
+
+  Hooks.on('updateToken', (document: TokenDocument, change, options, userId) => {
+    const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(<Token>document.object);
+    if (sourceVisionCapabilities.hasSenses()) {
+      const sourceVisionLevels = getSensesFromToken(<Token>document.object);
+      prepareActiveEffectForConditionalVisibility(<Token>document.object, sourceVisionCapabilities);
+    }
+  });
 };
 
 const module = {

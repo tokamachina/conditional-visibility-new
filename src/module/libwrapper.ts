@@ -13,9 +13,6 @@ export function registerLibwrappers() {
     'WRAPPER',
   );
 
-  //@ts-ignore
-  libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.isVisible', isVisibleHandler, 'MIXED');
-
   // THIS IS https://github.com/trioderegion/eagle-eye/
 
   if (game.settings.get(CONSTANTS.MODULE_NAME, 'useEagleEye')) {

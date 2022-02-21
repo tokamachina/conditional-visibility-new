@@ -1,5 +1,5 @@
 <hr/>
-<p class="notes">{{localize "conditional-visibility.ExtraSenseInstructions"}}</p>
+<p class="notes">{{localize "conditional-visibility.extraSenseInstructions"}}</p>
 <div class="form-group">
     <label>{{localize "conditional-visibility.blindsight"}}</label>
     <input type="number" min=-1 step=1 {{#if blindsight}} value="{{blindsight}}" {{else}} value="0" {{/if}} name="flags.conditional-visibility.blindsight"/>

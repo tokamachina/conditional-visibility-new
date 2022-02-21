@@ -9,7 +9,7 @@ import {
   getSensesFromToken,
   prepareActiveEffectForConditionalVisibility,
 } from './lib/lib';
-import API from './api.js';
+import API from './api';
 import EffectInterface from './effects/effect-interface';
 import { registerHotkeys } from './hotkeys';
 import { canvas, game } from './settings';
@@ -83,10 +83,17 @@ export const readyHooks = async (): Promise<void> => {
 const module = {
   onRenderTokenConfig(tokenConfig: TokenConfig, jQuery: JQuery, data: object): void {
     const visionTab = $('div.tab[data-tab="vision"]');
+    const senses = API.SENSES ?? [];
+    const sensesData:any[] = [];
+    for(const s of senses){
+      const s2:any = s;
+      s2.value = tokenConfig.object.getFlag(CONSTANTS.MODULE_NAME, s.id);
+    }
     renderTemplate(
-      `modules/${CONSTANTS.MODULE_NAME}/templates/extra_senses.html`,
-      //@ts-ignore
-      tokenConfig.object.data.flags[CONSTANTS.MODULE_NAME] ?? {},
+      `modules/${CONSTANTS.MODULE_NAME}/templates/extra_senses.hbs`, {
+        // flags: tokenConfig.object.data.flags[CONSTANTS.MODULE_NAME] ?? {},
+        senses: sensesData
+      }
     ).then((extraSenses) => {
       visionTab.append(extraSenses);
     });
@@ -95,8 +102,9 @@ const module = {
     if(change.flags && change.flags[CONSTANTS.MODULE_NAME]){
       const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(<Token>document.object);
       if (sourceVisionCapabilities.hasSenses()) {
-        const sourceVisionLevels = getSensesFromToken(<Token>document.object);
+        // const sourceVisionLevels = getSensesFromToken(<Token>document.object);
         prepareActiveEffectForConditionalVisibility(<Token>document.object, sourceVisionCapabilities);
+        // const sourceVisionLevels = getSensesFromToken(<Token>document.object);
       }
     }
   }

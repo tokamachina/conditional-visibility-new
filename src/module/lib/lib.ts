@@ -123,9 +123,10 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   // prepareActiveEffectForConditionalVisibility(sourceToken, sourceVisionCapabilities, API.SENSES);
 
   const targetVisionLevels = getConditionsFromToken(targetToken);
-  // const targetVisionCapabilities: VisionCapabilities = new VisionCapabilities(targetToken);
-  // prepareActiveEffectForConditionalVisibility(targetToken, targetVisionCapabilities, API.CONDITIONS);
-  // TODO manage the multi condition on target
+  if(!targetVisionLevels || targetVisionLevels.length == 0){
+    canYouSeeMe = true;
+  }
+  /*
   const targetVisionLevel = targetVisionLevels[0];
 
   if (!targetVisionLevel || !targetVisionLevel.statusSight) {
@@ -137,6 +138,7 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   ) {
     canYouSeeMe = true;
   }
+  */
 
   if (canYouSeeMe) {
     return canYouSeeMe;
@@ -156,14 +158,42 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
       if (tokenElevation < targetElevation) {
         result = false;
       } else {
+        const resultsOnTarget = targetVisionLevels.map((targetVisionLevel) => {
+          if (!targetVisionLevel || !targetVisionLevel.statusSight) {
+            result = true;
+          }
+          if (
+            targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NORMAL ||
+            targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NONE
+          ) {
+            result = true;
+          }
+          result =
+            sourceVisionLevel.visionLevelMinIndex <= <number>targetVisionLevel.statusSight?.visionLevelMin &&
+            sourceVisionLevel.visionLevelMaxIndex >= <number>targetVisionLevel.statusSight?.visionLevelMax;
+          return result;
+        });
+        // if any source has vision to the token, the token is visible
+        result = resultsOnTarget.reduce((total, curr) => total || curr, false);
+      }
+    } else {
+      const resultsOnTarget = targetVisionLevels.map((targetVisionLevel) => {
+        if (!targetVisionLevel || !targetVisionLevel.statusSight) {
+          result = true;
+        }
+        if (
+          targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NORMAL ||
+          targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NONE
+        ) {
+          result = true;
+        }
         result =
           sourceVisionLevel.visionLevelMinIndex <= <number>targetVisionLevel.statusSight?.visionLevelMin &&
           sourceVisionLevel.visionLevelMaxIndex >= <number>targetVisionLevel.statusSight?.visionLevelMax;
-      }
-    } else {
-      result =
-        sourceVisionLevel.visionLevelMinIndex <= <number>targetVisionLevel.statusSight?.visionLevelMin &&
-        sourceVisionLevel.visionLevelMaxIndex >= <number>targetVisionLevel.statusSight?.visionLevelMax;
+        return result;
+      });
+      // if any source has vision to the token, the token is visible
+      result = resultsOnTarget.reduce((total, curr) => total || curr, false);
     }
     if (result) {
       sourceVisionLevelsValid.push(sourceVisionLevel);
@@ -184,12 +214,23 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
 
   const visibleForTypeOfSenseByValue = [...sourceVisionLevelsValid].map((sourceVisionLevel: StatusEffect) => {
     let result = false;
-    if (
-      <number>sourceVisionLevel.visionLevelValue == -1 ||
-      <number>sourceVisionLevel.visionLevelValue >= <number>targetVisionLevel.visionLevelValue
-    ) {
-      result = true;
-    }
+    const resultsOnTarget = targetVisionLevels.map((targetVisionLevel) => {
+      if (!targetVisionLevel || !targetVisionLevel.statusSight) {
+        result = true;
+      }
+      if (
+        targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NORMAL ||
+        targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NONE
+      ) {
+        result = true;
+      }
+      result =
+        <number>sourceVisionLevel.visionLevelValue == -1 ||
+        <number>sourceVisionLevel.visionLevelValue >= <number>targetVisionLevel.visionLevelValue
+      return result;
+    });
+    // if any source has vision to the token, the token is visible
+    result = resultsOnTarget.reduce((total, curr) => total || curr, false);
     return result;
   });
 
@@ -244,6 +285,9 @@ export async function prepareActiveEffectForConditionalVisibility(
       }
     }
   }
+  // Refresh the flags (this is necessary for retrocompatibility)
+  visionCapabilities.refreshSenses();
+  visionCapabilities.refreshConditions();
 }
 
 export function getSensesFromToken(token: Token): StatusEffect[] {

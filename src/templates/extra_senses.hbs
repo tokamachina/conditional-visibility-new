@@ -1,0 +1,12 @@
+<hr/>
+<fieldset>
+    <legend><p class="notes">{{localize "conditional-visibility.extraSenseInstructions"}}</p></legend>
+    {{#each senses as |sense|}}
+        <div class="form-group">
+            <img src="{{sense.image}}"></img>
+            <label>{{localize sense.name}}</label>
+            <input type="number" min=-1 step=1 {{#if sense.value}} value="{{sense.value}}" {{else}} value="0" {{/if}} name="flags.conditional-visibility.{{sense.id}}"/>
+        </div>
+    {{/each}}
+</fieldset>
+<hr/>

@@ -128,12 +128,12 @@ export default class API {
   }
 
   static async hasEffectAppliedOnActor(actorId: string, effectName: string, includeDisabled:boolean) {
-    const result = await API.effectInterface.hasEffectAppliedOnActor(effectName, <string>actorId, true);
+    const result = await API.effectInterface.hasEffectAppliedOnActor(effectName, <string>actorId, includeDisabled);
     return result;
   }
 
   static async hasEffectAppliedFromIdOnActor(actorId: string, effectId: string, includeDisabled:boolean) {
-    const result = await API.effectInterface.hasEffectAppliedFromIdOnActor(effectId, <string>actorId, true);
+    const result = await API.effectInterface.hasEffectAppliedFromIdOnActor(effectId, <string>actorId, includeDisabled);
     return result;
   }
 
@@ -184,12 +184,12 @@ export default class API {
   }
 
   static async hasEffectAppliedOnToken(tokenId: string, effectName: string, includeDisabled:boolean) {
-    const result = await API.effectInterface.hasEffectAppliedOnToken(effectName, <string>tokenId, true);
+    const result = await API.effectInterface.hasEffectAppliedOnToken(effectName, <string>tokenId, includeDisabled);
     return result;
   }
 
   static async hasEffectAppliedFromIdOnToken(tokenId: string, effectId: string, includeDisabled:boolean) {
-    const result = await API.effectInterface.hasEffectAppliedFromIdOnToken(effectId, <string>tokenId, true);
+    const result = await API.effectInterface.hasEffectAppliedFromIdOnToken(effectId, <string>tokenId, includeDisabled);
     return result;
   }
 

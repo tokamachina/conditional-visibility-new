@@ -36,16 +36,17 @@ export default class EffectHandler {
    * @param {string} effectName - name of the effect to toggle
    * @param {object} params - the effect parameters
    * @param {string} params.overlay - name of the effect to toggle
+   * @param {object} params.metadata - additional contextual data for the application of the effect (likely provided by midi-qol)
    * @param {string[]} params.uuids - UUIDS of the actors to toggle the effect on
    */
-  async toggleEffect(effectName, { overlay, uuids }) {
+  async toggleEffect(effectName, { overlay, uuids, metadata }) {
     for (const uuid of uuids) {
       if (await this.hasEffectApplied(effectName, uuid)) {
         await this.removeEffect({ effectName, uuid });
       } else {
         const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
         const origin = `Actor.${actor.id}`;
-        await this.addEffect({ effectName, effectData: null, uuid, origin, overlay });
+        await this.addEffect({ effectName, effectData: null, uuid, origin, overlay, metadata });
       }
     }
   }
@@ -158,8 +159,9 @@ export default class EffectHandler {
    * @param {string} params.uuid - the uuid of the actor to add the effect to
    * @param {string} params.origin - the origin of the effect
    * @param {boolean} params.overlay - if the effect is an overlay or not
+   * @param {object} params.metadata - additional contextual data for the application of the effect (likely provided by midi-qol)
    */
-  async addEffect({ effectName, effectData, uuid, origin, overlay }) {
+  async addEffect({ effectName, effectData, uuid, origin, overlay, metadata }) {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
     let effect = <Effect>this._findEffectByName(effectName, actor);
 

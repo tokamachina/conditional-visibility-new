@@ -76,6 +76,21 @@ export default class EffectInterface {
   //   return effect;
   // }
 
+  // /**
+  //  * Searches through the list of available custom effects and returns one matching the
+  //  * effect name.
+  //  *
+  //  * @param {string} effectName - the effect name to search for
+  //  * @returns {Effect} the found effect
+  //  */
+  //   findCustomEffectByName(effectName) {
+  //     const effect = this._customEffectsHandler
+  //       .getCustomEffects()
+  //       .find((effect) => effect.name == effectName);
+
+  //     return effect;
+  //   }
+
   /**
    * Toggles the effect on the provided actor UUIDS as the GM via sockets
    *
@@ -226,6 +241,19 @@ export default class EffectInterface {
       overlay,
     });
   }
+
+  // /**
+  //  * Creates new custom effects with the provided active effect data.
+  //  *
+  //  * @param {object} params - the params for adding an effect
+  //  * @param {object[]} params.activeEffects - array of active effects to add
+  //  * @returns {Promise} a promise that resolves when the active effects have finished being added
+  //  */
+  // createNewCustomEffectsWith({ activeEffects }) {
+  //   return this._customEffectsHandler.createNewCustomEffectsWith({
+  //     activeEffects,
+  //   });
+  // }
 
   /**
    * Adds data changes to the provided actor UUID as the GM via sockets

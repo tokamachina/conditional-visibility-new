@@ -183,12 +183,12 @@ export default class API {
     return result;
   }
 
-  static async hasEffectAppliedOnToken(tokenId: string, effectName: string, includeDisabled:boolean) {
+  static async hasEffectAppliedOnToken(tokenId: string, effectName: string, includeDisabled: boolean) {
     const result = await API.effectInterface.hasEffectAppliedOnToken(effectName, <string>tokenId, includeDisabled);
     return result;
   }
 
-  static async hasEffectAppliedFromIdOnToken(tokenId: string, effectId: string, includeDisabled:boolean) {
+  static async hasEffectAppliedFromIdOnToken(tokenId: string, effectId: string, includeDisabled: boolean) {
     const result = await API.effectInterface.hasEffectAppliedFromIdOnToken(effectId, <string>tokenId, includeDisabled);
     return result;
   }
@@ -270,21 +270,20 @@ export default class API {
   static async setCondition(
     tokenNameOrId: string,
     effectName: string,
-    disabled:boolean,
+    disabled: boolean,
     distance: number | undefined,
     visionLevel: number | undefined,
   ) {
-    return API.addEffectConditionalVisibilityOnToken(tokenNameOrId,effectName,disabled,distance,visionLevel);
+    return API.addEffectConditionalVisibilityOnToken(tokenNameOrId, effectName, disabled, distance, visionLevel);
   }
 
   static async addEffectConditionalVisibilityOnToken(
     tokenNameOrId: string,
     effectName: string,
-    disabled:boolean,
+    disabled: boolean,
     distance: number | undefined,
     visionLevel: number | undefined,
   ) {
-
     const tokens = <Token[]>canvas.tokens?.placeables;
     const token = <Token>tokens.find((token) => token.name == i18n(tokenNameOrId) || token.id == tokenNameOrId);
 

@@ -15,7 +15,11 @@ import EffectInterface from './effects/effect-interface';
 import { registerHotkeys } from './hotkeys';
 import { canvas, game } from './settings';
 import { checkSystem } from './settings';
-import { VisionCapabilities } from './conditional-visibility-models';
+import {
+  StatusEffectConditionFlags,
+  StatusEffectSenseFlags,
+  VisionCapabilities,
+} from './conditional-visibility-models';
 
 export const initHooks = async (): Promise<void> => {
   // registerSettings();
@@ -23,13 +27,13 @@ export const initHooks = async (): Promise<void> => {
 
   Hooks.once('socketlib.ready', registerSocket);
 
-  Hooks.on('dfreds-convenient-effects.ready', () => {
-    const effects = EffectDefinitions.all();
-    //@ts-ignore
-    game.dfreds.effectInterface.createNewCustomEffectWith({
-      activeEffects: effects,
-    });
-  });
+  // Hooks.on('dfreds-convenient-effects.ready', () => {
+  //   const effects = EffectDefinitions.all();
+  //   //@ts-ignore
+  //   game.dfreds.effectInterface.createNewCustomEffectWith({
+  //     activeEffects: effects,
+  //   });
+  // });
 
   if (game.settings.get(CONSTANTS.MODULE_NAME, 'debugHooks')) {
     for (const hook of Object.values(HOOKS)) {
@@ -97,35 +101,37 @@ const module = {
     const visionTab = $('div.tab[data-tab="vision"]');
     const senses = API.SENSES ?? [];
 
-    const sensesData:any[] = [];
-    for(const s of senses){
-      const s2:any = duplicate(s);
-      s2.value = tokenConfig.object.getFlag(CONSTANTS.MODULE_NAME, s.id);
-      sensesData.push(s2);
+    const sensesData: any[] = [];
+    for (const s of senses) {
+      if (s.id != StatusEffectSenseFlags.NONE && s.id != StatusEffectSenseFlags.NORMAL) {
+        const s2: any = duplicate(s);
+        s2.value = tokenConfig.object.getFlag(CONSTANTS.MODULE_NAME, s.id);
+        sensesData.push(s2);
+      }
     }
     const conditions = API.CONDITIONS ?? [];
-    const conditionsData:any[] = [];
-    for(const s of conditions){
-      const s2:any = duplicate(s);
-      s2.value = tokenConfig.object.getFlag(CONSTANTS.MODULE_NAME, s.id);
-      conditionsData.push(s2);
-    }
-    renderTemplate(
-      `modules/${CONSTANTS.MODULE_NAME}/templates/extra_senses.hbs`, {
-        // flags: tokenConfig.object.data.flags[CONSTANTS.MODULE_NAME] ?? {},
-        senses: sensesData,
-        conditions:conditionsData
+    const conditionsData: any[] = [];
+    for (const s of conditions) {
+      if (s.id != StatusEffectSenseFlags.NONE && s.id != StatusEffectSenseFlags.NORMAL) {
+        const s2: any = duplicate(s);
+        s2.value = tokenConfig.object.getFlag(CONSTANTS.MODULE_NAME, s.id);
+        conditionsData.push(s2);
       }
-    ).then((extraSenses) => {
+    }
+    renderTemplate(`modules/${CONSTANTS.MODULE_NAME}/templates/extra_senses.hbs`, {
+      // flags: tokenConfig.object.data.flags[CONSTANTS.MODULE_NAME] ?? {},
+      senses: sensesData,
+      conditions: conditionsData,
+    }).then((extraSenses) => {
       visionTab.append(extraSenses);
     });
   },
-  onRenderTokenHUD(app, html, token){
+  onRenderTokenHUD(app, html, token) {
     // DO NOTHING FOR NOW
   },
-  updateToken(document: TokenDocument, change, options, userId){
+  updateToken(document: TokenDocument, change, options, userId) {
     const token = <Token>document.object;
-    if(change.flags && change.flags[CONSTANTS.MODULE_NAME]){
+    if (change.flags && change.flags[CONSTANTS.MODULE_NAME]) {
       const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(<Token>document.object);
       if (sourceVisionCapabilities.hasSenses()) {
         // const sourceVisionLevels = getSensesFromToken(<Token>document.object);
@@ -150,5 +156,5 @@ const module = {
     //       }
     //   }
     // }
-  }
+  },
 };

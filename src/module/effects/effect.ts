@@ -173,7 +173,7 @@ export default class Effect {
     return arrChanges;
   }
 
-  static _getDurationDataStatic(seconds:number, rounds:number, turns:number) {
+  static _getDurationDataStatic(seconds: number, rounds: number, turns: number) {
     if (game.combat) {
       return {
         startRound: game.combat.round,
@@ -188,7 +188,7 @@ export default class Effect {
     }
   }
 
-  static _getCombatRoundsStatic(seconds:number, rounds:number) {
+  static _getCombatRoundsStatic(seconds: number, rounds: number) {
     if (rounds) {
       return rounds;
     }
@@ -200,7 +200,7 @@ export default class Effect {
     return undefined;
   }
 
-  static _getSecondsStatic(seconds:number, rounds:number) {
+  static _getSecondsStatic(seconds: number, rounds: number) {
     if (seconds) {
       return seconds;
     }
@@ -237,8 +237,9 @@ export default class Effect {
     });
   }
 
-  static convertActiveEffectDataPropertiesToActiveEffect(p:PropertiesToSource<ActiveEffectDataProperties>): ActiveEffect {
-
+  static convertActiveEffectDataPropertiesToActiveEffect(
+    p: PropertiesToSource<ActiveEffectDataProperties>,
+  ): ActiveEffect {
     // const duration = p.duration;
     // const pseudoDuration = Effect._getDurationDataStatic(<number>p.duration.seconds, <number>p.duration.rounds, <number>p.duration.turns);
 
@@ -265,7 +266,11 @@ export default class Effect {
       icon: p.icon,
       tint: p.tint,
       //@ts-ignore
-      duration: Effect._getDurationDataStatic(<number>p.duration.seconds, <number>p.duration.rounds, <number>p.duration.turns),
+      duration: Effect._getDurationDataStatic(
+        <number>p.duration.seconds,
+        <number>p.duration.rounds,
+        <number>p.duration.turns,
+      ),
       flags: foundry.utils.mergeObject(p.flags, {
         core: {
           statusId: p._id,

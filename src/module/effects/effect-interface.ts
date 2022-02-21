@@ -324,7 +324,7 @@ export default class EffectInterface {
    * @param {string} includeDisabled - if true include the applied disabled effect
    * @returns {boolean} true if the effect is applied, false otherwise
    */
-  async hasEffectAppliedOnActor(effectName: string, uuid: string, includeDisabled:boolean): Promise<boolean> {
+  async hasEffectAppliedOnActor(effectName: string, uuid: string, includeDisabled: boolean): Promise<boolean> {
     return this._effectHandler.hasEffectAppliedOnActor(effectName, uuid, includeDisabled);
   }
 
@@ -337,7 +337,7 @@ export default class EffectInterface {
    * @param {string} includeDisabled - if true include the applied disabled effect
    * @returns {boolean} true if the effect is applied, false otherwise
    */
-  async hasEffectAppliedFromIdOnActor(effectId: string, uuid: string, includeDisabled:boolean): Promise<boolean> {
+  async hasEffectAppliedFromIdOnActor(effectId: string, uuid: string, includeDisabled: boolean): Promise<boolean> {
     return this._effectHandler.hasEffectAppliedFromIdOnActor(effectId, uuid, includeDisabled);
   }
 
@@ -378,7 +378,7 @@ export default class EffectInterface {
    * @param {string} effectName - the name of the effect to add
    * @param {string} uuid - the uuid of the actor to add the effect to
    */
-  async addEffectOnActor(effectName: string, uuid: string, effect: Effect):Promise<void> {
+  async addEffectOnActor(effectName: string, uuid: string, effect: Effect): Promise<void> {
     if (!uuid) {
       ui.notifications?.error(`Actor ${uuid} could not be found`);
       return;
@@ -494,7 +494,7 @@ export default class EffectInterface {
    * @param {string} includeDisabled - if true include the applied disabled effect
    * @returns {boolean} true if the effect is applied, false otherwise
    */
-   async hasEffectAppliedOnToken(effectName: string, uuid: string, includeDisabled:boolean): Promise<boolean> {
+  async hasEffectAppliedOnToken(effectName: string, uuid: string, includeDisabled: boolean): Promise<boolean> {
     return this._effectHandler.hasEffectAppliedOnToken(effectName, uuid, includeDisabled);
   }
 
@@ -507,7 +507,7 @@ export default class EffectInterface {
    * @param {string} includeDisabled - if true include the applied disabled effect
    * @returns {boolean} true if the effect is applied, false otherwise
    */
-  async hasEffectAppliedFromIdOnToken(effectId: string, uuid: string, includeDisabled:boolean): Promise<boolean> {
+  async hasEffectAppliedFromIdOnToken(effectId: string, uuid: string, includeDisabled: boolean): Promise<boolean> {
     return this._effectHandler.hasEffectAppliedFromIdOnToken(effectId, uuid, includeDisabled);
   }
 
@@ -548,7 +548,7 @@ export default class EffectInterface {
    * @param {string} effectName - the name of the effect to add
    * @param {string} uuid - the uuid of the token to add the effect to
    */
-  async addEffectOnToken(effectName: string, uuid: string, effect: Effect):Promise<void> {
+  async addEffectOnToken(effectName: string, uuid: string, effect: Effect): Promise<void> {
     if (!uuid) {
       ui.notifications?.error(`Token ${uuid} could not be found`);
       return;
@@ -582,14 +582,14 @@ export default class EffectInterface {
     }
 
     const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
-    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects;
+    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
     const effects = <PropertiesToSource<ActiveEffectDataProperties>[]>tokenEffects.map(
       //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectId,
       (activeEffect) => {
-        if(<string>activeEffect?._id == effectId){
+        if (<string>activeEffect?._id == effectId) {
           return activeEffect;
         }
-      }
+      },
     );
 
     if (!effects) return;

@@ -129,47 +129,51 @@ export class VisionCapabilities {
       // );
 
       // SENSES
-      Promise.all(API.SENSES.map(async (statusSight) => {
-        let visionLevelValue = srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id);
-        let visionDistanceValue = 0;
-        if(!visionLevelValue || visionLevelValue == 0){
-          // try to serach on active effect
-          if(await API.hasEffectAppliedOnToken(srcToken.id, i18n(statusSight.name), true)){
-            const ae = <ActiveEffect>await API.findEffectByNameOnToken(srcToken.id,i18n(statusSight.name));
-            visionLevelValue = getVisionLevelFromActiveEffect(ae, statusSight);
-            visionDistanceValue = getDistanceFromActiveEffect(ae);
+      Promise.all(
+        API.SENSES.map(async (statusSight) => {
+          let visionLevelValue = srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id);
+          let visionDistanceValue = 0;
+          if (!visionLevelValue || visionLevelValue == 0) {
+            // try to serach on active effect
+            if (await API.hasEffectAppliedOnToken(srcToken.id, i18n(statusSight.name), true)) {
+              const ae = <ActiveEffect>await API.findEffectByNameOnToken(srcToken.id, i18n(statusSight.name));
+              visionLevelValue = getVisionLevelFromActiveEffect(ae, statusSight);
+              visionDistanceValue = getDistanceFromActiveEffect(ae);
+            }
           }
-        }
 
-        const statusEffect = <StatusEffect>{
-          visionLevelValue: visionLevelValue ?? 0,
-          visionDistanceValue: visionDistanceValue ?? 0,
-          statusSight: statusSight
-        };
-        this.senses.set(statusSight.id, statusEffect);
-      }));
+          const statusEffect = <StatusEffect>{
+            visionLevelValue: visionLevelValue ?? 0,
+            visionDistanceValue: visionDistanceValue ?? 0,
+            statusSight: statusSight,
+          };
+          this.senses.set(statusSight.id, statusEffect);
+        }),
+      );
 
       // CONDITIONS
 
-      Promise.all(API.CONDITIONS.map(async (statusSight) => {
-        let visionLevelValue = srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id);
-        let visionDistanceValue = 0;
-        if(!visionLevelValue || visionLevelValue == 0){
-          // try to serach on active effect
-          if(await API.hasEffectAppliedOnToken(srcToken.id, i18n(statusSight.name), true)){
-            const ae = <ActiveEffect>await API.findEffectByNameOnToken(srcToken.id,i18n(statusSight.name));
-            visionLevelValue = getVisionLevelFromActiveEffect(ae, statusSight);
-            visionDistanceValue = getDistanceFromActiveEffect(ae);
+      Promise.all(
+        API.CONDITIONS.map(async (statusSight) => {
+          let visionLevelValue = srcToken?.data?.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id);
+          let visionDistanceValue = 0;
+          if (!visionLevelValue || visionLevelValue == 0) {
+            // try to serach on active effect
+            if (await API.hasEffectAppliedOnToken(srcToken.id, i18n(statusSight.name), true)) {
+              const ae = <ActiveEffect>await API.findEffectByNameOnToken(srcToken.id, i18n(statusSight.name));
+              visionLevelValue = getVisionLevelFromActiveEffect(ae, statusSight);
+              visionDistanceValue = getDistanceFromActiveEffect(ae);
+            }
           }
-        }
 
-        const statusEffect = <StatusEffect>{
-          visionLevelValue: visionLevelValue ?? 0,
-          visionDistanceValue: visionDistanceValue ?? 0,
-          statusSight: statusSight
-        };
-        this.conditions.set(statusSight.id, statusEffect);
-      }));
+          const statusEffect = <StatusEffect>{
+            visionLevelValue: visionLevelValue ?? 0,
+            visionDistanceValue: visionDistanceValue ?? 0,
+            statusSight: statusSight,
+          };
+          this.conditions.set(statusSight.id, statusEffect);
+        }),
+      );
 
       // this.senses.set(StatusEffectSenseFlags.DARKVISION,_darkvisionTmp);
       // this.senses.set(StatusEffectSenseFlags.SEE_INVISIBLE, _seeinvisibleTmp);
@@ -240,9 +244,7 @@ export class VisionCapabilities {
   //   return roll;
   // }
   hasSenses() {
-    if (
-      this.senses.size > 0
-    ) {
+    if (this.senses.size > 0) {
       return true;
     } else {
       return false;
@@ -267,12 +269,14 @@ export class VisionCapabilities {
     return sensesTmp;
   }
 
-  async refreshSenses(){
+  async refreshSenses() {
     for (const [key, value] of this.senses.entries()) {
       const statusSight = value.statusSight;
       const visionLevelValue = value.visionLevelValue;
       await this.token.document.setFlag(CONSTANTS.MODULE_NAME, key, visionLevelValue);
-      setProperty(this.token,<string>value.statusSight?.path,visionLevelValue);
+      if(value.statusSight?.path){
+        setProperty(this.token, <string>value.statusSight?.path, visionLevelValue);
+      }
     }
   }
 
@@ -298,12 +302,14 @@ export class VisionCapabilities {
     return sensesTmp;
   }
 
-  async refreshConditions(){
+  async refreshConditions() {
     for (const [key, value] of this.conditions.entries()) {
       const statusSight = value.statusSight;
       const visionLevelValue = value.visionLevelValue;
       await this.token.document.setFlag(CONSTANTS.MODULE_NAME, key, visionLevelValue);
-      setProperty(this.token,<string>value.statusSight?.path,visionLevelValue);
+      if(value.statusSight?.path){
+        setProperty(this.token, <string>value.statusSight?.path, visionLevelValue);
+      }
     }
   }
 
@@ -318,5 +324,4 @@ export class VisionCapabilities {
     }
     return sense;
   }
-
 }

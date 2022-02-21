@@ -2,7 +2,7 @@ import API from './api';
 import { StatusEffectSenseFlags, StatusEffectConditionFlags, StatusSight } from './conditional-visibility-models';
 import CONSTANTS from './constants';
 import Effect, { Constants } from './effects/effect';
-import { i18n, i18nFormat, warn } from './lib/lib';
+import { debug, i18n, i18nFormat, warn } from './lib/lib';
 import { canvas, game } from './settings';
 
 /**
@@ -122,7 +122,7 @@ export class EffectDefinitions {
         .startsWith(StatusEffectSenseFlags.DARKVISION.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      warn(
+      debug(
         `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.DARKVISION}'`,
       );
       return;
@@ -176,7 +176,7 @@ export class EffectDefinitions {
         .startsWith(StatusEffectSenseFlags.BLIND_SIGHT.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      warn(
+      debug(
         `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.BLIND_SIGHT}'`,
       );
       return;
@@ -222,7 +222,7 @@ export class EffectDefinitions {
         .startsWith(StatusEffectSenseFlags.TREMOR_SENSE.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      warn(
+      debug(
         `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.TREMOR_SENSE}'`,
       );
       return;
@@ -268,7 +268,7 @@ export class EffectDefinitions {
         .startsWith(StatusEffectSenseFlags.TRUE_SIGHT.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      warn(
+      debug(
         `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.TRUE_SIGHT}'`,
       );
       return;
@@ -314,7 +314,7 @@ export class EffectDefinitions {
         .startsWith(StatusEffectSenseFlags.SEE_INVISIBLE.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      warn(
+      debug(
         `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.SEE_INVISIBLE}'`,
       );
       return;
@@ -360,7 +360,7 @@ export class EffectDefinitions {
         .startsWith(StatusEffectSenseFlags.DEVILS_SIGHT.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      warn(
+      debug(
         `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.DEVILS_SIGHT}'`,
       );
       return;
@@ -406,7 +406,7 @@ export class EffectDefinitions {
         .startsWith(StatusEffectSenseFlags.LOW_LIGHT_VISION.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      warn(
+      debug(
         `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.LOW_LIGHT_VISION}'`,
       );
       return;
@@ -466,9 +466,7 @@ export class EffectDefinitions {
         .startsWith(StatusEffectSenseFlags.BLINDED.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      warn(
-        `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.BLINDED}'`,
-      );
+      debug(`Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.BLINDED}'`);
       return;
     }
     return new Effect({
@@ -529,7 +527,7 @@ export class EffectDefinitions {
         .startsWith(StatusEffectConditionFlags.INVISIBLE.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      warn(`Cannot find for system '${game.system.id}' the status with id '${StatusEffectConditionFlags.INVISIBLE}'`);
+      debug(`Cannot find for system '${game.system.id}' the status with id '${StatusEffectConditionFlags.INVISIBLE}'`);
       return;
     }
     return new Effect({

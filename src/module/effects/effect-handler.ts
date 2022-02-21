@@ -84,8 +84,11 @@ export default class EffectHandler {
       (activeEffect) => {
         if (
           (activeEffect?.data?.label.toLowerCase() == effectName.toLowerCase() ||
-            activeEffect?.data?.label.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase()))
-          && !activeEffect?.data?.disabled
+            activeEffect?.data?.label
+              .replace(regex, '')
+              .toLowerCase()
+              .startsWith(effectName.replace(regex, '').toLowerCase())) &&
+          !activeEffect?.data?.disabled
         ) {
           return true;
         } else {
@@ -385,21 +388,28 @@ export default class EffectHandler {
     const isApplied = actorEffects.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
       (activeEffect) => {
-        if(includeDisabled){
+        if (includeDisabled) {
           if (
-            (activeEffect?.data?.label.replace(regex, '').toLowerCase() == effectName.replace(regex, '').toLowerCase() ||
-              activeEffect?.data?.label.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase()))
+            activeEffect?.data?.label.replace(regex, '').toLowerCase() == effectName.replace(regex, '').toLowerCase() ||
+            activeEffect?.data?.label
+              .replace(regex, '')
+              .toLowerCase()
+              .startsWith(effectName.replace(regex, '').toLowerCase())
             // && !activeEffect?.data?.disabled
           ) {
             return true;
           } else {
             return false;
           }
-        }else{
+        } else {
           if (
-            (activeEffect?.data?.label.replace(regex, '').toLowerCase() == effectName.replace(regex, '').toLowerCase() ||
-              activeEffect?.data?.label.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase()))
-            && !activeEffect?.data?.disabled
+            (activeEffect?.data?.label.replace(regex, '').toLowerCase() ==
+              effectName.replace(regex, '').toLowerCase() ||
+              activeEffect?.data?.label
+                .replace(regex, '')
+                .toLowerCase()
+                .startsWith(effectName.replace(regex, '').toLowerCase())) &&
+            !activeEffect?.data?.disabled
           ) {
             return true;
           } else {
@@ -437,26 +447,26 @@ export default class EffectHandler {
    * @param {string} includeDisabled - if true include the applied disabled effect
    * @returns {boolean} true if the effect is applied, false otherwise
    */
-  async hasEffectAppliedFromIdOnActor(effectId, uuid, includeDisabled= false): Promise<boolean> {
+  async hasEffectAppliedFromIdOnActor(effectId, uuid, includeDisabled = false): Promise<boolean> {
     const actor = await this._foundryHelpers.getActorByUuid(uuid);
     const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects;
     const isApplied = actorEffects.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?._id == effectId,
       (activeEffect) => {
-        if(includeDisabled){
-          if(<string>activeEffect?.id == effectId){
+        if (includeDisabled) {
+          if (<string>activeEffect?.id == effectId) {
             return true;
-          }else{
+          } else {
             return false;
           }
-        }else{
-          if(<string>activeEffect?.id == effectId && !activeEffect.data.disabled){
+        } else {
+          if (<string>activeEffect?.id == effectId && !activeEffect.data.disabled) {
             return true;
-          }else{
+          } else {
             return false;
           }
         }
-      }
+      },
     );
     return isApplied;
   }
@@ -690,7 +700,7 @@ export default class EffectHandler {
       effectName = i18n(effectName);
     }
     const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
-    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects;
+    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
     let effect: ActiveEffect | null = null;
     if (!effectName) {
       return effect;
@@ -735,31 +745,34 @@ export default class EffectHandler {
    * @param {string} includeDisabled - if true include the applied disabled effect
    * @returns {boolean} true if the effect is applied, false otherwise
    */
-  async hasEffectAppliedOnToken(effectName, uuid, includeDisabled=false): Promise<boolean> {
+  async hasEffectAppliedOnToken(effectName, uuid, includeDisabled = false): Promise<boolean> {
     if (effectName) {
       effectName = i18n(effectName);
     }
     const token = await this._foundryHelpers.getTokenByUuid(uuid);
-    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects;
+    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
     const regex = /[^A-Za-z0-9]/g;
     const isApplied = tokenEffects.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
       (activeEffect) => {
-        if(includeDisabled){
+        if (includeDisabled) {
           if (
-            (activeEffect?.label.replace(regex, '').toLowerCase() == effectName.replace(regex, '').toLowerCase() ||
-              activeEffect?.label.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase()))
+            activeEffect?.label.replace(regex, '').toLowerCase() == effectName.replace(regex, '').toLowerCase() ||
+            activeEffect?.label.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase())
             // && !activeEffect.disabled
           ) {
             return true;
           } else {
             return false;
           }
-        }else{
+        } else {
           if (
             (activeEffect?.label.replace(regex, '').toLowerCase() == effectName.replace(regex, '').toLowerCase() ||
-              activeEffect?.label.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase()))
-              && !activeEffect.disabled
+              activeEffect?.label
+                .replace(regex, '')
+                .toLowerCase()
+                .startsWith(effectName.replace(regex, '').toLowerCase())) &&
+            !activeEffect.disabled
           ) {
             return true;
           } else {
@@ -799,11 +812,11 @@ export default class EffectHandler {
    */
   async hasEffectAppliedFromIdOnToken(effectId, uuid, includeDisabled = false): Promise<boolean> {
     const token = await this._foundryHelpers.getTokenByUuid(uuid);
-    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects;
+    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
     const isApplied = tokenEffects.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
       (activeEffect) => {
-        if(includeDisabled){
+        if (includeDisabled) {
           if (
             activeEffect._id == effectId
             // && !activeEffect.disabled
@@ -813,10 +826,7 @@ export default class EffectHandler {
             return false;
           }
         } else {
-          if (
-            activeEffect._id == effectId
-            && !activeEffect.disabled
-          ) {
+          if (activeEffect._id == effectId && !activeEffect.disabled) {
             return true;
           } else {
             return false;
@@ -856,14 +866,14 @@ export default class EffectHandler {
       effectName = i18n(effectName);
     }
     const token = await this._foundryHelpers.getTokenByUuid(uuid);
-    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects;
+    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
     const effectsToRemove = <PropertiesToSource<ActiveEffectDataProperties>[]>tokenEffects.map(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
       (activeEffect) => {
-        if(<string>activeEffect?.label == effectName){
+        if (<string>activeEffect?.label == effectName) {
           return activeEffect;
         }
-      }
+      },
     );
 
     if (!effectsToRemove) return;
@@ -904,16 +914,16 @@ export default class EffectHandler {
   async removeEffectFromIdOnToken(effectId, uuid) {
     if (effectId) {
       const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
-      const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects;
+      const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
       //token.deleteEmbeddedDocuments('ActiveEffect', [<string>effectToRemoveId]);
       // Why i need this ??? for avoid the double AE
       const effectsToRemove = <PropertiesToSource<ActiveEffectDataProperties>[]>tokenEffects.map(
         //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectId,
         (activeEffect) => {
-          if(<string>activeEffect?._id == effectId){
+          if (<string>activeEffect?._id == effectId) {
             return activeEffect;
           }
-        }
+        },
       );
 
       if (!effectsToRemove) return;
@@ -997,17 +1007,17 @@ export default class EffectHandler {
     forceDisabled?: boolean,
   ) {
     const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
-    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects;
+    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
     // const effect = <ActiveEffect>tokenEffects.find((entity: ActiveEffect) => {
     //   return <string>entity.id == effectId;
     // });
     const effects = <PropertiesToSource<ActiveEffectDataProperties>[]>tokenEffects.map(
       //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectId,
       (activeEffect) => {
-        if(<string>activeEffect?._id == effectId){
+        if (<string>activeEffect?._id == effectId) {
           return activeEffect;
         }
-      }
+      },
     );
 
     if (!effects) return;

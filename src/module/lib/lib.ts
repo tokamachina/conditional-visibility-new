@@ -119,8 +119,8 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   // =========================================
 
   const sourceVisionLevels = getSensesFromToken(sourceToken);
-  for(const sourceStatusEffect of sourceVisionLevels){
-    if(sourceStatusEffect.statusSight?.id == StatusEffectSenseFlags.BLINDED){
+  for (const sourceStatusEffect of sourceVisionLevels) {
+    if (sourceStatusEffect.statusSight?.id == StatusEffectSenseFlags.BLINDED) {
       canYouSeeMe = false;
       break;
     }
@@ -132,15 +132,13 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   }
 
   const targetVisionLevels = getConditionsFromToken(targetToken);
-  if(!targetVisionLevels || targetVisionLevels.length == 0){
+  if (!targetVisionLevels || targetVisionLevels.length == 0) {
     canYouSeeMe = true;
   }
 
   if (canYouSeeMe) {
     return canYouSeeMe;
   }
-
-
 
   // ========================================
   // 2 - Check for the correct status sight
@@ -224,7 +222,7 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
       }
       result =
         <number>sourceVisionLevel.visionLevelValue == -1 ||
-        <number>sourceVisionLevel.visionLevelValue >= <number>targetVisionLevel.visionLevelValue
+        <number>sourceVisionLevel.visionLevelValue >= <number>targetVisionLevel.visionLevelValue;
       return result;
     });
     // if any source has vision to the token, the token is visible
@@ -251,10 +249,10 @@ export async function prepareActiveEffectForConditionalVisibility(
   for (const [key, sense] of visionCapabilities.retrieveSenses()) {
     // use replace() method to match and remove all the non-alphanumeric characters
     const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
-    if(sense.visionLevelValue && sense.visionLevelValue != 0){
-      if (!await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true)) {
+    if (sense.visionLevelValue && sense.visionLevelValue != 0) {
+      if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
         await API.addEffectConditionalVisibilityOnToken(
-          <string>sourceToken.actor?.id,
+          <string>sourceToken.id,
           effectNameToCheckOnActor,
           false,
           sense.visionDistanceValue,
@@ -263,10 +261,10 @@ export async function prepareActiveEffectForConditionalVisibility(
       } else {
         // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
         const activeEffectToRemove = <ActiveEffect>(
-          await API.findEffectByNameOnToken(<string>sourceToken.actor?.id, effectNameToCheckOnActor)
+          await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
         );
-        if(activeEffectToRemove){
-          await API.removeEffectFromIdOnToken(<string>sourceToken.actor?.id, <string>activeEffectToRemove.id);
+        if (activeEffectToRemove) {
+          await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
         }
         await API.addEffectConditionalVisibilityOnToken(
           <string>sourceToken.id,
@@ -316,7 +314,10 @@ function _getActiveEffectsFromToken(token: Token, statusSights: StatusSight[]): 
     // use replace() method to match and remove all the non-alphanumeric characters
     const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
     const effectSight = statusSights.find((a: StatusSight) => {
-      return effectNameToCheckOnActor.replace(regex, '').toLowerCase().startsWith(a.id.replace(regex, '').toLowerCase());
+      return effectNameToCheckOnActor
+        .replace(regex, '')
+        .toLowerCase()
+        .startsWith(a.id.replace(regex, '').toLowerCase());
     });
     // if is a AE with the label of the module (no id sorry)
     if (effectSight) {
@@ -362,7 +363,11 @@ export function getVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effec
   }
   atcvValue = Number(
     effectEntity.data.changes.find((aee) => {
-      if (aee.key.replace(regex, '').toLowerCase().startsWith(('ATCV.' + effectSight.id).replace(regex, '').toLowerCase())
+      if (
+        aee.key
+          .replace(regex, '')
+          .toLowerCase()
+          .startsWith(('ATCV.' + effectSight.id).replace(regex, '').toLowerCase())
       ) {
         return aee.value;
       }

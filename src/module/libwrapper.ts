@@ -1,4 +1,3 @@
-import { DOCUMENT_PERMISSION_LEVELS } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/constants.mjs';
 import API from './api';
 import CONSTANTS from './constants';
 import { debug, log, shouldIncludeVision } from './lib/lib';
@@ -113,7 +112,7 @@ export const isVisibleHandler = function (wrapped, ...args) {
   const gm = game.user?.isGM;
   // All owned tokens are visible at all times (hidden or not)
   // by tim posney
-  if (this.actor?.hasPerm(game.user, "OWNER")){
+  if (this.actor?.hasPerm(game.user, 'OWNER')) {
     return true; // new code
   }
 
@@ -140,7 +139,7 @@ export const isVisibleHandler = function (wrapped, ...args) {
   const tolerance = <number>canvas.dimensions?.size / 4; // from tim
 
   //return canvas.sight.testVisibility(this.center, { tolerance, object: this });
-  return canvas.sight.testVisibility(this.center, {tolerance: tolerance, object: this }); // by tim posney
+  return canvas.sight.testVisibility(this.center, { tolerance: tolerance, object: this }); // by tim posney
 };
 
 /**
@@ -245,11 +244,15 @@ export const updateTokenHandler = function (wrapped, ...args) {
   // this.sources.vision.delete(sourceId);
   // this.sources.lights.delete(sourceId);
   // if ( deleted ) return defer ? null : this.update();
-  if (document.data.hidden && !(game.user?.isGM ||
-    //(<Actor>token.actor).hasPerm(game.user, "OWNER"))
-    document.actor.permission == DOCUMENT_PERMISSION_LEVELS.OWNER)
-    ){
-      return; // new code
-    }
+  if (
+    document.data.hidden &&
+    !(
+      game.user?.isGM ||
+      //(<Actor>token.actor).hasPerm(game.user, "OWNER"))
+      document.actor.permission == CONST.DOCUMENT_PERMISSION_LEVELS.OWNER
+    )
+  ) {
+    return; // new code
+  }
   return wrapped(...args);
-}
+};

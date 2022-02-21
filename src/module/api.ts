@@ -113,21 +113,28 @@ export default class API {
     return game.settings.set(CONSTANTS.MODULE_NAME, 'conditions', inAttributes);
   }
 
+  // ======================
+  // Actor Management
+  // ======================
+  /*
   static async addEffectOnActor(actorId: string, effectName: string, effect: Effect) {
     const result = await API.effectInterface.addEffectOnActor(effectName, <string>actorId, effect);
     return result;
   }
 
   static async findEffectByNameOnActor(actorId: string, effectName: string): Promise<ActiveEffect | null> {
-    return await API.effectInterface.findEffectByNameOnActor(effectName, <string>actorId);
+    const result = await API.effectInterface.findEffectByNameOnActor(effectName, <string>actorId);
+    return result;
   }
 
-  static async hasEffectAppliedOnActor(actorId: string, effectName: string) {
-    return await API.effectInterface.hasEffectAppliedOnActor(effectName, <string>actorId);
+  static async hasEffectAppliedOnActor(actorId: string, effectName: string, includeDisabled:boolean) {
+    const result = await API.effectInterface.hasEffectAppliedOnActor(effectName, <string>actorId, true);
+    return result;
   }
 
-  static async hasEffectAppliedFromIdOnActor(actorId: string, effectId: string) {
-    return await API.effectInterface.hasEffectAppliedFromIdOnActor(effectId, <string>actorId);
+  static async hasEffectAppliedFromIdOnActor(actorId: string, effectId: string, includeDisabled:boolean) {
+    const result = await API.effectInterface.hasEffectAppliedFromIdOnActor(effectId, <string>actorId, true);
+    return result;
   }
 
   static async toggleEffectFromIdOnActor(
@@ -161,16 +168,72 @@ export default class API {
     const result = await API.effectInterface.removeEffectFromIdOnActor(effectId, <string>actorId);
     return result;
   }
+  */
+  // ======================
+  // Token Management
+  // ======================
+
+  static async addEffectOnToken(tokenId: string, effectName: string, effect: Effect) {
+    const result = await API.effectInterface.addEffectOnToken(effectName, <string>tokenId, effect);
+    return result;
+  }
+
+  static async findEffectByNameOnToken(tokenId: string, effectName: string): Promise<ActiveEffect | null> {
+    const result = await API.effectInterface.findEffectByNameOnToken(effectName, <string>tokenId);
+    return result;
+  }
+
+  static async hasEffectAppliedOnToken(tokenId: string, effectName: string, includeDisabled:boolean) {
+    const result = await API.effectInterface.hasEffectAppliedOnToken(effectName, <string>tokenId, true);
+    return result;
+  }
+
+  static async hasEffectAppliedFromIdOnToken(tokenId: string, effectId: string, includeDisabled:boolean) {
+    const result = await API.effectInterface.hasEffectAppliedFromIdOnToken(effectId, <string>tokenId, true);
+    return result;
+  }
+
+  static async toggleEffectFromIdOnToken(
+    tokenId: string,
+    effectId: string,
+    alwaysDelete: boolean,
+    forceEnabled?: boolean,
+    forceDisabled?: boolean,
+  ) {
+    const result = await API.effectInterface.toggleEffectFromIdOnToken(
+      effectId,
+      <string>tokenId,
+      alwaysDelete,
+      forceEnabled,
+      forceDisabled,
+    );
+    return result;
+  }
+
+  static async addActiveEffectOnToken(tokenId: string, activeEffect: ActiveEffect) {
+    const result = API.effectInterface.addActiveEffectOnToken(<string>tokenId, activeEffect.data);
+    return result;
+  }
+
+  static async removeEffectOnToken(tokenId: string, effectName: string) {
+    const result = await API.effectInterface.removeEffectOnToken(effectName, <string>tokenId);
+    return result;
+  }
+
+  static async removeEffectFromIdOnToken(tokenId: string, effectId: string) {
+    const result = await API.effectInterface.removeEffectFromIdOnToken(effectId, <string>tokenId);
+    return result;
+  }
 
   // =======================================================================================
-
-  static async addEffectConditionalVisibility(
+  /*
+  static async addEffectConditionalVisibilityOnActor(
     actorNameOrId: string,
     effectName: string,
     distance: number | undefined,
     visionLevel: number | undefined,
   ) {
-    const actor = <Actor>game.actors?.get(actorNameOrId) || <Actor>game.actors?.getName(actorNameOrId);
+    const actor = <Actor>game.actors?.get(actorNameOrId) || <Actor>game.actors?.getName(i18n(actorNameOrId));
 
     if (!actor) {
       warn(`No actor found with reference '${actorNameOrId}'`, true);
@@ -200,6 +263,48 @@ export default class API {
 
     if (actor && effect) {
       await API.effectInterface.addEffectOnActor(effectName, <string>actor.id, effect);
+    }
+  }
+  */
+
+  static async addEffectConditionalVisibilityOnToken(
+    tokenNameOrId: string,
+    effectName: string,
+    distance: number | undefined,
+    visionLevel: number | undefined,
+  ) {
+
+    const tokens = <Token[]>canvas.tokens?.placeables;
+    const token = <Token>tokens.find((token) => token.name == i18n(tokenNameOrId) || token.id == tokenNameOrId);
+
+    if (!token) {
+      warn(`No token found with reference '${tokenNameOrId}'`, true);
+    }
+
+    if (!distance) {
+      distance = 0;
+    }
+
+    if (!visionLevel) {
+      visionLevel = 0;
+    }
+
+    let effect: Effect | undefined = undefined;
+    const sensesOrderByName = <StatusSight[]>API.SENSES.sort((a, b) => a.name.localeCompare(b.name));
+    sensesOrderByName.forEach((a: StatusSight) => {
+      if (a.id == effectName || i18n(a.name) == effectName) {
+        effect = <Effect>EffectDefinitions.all(distance, visionLevel).find((e: Effect) => {
+          return e.customId == a.id;
+        });
+      }
+    });
+
+    if (!effect) {
+      warn(`No effect found with reference '${effectName}'`, true);
+    }
+
+    if (token && effect) {
+      await API.effectInterface.addEffectOnToken(effectName, <string>token.id, effect);
     }
   }
 }

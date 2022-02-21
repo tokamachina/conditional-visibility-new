@@ -1,3 +1,4 @@
+import { DOCUMENT_PERMISSION_LEVELS } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/constants.mjs';
 import API from './api';
 import CONSTANTS from './constants';
 import { debug, log, shouldIncludeVision } from './lib/lib';
@@ -12,11 +13,17 @@ export function registerLibwrappers() {
     'WRAPPER',
   );
 
+  //@ts-ignore
+  libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.isVisible', isVisibleHandler, 'MIXED');
+
   // THIS IS https://github.com/trioderegion/eagle-eye/
 
   if (game.settings.get(CONSTANTS.MODULE_NAME, 'useEagleEye')) {
     //@ts-ignore
     libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.isVisible', isVisibleHandler, 'MIXED');
+
+    //@ts-ignore
+    libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.updateToken', updateTokenHandler, 'MIXED');
 
     // Just as we're about to recalculate vision for this token, keep track of its vision level
     //@ts-ignore
@@ -96,8 +103,23 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
 
 // ============= Eagle Eye  ==============================
 
+/**
+ * 1) Calculates vision from 4 corners of a 1x1 token's square. Shows token if any of it is visible, rather than a small area around its center.
+ * 2) All owned tokens are visible at all times (hidden or not) this has been a complaint from my users and the functionality already exists with shift-click (for non-hidden tokens), so I don't see the change as negative.
+ * @href https://gitlab.com/foundrynet/foundryvtt/-/issues/2547#note_413356123
+ * @href https://github.com/trioderegion/eagle-eye/
+ * @param wrapped
+ * @param args
+ * @returns
+ */
 export const isVisibleHandler = function (wrapped, ...args) {
   const gm = game.user?.isGM;
+  // All owned tokens are visible at all times (hidden or not)
+  // by tim posney
+  if (this.actor?.hasPerm(game.user, "OWNER")){
+    return true; // new code
+  }
+
   if (this.data.hidden) {
     return gm;
   }
@@ -107,6 +129,7 @@ export const isVisibleHandler = function (wrapped, ...args) {
   if (this._controlled) {
     return true;
   }
+
   if (
     canvas.sight.sources.has(this.sourceId) ||
     canvas.sight.sources.has(this.sourceId + '_2') ||
@@ -116,11 +139,20 @@ export const isVisibleHandler = function (wrapped, ...args) {
     return true;
   }
 
-  const tolerance = <number>canvas.grid?.size / 2;
+  //const tolerance = <number>canvas.grid?.size / 2;
+  const tolerance = <number>canvas.dimensions?.size / 4; // from tim
 
-  return canvas.sight.testVisibility(this.center, { tolerance, object: this });
+  //return canvas.sight.testVisibility(this.center, { tolerance, object: this });
+  return canvas.sight.testVisibility(this.center, {tolerance: tolerance, object: this }); // by tim posney
 };
 
+/**
+ * 1) Calculates vision from 4 corners of a 1x1 token's square. Shows token if any of it is visible, rather than a small area around its center.
+ * @href https://github.com/trioderegion/eagle-eye/
+ * @param wrapped
+ * @param args
+ * @returns
+ */
 export const updateVisionSourceHandler = function (wrapped, ...args) {
   const [{ defer = false, deleted = false, skipUpdateFog = false } = {}] = args;
   if (!this.vision2) {
@@ -201,3 +233,26 @@ export const updateVisionSourceHandler = function (wrapped, ...args) {
   }
   return wrapped(...args);
 };
+
+/**
+ * 1) All owned tokens are visible at all times (hidden or not) this has been a complaint from my users and the functionality already exists with shift-click (for non-hidden tokens), so I don't see the change as negative.
+ * @href https://gitlab.com/foundrynet/foundryvtt/-/issues/2547#note_413356123
+ * @param wrapped
+ * @param args
+ * @returns
+ */
+export const updateTokenHandler = function (wrapped, ...args) {
+  const [document, change, options, userId] = args;
+  // const[{defer=false, deleted=false, walls=null, forceUpdateFog=false}={}] = change;
+  // const sourceId = `Token.${document.id}`;
+  // this.sources.vision.delete(sourceId);
+  // this.sources.lights.delete(sourceId);
+  // if ( deleted ) return defer ? null : this.update();
+  if (document.data.hidden && !(game.user?.isGM ||
+    //(<Actor>token.actor).hasPerm(game.user, "OWNER"))
+    document.actor.permission == DOCUMENT_PERMISSION_LEVELS.OWNER)
+    ){
+      return; // new code
+    }
+  return wrapped(...args);
+}

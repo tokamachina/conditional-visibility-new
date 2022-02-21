@@ -45,7 +45,7 @@ export default class FoundryHelpers {
    * @param {string} uuid - the actor UUID
    * @returns {Actor5e} the actor that was found via the UUID
    */
-  getTokenByUuid(uuid: string): Token {
+  async getTokenByUuid(uuid: string): Promise<Token> {
     const tokens = <Token[]>canvas.tokens?.placeables;
     const token = <Token>tokens.find((token) => token.id == uuid);
     return token;

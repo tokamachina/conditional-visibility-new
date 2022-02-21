@@ -1,4 +1,4 @@
-import { registerLibwrappers } from './libwrapper';
+import { registerLibwrappers, updateTokenHandler } from './libwrapper';
 import { registerSocket, conditionalVisibilitySocket } from './socket';
 
 import CONSTANTS from './constants';
@@ -76,13 +76,7 @@ export const readyHooks = async (): Promise<void> => {
   // });
 
   Hooks.on('updateToken', (document: TokenDocument, change, options, userId) => {
-    if(change.flags && change.flags[CONSTANTS.MODULE_NAME]){
-      const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(<Token>document.object);
-      if (sourceVisionCapabilities.hasSenses()) {
-        const sourceVisionLevels = getSensesFromToken(<Token>document.object);
-        prepareActiveEffectForConditionalVisibility(<Token>document.object, sourceVisionCapabilities);
-      }
-    }
+    module.updateToken(document, change, options, userId);
   });
 };
 
@@ -97,4 +91,13 @@ const module = {
       visionTab.append(extraSenses);
     });
   },
+  updateToken(document: TokenDocument, change, options, userId){
+    if(change.flags && change.flags[CONSTANTS.MODULE_NAME]){
+      const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(<Token>document.object);
+      if (sourceVisionCapabilities.hasSenses()) {
+        const sourceVisionLevels = getSensesFromToken(<Token>document.object);
+        prepareActiveEffectForConditionalVisibility(<Token>document.object, sourceVisionCapabilities);
+      }
+    }
+  }
 };

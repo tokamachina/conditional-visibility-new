@@ -213,8 +213,8 @@ export async function prepareActiveEffectForConditionalVisibility(
     // use replace() method to match and remove all the non-alphanumeric characters
     const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
     if(sense.visionLevelValue && sense.visionLevelValue != 0){
-      if (!await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)) {
-        await API.addEffectConditionalVisibility(
+      if (!await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true)) {
+        await API.addEffectConditionalVisibilityOnToken(
           <string>sourceToken.actor?.id,
           effectNameToCheckOnActor,
           sense.visionDistanceValue,
@@ -223,24 +223,24 @@ export async function prepareActiveEffectForConditionalVisibility(
       } else {
         // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
         const activeEffectToRemove = <ActiveEffect>(
-          await API.findEffectByNameOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)
+          await API.findEffectByNameOnToken(<string>sourceToken.actor?.id, effectNameToCheckOnActor)
         );
         if(activeEffectToRemove){
-          await API.removeEffectFromIdOnActor(<string>sourceToken.actor?.id, <string>activeEffectToRemove.id);
+          await API.removeEffectFromIdOnToken(<string>sourceToken.actor?.id, <string>activeEffectToRemove.id);
         }
-        await API.addEffectConditionalVisibility(
-          <string>sourceToken.actor?.id,
+        await API.addEffectConditionalVisibilityOnToken(
+          <string>sourceToken.id,
           effectNameToCheckOnActor,
           sense.visionDistanceValue,
           sense.visionLevelValue,
         );
       }
     } else {
-      if (await API.hasEffectAppliedOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)) {
+      if (await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true)) {
         const activeEffectToRemove = <ActiveEffect>(
-          await API.findEffectByNameOnActor(<string>sourceToken.actor?.id, effectNameToCheckOnActor)
+          await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
         );
-        await API.removeEffectFromIdOnActor(<string>sourceToken.actor?.id, <string>activeEffectToRemove.id);
+        await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
       }
     }
   }

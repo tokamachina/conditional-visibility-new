@@ -52,6 +52,9 @@ export function registerSocket() {
   /**
    * Effects
    */
+
+  // conditionalVisibilitySocket.register('addActorDataChanges', (...args) => API._actorUpdater.addActorDataChanges(...args));
+  // conditionalVisibilitySocket.register('removeActorDataChanges', (...args) => API._actorUpdater.removeActorDataChanges(...args));
   conditionalVisibilitySocket.register('toggleEffect', (...args) =>
     API.effectInterface._effectHandler.toggleEffectArr(...args),
   );
@@ -61,8 +64,7 @@ export function registerSocket() {
   conditionalVisibilitySocket.register('removeEffect', (...args) =>
     API.effectInterface._effectHandler.removeEffectArr(...args),
   );
-  // conditionalVisibilitySocket.register('addActorDataChanges', (...args) => API._actorUpdater.addActorDataChanges(...args));
-  // conditionalVisibilitySocket.register('removeActorDataChanges', (...args) => API._actorUpdater.removeActorDataChanges(...args));
+
   conditionalVisibilitySocket.register('addEffectOnActor', (...args) =>
     API.effectInterface._effectHandler.addEffectOnActorArr(...args),
   );
@@ -77,6 +79,22 @@ export function registerSocket() {
   );
   conditionalVisibilitySocket.register('findEffectByNameOnActor', (...args) =>
     API.effectInterface._effectHandler.findEffectByNameOnActorArr(...args),
+  );
+
+  conditionalVisibilitySocket.register('addEffectOnToken', (...args) =>
+    API.effectInterface._effectHandler.addEffectOnTokenArr(...args),
+  );
+  conditionalVisibilitySocket.register('removeEffectOnToken', (...args) =>
+    API.effectInterface._effectHandler.removeEffectOnTokenArr(...args),
+  );
+  conditionalVisibilitySocket.register('removeEffectFromIdOnToken', (...args) =>
+    API.effectInterface._effectHandler.removeEffectFromIdOnTokenArr(...args),
+  );
+  conditionalVisibilitySocket.register('toggleEffectFromIdOnToken', (...args) =>
+    API.effectInterface._effectHandler.toggleEffectFromIdOnTokenArr(...args),
+  );
+  conditionalVisibilitySocket.register('findEffectByNameOnToken', (...args) =>
+    API.effectInterface._effectHandler.findEffectByNameOnTokenArr(...args),
   );
   return conditionalVisibilitySocket;
 }

@@ -1,4 +1,7 @@
+import { ActiveEffectDataProperties } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
+import { EffectDurationData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectDurationData';
+import { PropertiesToSource } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
 import { game } from '../settings';
 
 /**
@@ -166,7 +169,46 @@ export default class Effect {
     return arrChanges;
   }
 
-  static convertToEffectClass(effect: ActiveEffect): Effect {
+  static _getDurationDataStatic(seconds:number, rounds:number, turns:number) {
+    if (game.combat) {
+      return {
+        startRound: game.combat.round,
+        rounds: Effect._getCombatRoundsStatic(seconds, rounds),
+        turns: turns,
+      };
+    } else {
+      return {
+        startTime: game.time.worldTime,
+        seconds: Effect._getSecondsStatic(seconds, rounds),
+      };
+    }
+  }
+
+  static _getCombatRoundsStatic(seconds:number, rounds:number) {
+    if (rounds) {
+      return rounds;
+    }
+
+    if (seconds) {
+      return seconds / Constants.SECONDS.IN_ONE_ROUND;
+    }
+
+    return undefined;
+  }
+
+  static _getSecondsStatic(seconds:number, rounds:number) {
+    if (seconds) {
+      return seconds;
+    }
+
+    if (rounds) {
+      return rounds * Constants.SECONDS.IN_ONE_ROUND;
+    }
+
+    return undefined;
+  }
+
+  static convertActiveEffectToEffect(effect: ActiveEffect): Effect {
     const atlChanges = effect.data.changes.filter((changes) => changes.key.startsWith('ATL'));
     const tokenMagicChanges = effect.data.changes.filter((changes) => changes.key === 'macro.tokenMagic');
     const atcvChanges = effect.data.changes.filter((changes) => changes.key.startsWith('ATCV'));
@@ -189,6 +231,51 @@ export default class Effect {
       tokenMagicChanges,
       atcvChanges,
     });
+  }
+
+  static convertActiveEffectDataPropertiesToActiveEffect(p:PropertiesToSource<ActiveEffectDataProperties>): ActiveEffect {
+
+    // const duration = p.duration;
+    // const pseudoDuration = Effect._getDurationDataStatic(<number>p.duration.seconds, <number>p.duration.rounds, <number>p.duration.turns);
+
+    // if(pseudoDuration.startTime){
+    //   duration.startTime = pseudoDuration.startTime;
+    // }
+    // if(pseudoDuration.seconds){
+    //   duration.seconds = pseudoDuration.seconds;
+    // }
+    // if(pseudoDuration.startRound){
+    //   duration.startRound = pseudoDuration.startRound;
+    // }
+    // if(pseudoDuration.rounds){
+    //   duration.rounds = pseudoDuration.rounds;
+    // }
+    // if(pseudoDuration.turns){
+    //   duration.rounds = pseudoDuration.rounds;
+    // }
+
+    return {
+      id: p._id,
+      name: p.label,
+      label: <string>p.label,
+      icon: p.icon,
+      tint: p.tint,
+      //@ts-ignore
+      duration: Effect._getDurationDataStatic(<number>p.duration.seconds, <number>p.duration.rounds, <number>p.duration.turns),
+      flags: foundry.utils.mergeObject(p.flags, {
+        core: {
+          statusId: p._id,
+          //@ts-ignore
+          overlay: p.overlay ? p.overlay : false,
+        },
+        isConvenient: true,
+        //@ts-ignore
+        convenientDescription: p.description,
+      }),
+      origin: p.origin ? p.origin : '',
+      transfer: p.transfer ? p.transfer : false,
+      changes: p.changes,
+    };
   }
 }
 

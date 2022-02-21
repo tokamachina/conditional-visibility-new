@@ -350,7 +350,7 @@ export default class EffectInterface {
    * @param {string} effectName - the name of the effect to add
    * @param {string} uuid - the uuid of the actor to add the effect to
    */
-  async addEffectOnActor(effectName: string, uuid: string, effect: Effect) {
+  async addEffectOnActor(effectName: string, uuid: string, effect: Effect):Promise<void> {
     if (!uuid) {
       ui.notifications?.error(`Actor ${uuid} could not be found`);
       return;
@@ -520,7 +520,7 @@ export default class EffectInterface {
    * @param {string} effectName - the name of the effect to add
    * @param {string} uuid - the uuid of the token to add the effect to
    */
-  async addEffectOnToken(effectName: string, uuid: string, effect: Effect) {
+  async addEffectOnToken(effectName: string, uuid: string, effect: Effect):Promise<void> {
     if (!uuid) {
       ui.notifications?.error(`Token ${uuid} could not be found`);
       return;

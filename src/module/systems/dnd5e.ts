@@ -2,24 +2,26 @@ import { StatusEffectSenseFlags, StatusEffectConditionFlags, StatusSight } from 
 import CONSTANTS from '../constants';
 
 export default {
-  HP_ATTRIBUTE: 'data.attributes.hp.value',
+  HP_ATTRIBUTE: `data.attributes.hp.value`,
+  PERCEPTION_PASSIVE_SKILL: `data.skills.prc.passive`,
+  STEALTH_PASSIVE_SKILL: `data.skills.ste.passive`,
   /**
    * The set of possible sensory perception types which an Actor may have.
    * @enum {string}
    */
   SENSES: <StatusSight[]>[
     // {
-    //   id: 'stealthpassive',
-    //   name: `${CONSTANTS.MODULE_NAME}.stealthpassive'),
-    //   //path: 'data.skills.ste.passive',
-    //   path: 'data.attributes.senses.stealthpassive',
-    //   img: '',
+    //   id: `stealthpassive`,
+    //   name: `${CONSTANTS.MODULE_NAME}.stealthpassive`),
+    //   //path: `data.skills.ste.passive`,
+    //   path: `data.attributes.senses.stealthpassive`,
+    //   img: ``,
     //   //effect: EffectDefinitions.stealthpassive(0),
     // },
     {
       id: StatusEffectSenseFlags.NONE,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.NONE}`,
-      path: '',
+      path: ``,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/light_01.jpg`,
       //effect: undefined,
       visionLevelMin: -2,
@@ -29,7 +31,7 @@ export default {
     {
       id: StatusEffectSenseFlags.NORMAL,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.NORMAL}`,
-      path: '',
+      path: ``,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/light_02.jpg`,
       //effect: undefined,
       visionLevelMin: 0,
@@ -39,7 +41,7 @@ export default {
     {
       id: StatusEffectSenseFlags.BLINDED,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.BLINDED}`,
-      path: 'data.traits.senses.blinded',
+      path: `data.traits.senses.blinded`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/affliction_24.jpg`,
       //effect: EffectDefinitions.blinded(0),
       visionLevelMin: -1,
@@ -49,7 +51,7 @@ export default {
     {
       id: StatusEffectSenseFlags.DARKVISION,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.DARKVISION}`,
-      path: 'data.attributes.senses.darkvision',
+      path: `data.attributes.senses.darkvision`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/evil-eye-red-1.jpg`,
       //effect: EffectDefinitions.darkvision(0),
       visionLevelMin: 0,
@@ -59,7 +61,7 @@ export default {
     {
       id: StatusEffectSenseFlags.TREMOR_SENSE,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.TREMOR_SENSE}`,
-      path: 'data.attributes.senses.tremorsense',
+      path: `data.attributes.senses.tremorsense`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/ice_15.jpg`,
       //effect: EffectDefinitions.tremorsense(0),
       visionLevelMin: 0,
@@ -69,7 +71,7 @@ export default {
     {
       id: StatusEffectSenseFlags.SEE_INVISIBLE,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.SEE_INVISIBLE}`,
-      path: 'data.attributes.senses.seeinvisible', // data.attributes.senses.special
+      path: `data.attributes.senses.seeinvisible`, // data.attributes.senses.special
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/shadow_11.jpg`,
       //effect: EffectDefinitions.seeinvisible(0),
       visionLevelMin: 0,
@@ -79,7 +81,7 @@ export default {
     {
       id: StatusEffectSenseFlags.BLIND_SIGHT,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.BLIND_SIGHT}`,
-      path: 'data.attributes.senses.blindsight',
+      path: `data.attributes.senses.blindsight`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/green_18.jpg`,
       //effect: EffectDefinitions.blindsigth(0),
       visionLevelMin: 0,
@@ -89,7 +91,7 @@ export default {
     {
       id: StatusEffectSenseFlags.TRUE_SIGHT,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.TRUE_SIGHT}`,
-      path: 'data.attributes.senses.truesight',
+      path: `data.attributes.senses.truesight`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/emerald_11.jpg`,
       //effect: EffectDefinitions.truesight(0),
       visionLevelMin: 0,
@@ -99,7 +101,7 @@ export default {
     {
       id: StatusEffectSenseFlags.DEVILS_SIGHT,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectSenseFlags.DEVILS_SIGHT}`,
-      path: 'data.attributes.senses.devilssight', // data.attributes.senses.special
+      path: `data.attributes.senses.devilssight`, // data.attributes.senses.special
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/blue_17.jpg`,
       //effect: EffectDefinitions.devilssight(0),
       visionLevelMin: 0,
@@ -111,22 +113,38 @@ export default {
     {
       id: StatusEffectConditionFlags.HIDDEN,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.HIDDEN}`,
+      path: `data.skills.ste.passive`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/newspaper.svg`,
+      visionLevelMin: 0,
+      visionLevelMax: 1,
+      checkElevation: false,
     },
     {
       id: StatusEffectConditionFlags.INVISIBLE,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.INVISIBLE}`,
+      path: ``,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/unknown.svg`,
+      visionLevelMin: 0,
+      visionLevelMax: 4,
+      checkElevation: false,
     },
     {
       id: StatusEffectConditionFlags.OBSCURED,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.OBSCURED}`,
+      path: ``,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/foggy.svg`,
+      visionLevelMin: 0,
+      visionLevelMax: 6,
+      checkElevation: false,
     },
     {
       id: StatusEffectConditionFlags.IN_DARKNESS,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.IN_DARKNESS}`,
+      path: ``,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/moon.svg`,
+      visionLevelMin: 0,
+      visionLevelMax: 6,
+      checkElevation: false,
     },
   ],
 };

@@ -119,30 +119,28 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   // =========================================
 
   const sourceVisionLevels = getSensesFromToken(sourceToken);
-  // const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(sourceToken);
-  // prepareActiveEffectForConditionalVisibility(sourceToken, sourceVisionCapabilities, API.SENSES);
+  for(const sourceStatusEffect of sourceVisionLevels){
+    if(sourceStatusEffect.statusSight?.id == StatusEffectSenseFlags.BLINDED){
+      canYouSeeMe = false;
+      break;
+    }
+  }
+
+  // Someone is blind
+  if (!canYouSeeMe) {
+    return canYouSeeMe;
+  }
 
   const targetVisionLevels = getConditionsFromToken(targetToken);
   if(!targetVisionLevels || targetVisionLevels.length == 0){
     canYouSeeMe = true;
   }
-  /*
-  const targetVisionLevel = targetVisionLevels[0];
-
-  if (!targetVisionLevel || !targetVisionLevel.statusSight) {
-    canYouSeeMe = true;
-  }
-  if (
-    targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NORMAL ||
-    targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NONE
-  ) {
-    canYouSeeMe = true;
-  }
-  */
 
   if (canYouSeeMe) {
     return canYouSeeMe;
   }
+
+
 
   // ========================================
   // 2 - Check for the correct status sight
@@ -258,6 +256,7 @@ export async function prepareActiveEffectForConditionalVisibility(
         await API.addEffectConditionalVisibilityOnToken(
           <string>sourceToken.actor?.id,
           effectNameToCheckOnActor,
+          false,
           sense.visionDistanceValue,
           sense.visionLevelValue,
         );
@@ -272,6 +271,7 @@ export async function prepareActiveEffectForConditionalVisibility(
         await API.addEffectConditionalVisibilityOnToken(
           <string>sourceToken.id,
           effectNameToCheckOnActor,
+          false,
           sense.visionDistanceValue,
           sense.visionLevelValue,
         );
@@ -362,7 +362,8 @@ export function getVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effec
   }
   atcvValue = Number(
     effectEntity.data.changes.find((aee) => {
-      if (aee.key.replace(regex, '').toLowerCase().startsWith(('ATCV.' + effectSight.id).replace(regex, '').toLowerCase())) {
+      if (aee.key.replace(regex, '').toLowerCase().startsWith(('ATCV.' + effectSight.id).replace(regex, '').toLowerCase())
+      ) {
         return aee.value;
       }
     }),

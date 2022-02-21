@@ -50,6 +50,8 @@ This module uses the [levels](https://github.com/theripper93/Levels) library. It
 
 ## Usage
 
+A usage documentation is reachable [here](./wiki/tuotrial.md)
+
 ## Conditions Panel
 
 ### [System Dnd5e](./wiki/table_dnd5e.md)
@@ -60,35 +62,15 @@ This module uses the [levels](https://github.com/theripper93/Levels) library. It
 
 ## Api
 
-New to version 0.0.8, script entry points are created for macro and script authors.  The following methods are supported:
+The API documentation is reachable here [API](./wiki/api.md)
 
-`ConditionalVisibility.help()`
-
-(GM only) pops up a dialog showing the current system, available conditions, and configuration status.
-
-`ConditionalVisibility.setCondition(tokens, condition, value)`
-
-* tokens - an array of tokens to affect
-* condition - the name of the condition, e.g. invisible or indarkness.  You can check the available names for your system in the `help()` dialog.
-* value true to turn the condition on, false to turn it off
-
-For example, if you want to set all the selected tokens invisible:
-`ConditionalVisibility.setCondition(canvas.tokens.controlled, 'invisible', true)`
-
-The *hidden* condition requires system specific rules, and so uses a different set of methods.  Note this is only available on systems that have these rules developed, currently only D&D 5e.  Issues or contributions for other issues are welcome.
-
-`ConditionalVisibility.hide(tokens, value)`
-* tokens - a list of tokens to affect
-* value - optional; a flat value to apply to all tokens.  If not specified, each token will make system-specific roll.
-
-`ConditionalVisibility.unHide(tokens)`
-* tokens - a list of tokens from which to remove the hidden condition. 
+## Feature
 
 #### Auto-applied from Stealth Rolls
 
 Conditional Visibility contains an setting to auto-apply the hidden condition based on a stealth roll.  Currently only 5e; again, contributions for other systems are welcomed.
 
-![Vision Panel](./support/autoStealth.png)
+![Vision Panel](./wiki/images/autoStealth.png)
 
 When this setting is true, then rolling stealth from that token's character sheet will apply the hidden condition based on the value of that roll.
 
@@ -101,26 +83,12 @@ If you use Combat Utility Belt and check "Remove Default Status Effects," it wil
 
 If each condition is added to the CUB set, Conditional Visibility will again function, even if CUB has removed the default set.  The pairs would be:
 
-Invisible
-
-* modules/conditional-visibility/icons/unknown.svg
-
-Obscured
-
-* modules/conditional-visibility/icons/foggy.svg
-
-In Darkness
-
-* modules/conditional-visibility/icons/moon.svg
-
-Hidden (5e only)
-
-* modules/conditional-visibility/icons/newspaper.svg
-
-# Known Issues
-
-* Pathfinder 2e supports only the "Invisible" condition.
-* Will not work if the hide regular conditions options of Combat Utility Belt is checked, as it hides the required Conditional Visibility conditions
+| effectId | image path | image |
+| --- | --- | --- |
+| Invisible | modules/conditional-visibility/icons/unknown.svg | [img](./src/icons/invisible.svg) |
+| Obscured | modules/conditional-visibility/icons/foggy.svg | [img](./src/icons/obscured.svg) |
+| In Darkness | modules/conditional-visibility/icons/moon.svg | [img](./src/icons/indarkness.svg) |
+| Hidden | modules/conditional-visibility/icons/newspaper.svg | [img](./src/icons/hidden.svg) |
 
 ## [Changelog](./CHANGELOG.md)
 

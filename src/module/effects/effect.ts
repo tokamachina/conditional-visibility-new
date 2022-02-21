@@ -91,6 +91,10 @@ export default class Effect {
         },
         isConvenient: true,
         convenientDescription: this.description,
+        // TODO to add this
+        // dae: {
+        //   transfer: false
+        // }
       }),
       origin: origin ? origin : this.origin ? this.origin : '', // MOD 4535992
       transfer: this.transfer ?? false,

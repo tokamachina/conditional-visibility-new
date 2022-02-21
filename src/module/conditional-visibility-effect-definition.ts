@@ -144,7 +144,7 @@ export class EffectDefinitions {
         {
           key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
+          value: number && number > 0 ? `${number}` : `${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -198,7 +198,7 @@ export class EffectDefinitions {
         {
           key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
+          value: number && number > 0 ? `${number}` : `${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -244,7 +244,7 @@ export class EffectDefinitions {
         {
           key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
+          value: number && number > 0 ? `${number}` : `${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -290,7 +290,7 @@ export class EffectDefinitions {
         {
           key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
+          value: number && number > 0 ? `${number}` : `${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -336,7 +336,7 @@ export class EffectDefinitions {
         {
           key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
+          value: number && number > 0 ? `${number}` : `${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -382,7 +382,7 @@ export class EffectDefinitions {
         {
           key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
+          value: number && number > 0 ? `${number}` : `${effectSight.path}`,
           priority: 5,
         },
       ],
@@ -428,7 +428,7 @@ export class EffectDefinitions {
         {
           key: effectSight.path,
           mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-          value: number && number > 0 ? `${number}` : `@${effectSight.path}`,
+          value: number && number > 0 ? `${number}` : `${effectSight.path}`,
           priority: 5,
         },
       ],

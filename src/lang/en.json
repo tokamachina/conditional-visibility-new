@@ -24,7 +24,11 @@
   "conditional-visibility.help.availableconditions": "Available Conditions",
 
   "conditional-visibility.unsupportedsystem": "Conditional Visibility does not support the system {system}, as it has its own condition mechanism.  Issues (especially pull requests) are welcomed",
-  "conditional-visibility.extraSenseInstructions": "Additional senses that may enhance vision, for unlimited range use -1",
+
+  "conditional-visibility.token.config.senses.title": "Senses",
+  "conditional-visibility.token.config.conditions.title": "Conditions",
+  "conditional-visibility.token.config.extraSenseInstructions": "Additional senses that may enhance vision, for unlimited range use -1",
+  "conditional-visibility.token.config.extraConditionInstructions": "Additional conditions that may enhance vision, for unlimited range use -1",
 
   "conditional-visibility.invisible": "Invisible",
   "conditional-visibility.obscured": "Obscured",

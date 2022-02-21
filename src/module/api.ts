@@ -267,9 +267,20 @@ export default class API {
   }
   */
 
+  static async setCondition(
+    tokenNameOrId: string,
+    effectName: string,
+    disabled:boolean,
+    distance: number | undefined,
+    visionLevel: number | undefined,
+  ) {
+    return API.addEffectConditionalVisibilityOnToken(tokenNameOrId,effectName,disabled,distance,visionLevel);
+  }
+
   static async addEffectConditionalVisibilityOnToken(
     tokenNameOrId: string,
     effectName: string,
+    disabled:boolean,
     distance: number | undefined,
     visionLevel: number | undefined,
   ) {
@@ -296,6 +307,7 @@ export default class API {
         effect = <Effect>EffectDefinitions.all(distance, visionLevel).find((e: Effect) => {
           return e.customId == a.id;
         });
+        effect.transfer = !disabled;
       }
     });
 

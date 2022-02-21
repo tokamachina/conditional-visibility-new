@@ -866,19 +866,23 @@ export default class EffectHandler {
       effectName = i18n(effectName);
     }
     const token = await this._foundryHelpers.getTokenByUuid(uuid);
-    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
-    const effectsToRemove = <PropertiesToSource<ActiveEffectDataProperties>[]>tokenEffects.map(
+    // const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
+    // const effectsToRemove = <PropertiesToSource<ActiveEffectDataProperties>[]>tokenEffects.map(
+    //   // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
+    //   (activeEffect) => {
+    //     if (<string>activeEffect?.label == effectName) {
+    //       return activeEffect;
+    //     }
+    //   },
+    // );
+    // if (!effectsToRemove) return;
+    // const effectToRemove = <ActiveEffect>await fromUuid(<string>effectsToRemove[0]._id);
+    // if (!effectToRemove) return;
+    const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>token.actor?.data.effects;
+    const effectToRemove = <ActiveEffect>actorEffects.find(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
-      (activeEffect) => {
-        if (<string>activeEffect?.label == effectName) {
-          return activeEffect;
-        }
-      },
+      (activeEffect) => <string>activeEffect?.data?.label == effectName,
     );
-
-    if (!effectsToRemove) return;
-
-    const effectToRemove = <ActiveEffect>await fromUuid(<string>effectsToRemove[0]._id);
 
     if (!effectToRemove) return;
 
@@ -914,23 +918,25 @@ export default class EffectHandler {
   async removeEffectFromIdOnToken(effectId, uuid) {
     if (effectId) {
       const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
-      const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
+      // const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
       //token.deleteEmbeddedDocuments('ActiveEffect', [<string>effectToRemoveId]);
       // Why i need this ??? for avoid the double AE
-      const effectsToRemove = <PropertiesToSource<ActiveEffectDataProperties>[]>tokenEffects.map(
+      // const effectsToRemove = <PropertiesToSource<ActiveEffectDataProperties>[]>tokenEffects.map(
+      //   //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectId,
+      //   (activeEffect) => {
+      //     if (<string>activeEffect?._id == effectId) {
+      //       return activeEffect;
+      //     }
+      //   },
+      // );
+      // if (!effectsToRemove) return;
+      // const effectToRemove = <ActiveEffect>await fromUuid(<string>effectsToRemove[0]._id);
+      // if (!effectToRemove) return;
+      const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>token.actor?.data.effects;
+      const effectToRemove = <ActiveEffect>actorEffects.find(
         //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectId,
-        (activeEffect) => {
-          if (<string>activeEffect?._id == effectId) {
-            return activeEffect;
-          }
-        },
+        (activeEffect) => <string>activeEffect?.data?._id == effectId,
       );
-
-      if (!effectsToRemove) return;
-
-      const effectToRemove = <ActiveEffect>await fromUuid(<string>effectsToRemove[0]._id);
-
-      if (!effectToRemove) return;
 
       await effectToRemove.update({ disabled: true });
       await effectToRemove.delete();
@@ -970,13 +976,13 @@ export default class EffectHandler {
     if (effect) {
       const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
       if (!origin) {
-        origin = `Token.${token.id}`;
+        origin = `Actor.${token.actor ? token.actor?.id : token.id}`;
       }
       const activeEffectData = effect.convertToActiveEffectData({
         origin,
         overlay,
       });
-      token.document.createEmbeddedDocuments('ActiveEffect', [activeEffectData]);
+      token.actor?.createEmbeddedDocuments('ActiveEffect', [activeEffectData]);
       log(`Added effect ${effect.name ? effect.name : effectName} to ${token.name} - ${token.id}`);
     }
   }
@@ -1007,22 +1013,22 @@ export default class EffectHandler {
     forceDisabled?: boolean,
   ) {
     const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
-    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
-    // const effect = <ActiveEffect>tokenEffects.find((entity: ActiveEffect) => {
-    //   return <string>entity.id == effectId;
-    // });
-    const effects = <PropertiesToSource<ActiveEffectDataProperties>[]>tokenEffects.map(
+    // const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
+    // const effects = <PropertiesToSource<ActiveEffectDataProperties>[]>tokenEffects.map(
+    //   //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectId,
+    //   (activeEffect) => {
+    //     if (<string>activeEffect?._id == effectId) {
+    //       return activeEffect;
+    //     }
+    //   },
+    // );
+    // if (!effects) return;
+    // const effect = <ActiveEffect>await fromUuid(<string>effects[0]._id);
+    const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>token.actor?.data.effects;
+    const effect = <ActiveEffect>actorEffects.find(
       //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectId,
-      (activeEffect) => {
-        if (<string>activeEffect?._id == effectId) {
-          return activeEffect;
-        }
-      },
+      (activeEffect) => <string>activeEffect?.data?._id == effectId,
     );
-
-    if (!effects) return;
-
-    const effect = <ActiveEffect>await fromUuid(<string>effects[0]._id);
 
     if (!effect) return;
     // nuke it if it has a statusId
@@ -1069,8 +1075,8 @@ export default class EffectHandler {
   async addActiveEffectOnToken(uuid, activeEffectData: ActiveEffectData) {
     if (activeEffectData) {
       const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
-      activeEffectData.origin = `Token.${token.id}`;
-      token.document.createEmbeddedDocuments('ActiveEffect', [<Record<string, any>>activeEffectData]);
+      activeEffectData.origin = `Actor.${token.actor ? token.actor?.id : token.id}`;
+      token.actor?.createEmbeddedDocuments('ActiveEffect', [<Record<string, any>>activeEffectData]);
       log(`Added effect ${activeEffectData.label} to ${token.name} - ${token.id}`);
     }
   }

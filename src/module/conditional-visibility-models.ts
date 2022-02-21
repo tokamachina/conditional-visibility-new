@@ -274,7 +274,7 @@ export class VisionCapabilities {
       const statusSight = value.statusSight;
       const visionLevelValue = value.visionLevelValue;
       await this.token.document.setFlag(CONSTANTS.MODULE_NAME, key, visionLevelValue);
-      if(value.statusSight?.path){
+      if (value.statusSight?.path) {
         setProperty(this.token, <string>value.statusSight?.path, visionLevelValue);
       }
     }
@@ -307,7 +307,7 @@ export class VisionCapabilities {
       const statusSight = value.statusSight;
       const visionLevelValue = value.visionLevelValue;
       await this.token.document.setFlag(CONSTANTS.MODULE_NAME, key, visionLevelValue);
-      if(value.statusSight?.path){
+      if (value.statusSight?.path) {
         setProperty(this.token, <string>value.statusSight?.path, visionLevelValue);
       }
     }

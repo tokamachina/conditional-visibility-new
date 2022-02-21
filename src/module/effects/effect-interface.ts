@@ -4,9 +4,13 @@ import Effect from './effect';
 import EffectHandler from './effect-handler';
 import { game } from '../settings';
 import { isGMConnected } from '../lib/lib';
-import { ActiveEffectData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
+import {
+  ActiveEffectData,
+  ActorData,
+} from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import { ActiveEffectDataProperties } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import { PropertiesToSource } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
+import EmbeddedCollection from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs';
 
 /**
  * Interface for working with effects and executing them as a GM via sockets
@@ -582,19 +586,22 @@ export default class EffectInterface {
     }
 
     const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
-    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
-    const effects = <PropertiesToSource<ActiveEffectDataProperties>[]>tokenEffects.map(
+    // const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
+    // const effects = <PropertiesToSource<ActiveEffectDataProperties>[]>tokenEffects.map(
+    //   //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectId,
+    //   (activeEffect) => {
+    //     if (<string>activeEffect?._id == effectId) {
+    //       return activeEffect;
+    //     }
+    //   },
+    // );
+    // if (!effects) return;
+    // const effect = <ActiveEffect>await fromUuid(<string>effects[0]._id);
+    const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>token.actor?.data.effects;
+    const effect = <ActiveEffect>actorEffects.find(
       //(activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect.id == effectId,
-      (activeEffect) => {
-        if (<string>activeEffect?._id == effectId) {
-          return activeEffect;
-        }
-      },
+      (activeEffect) => <string>activeEffect?.data?._id == effectId,
     );
-
-    if (!effects) return;
-
-    const effect = <ActiveEffect>await fromUuid(<string>effects[0]._id);
 
     if (!effect) return;
 

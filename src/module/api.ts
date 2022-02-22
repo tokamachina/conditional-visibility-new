@@ -1,5 +1,5 @@
 import CONSTANTS from './constants';
-import { error, i18n, warn } from './lib/lib';
+import { error, i18n, mergeByProperty, warn } from './lib/lib';
 import EffectInterface from './effects/effect-interface';
 import { StatusSight } from './conditional-visibility-models';
 import HOOKS from './hooks';
@@ -299,23 +299,32 @@ export default class API {
       visionLevel = 0;
     }
 
+    let allSensesAndConditions:StatusSight[] = [];
+    allSensesAndConditions = mergeByProperty(allSensesAndConditions,API.SENSES,'id');
+    allSensesAndConditions = mergeByProperty(allSensesAndConditions,API.CONDITIONS,'id');
+
+    const sensesOrderByName = <StatusSight[]>allSensesAndConditions.sort((a, b) => a.name.localeCompare(b.name));
+
     let effect: Effect | undefined = undefined;
-    const sensesOrderByName = <StatusSight[]>API.SENSES.sort((a, b) => a.name.localeCompare(b.name));
-    sensesOrderByName.forEach((a: StatusSight) => {
+    for(const a of sensesOrderByName){
       if (a.id == effectName || i18n(a.name) == effectName) {
         effect = <Effect>EffectDefinitions.all(distance, visionLevel).find((e: Effect) => {
           return e.customId == a.id;
         });
-        effect.transfer = !disabled;
+        if(effect){
+          effect.transfer = !disabled;
+          break;
+        }
       }
-    });
+    }
 
     if (!effect) {
       warn(`No effect found with reference '${effectName}'`, true);
-    }
-
-    if (token && effect) {
-      await API.effectInterface.addEffectOnToken(effectName, <string>token.id, effect);
+    }else{
+      if (token && effect) {
+        await API.effectInterface.addEffectOnToken(effectName, <string>token.id, effect);
+        await token?.document?.setFlag(CONSTANTS.MODULE_NAME, (<Effect>effect).customId, visionLevel);
+      }
     }
   }
 }

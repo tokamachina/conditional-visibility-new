@@ -97,6 +97,105 @@ export function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O):
   return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[];
 }
 
+/**
+ * @href https://stackoverflow.com/questions/7146217/merge-2-arrays-of-objects
+ * @param target 
+ * @param source 
+ * @param prop 
+ */
+export function mergeByProperty(target:any[], source:any[], prop:any){
+  source.forEach(sourceElement => {
+    const targetElement = target.find(targetElement => {
+      return sourceElement[prop] === targetElement[prop];
+    })
+    targetElement ? Object.assign(targetElement, sourceElement) : target.push(sourceElement);
+  })
+  return target;
+}
+
+// =========================================================================================
+
+
+// /**
+//  * Returns the first selected token
+//  */
+// export function getFirstPlayerTokenSelected(): Token | null {
+//   // Get first token ownted by the player
+//   const selectedTokens = <Token[]>canvas.tokens?.controlled;
+//   if (selectedTokens.length > 1) {
+//     //iteractionFailNotification(i18n("foundryvtt-arms-reach.warningNoSelectMoreThanOneToken"));
+//     return null;
+//   }
+//   if (!selectedTokens || selectedTokens.length == 0) {
+//     //if(game.user.character.data.token){
+//     //  //@ts-ignore
+//     //  return game.user.character.data.token;
+//     //}else{
+//     return null;
+//     //}
+//   }
+//   return selectedTokens[0];
+// }
+
+// /**
+//  * Returns a list of selected (or owned, if no token is selected)
+//  * note: ex getSelectedOrOwnedToken
+//  */
+// function getFirstPlayerToken(): Token | null {
+//   // Get controlled token
+//   let token: Token;
+//   const controlled: Token[] = <Token[]>canvas.tokens?.controlled;
+//   // Do nothing if multiple tokens are selected
+//   if (controlled.length && controlled.length > 1) {
+//     //iteractionFailNotification(i18n("foundryvtt-arms-reach.warningNoSelectMoreThanOneToken"));
+//     return null;
+//   }
+//   // If exactly one token is selected, take that
+//   token = controlled[0];
+//   if (!token) {
+//     if (!controlled.length || controlled.length == 0) {
+//       // If no token is selected use the token of the users character
+//       token = <Token>canvas.tokens?.placeables.find((token) => token.data._id === game.user?.character?.data?._id);
+//     }
+//     // If no token is selected use the first owned token of the users character you found
+//     if (!token) {
+//       token = <Token>canvas.tokens?.ownedTokens[0];
+//     }
+//   }
+//   return token;
+// }
+
+function getElevationToken(token: Token): number {
+  const base = token.document.data;
+  return getElevationPlaceableObject(base);
+}
+
+function getElevationWall(wall: Wall): number {
+  const base = wall.document.data;
+  return getElevationPlaceableObject(base);
+}
+
+function getElevationPlaceableObject(placeableObject: any): number {
+  let base = placeableObject;
+  if (base.document) {
+    base = base.document.data;
+  }
+  const base_elevation =
+    //@ts-ignore
+    typeof _levels !== 'undefined' &&
+    //@ts-ignore
+    _levels?.advancedLOS &&
+    (placeableObject instanceof Token || placeableObject instanceof TokenDocument)
+      ? //@ts-ignore
+        _levels.getTokenLOSheight(token)
+      : base.elevation ??
+        base.flags['levels']?.elevation ??
+        base.flags['levels']?.rangeBottom ??
+        base.flags['wallHeight']?.wallHeightBottom ??
+        0;
+  return base_elevation;
+}
+
 // =============================
 // Module specific function
 // =============================
@@ -112,32 +211,26 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
     return true;
   }
 
-  let canYouSeeMe = false;
+  // let canYouSeeMe = true;
 
   // ========================================
   // 1 - Preparation of the active effect
   // =========================================
 
-  const sourceVisionLevels = getSensesFromToken(sourceToken);
+  const sourceVisionLevels = getSensesFromToken(sourceToken) ?? [];
+  if (!sourceVisionLevels || sourceVisionLevels.length == 0) {
+    return true; // default vaue
+  }
   for (const sourceStatusEffect of sourceVisionLevels) {
     if (sourceStatusEffect.statusSight?.id == StatusEffectSenseFlags.BLINDED) {
-      canYouSeeMe = false;
-      break;
+      // Someone is blind
+      return false;
     }
-  }
-
-  // Someone is blind
-  if (!canYouSeeMe) {
-    return canYouSeeMe;
   }
 
   const targetVisionLevels = getConditionsFromToken(targetToken);
   if (!targetVisionLevels || targetVisionLevels.length == 0) {
-    canYouSeeMe = true;
-  }
-
-  if (canYouSeeMe) {
-    return canYouSeeMe;
+    return true;
   }
 
   // ========================================
@@ -197,11 +290,12 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
     return result;
   });
 
+  let canYouSeeMeByLevelIndex = false;
   // if any source has vision to the token, the token is visible
-  canYouSeeMe = visibleForTypeOfSenseByIndex.reduce((total, curr) => total || curr, false);
+  canYouSeeMeByLevelIndex = visibleForTypeOfSenseByIndex.reduce((total, curr) => total || curr, false);
 
-  if (!canYouSeeMe) {
-    return canYouSeeMe;
+  if (!canYouSeeMeByLevelIndex) {
+    return canYouSeeMeByLevelIndex;
   }
 
   // ========================================
@@ -230,19 +324,20 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
     return result;
   });
 
+  let canYouSeeMeByLevelValue = false;
   // if any source has vision to the token, the token is visible
-  canYouSeeMe = visibleForTypeOfSenseByValue.reduce((total, curr) => total || curr, false);
+  canYouSeeMeByLevelValue = visibleForTypeOfSenseByValue.reduce((total, curr) => total || curr, false);
 
-  return canYouSeeMe;
+  return canYouSeeMeByLevelValue;
 }
 
 export async function prepareActiveEffectForConditionalVisibility(
   sourceToken: Token,
   visionCapabilities: VisionCapabilities,
 ) {
-  if (!visionCapabilities.hasSenses()) {
-    return;
-  }
+  // if (!visionCapabilities.hasSenses() && !visionCapabilities.hasConditions()) {
+  //   return;
+  // }
 
   // const actor = <Actor>sourceToken.document.getActor();
 
@@ -272,6 +367,44 @@ export async function prepareActiveEffectForConditionalVisibility(
           false,
           sense.visionDistanceValue,
           sense.visionLevelValue,
+        );
+      }
+    } else {
+      if (await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true)) {
+        const activeEffectToRemove = <ActiveEffect>(
+          await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
+        );
+        await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
+      }
+    }
+  }
+
+  for (const [key, condition] of visionCapabilities.retrieveConditions()) {
+    // use replace() method to match and remove all the non-alphanumeric characters
+    const effectNameToCheckOnActor = i18n(<string>condition.statusSight?.name);
+    if (condition.visionLevelValue && condition.visionLevelValue != 0) {
+      if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
+        await API.addEffectConditionalVisibilityOnToken(
+          <string>sourceToken.id,
+          effectNameToCheckOnActor,
+          false,
+          condition.visionDistanceValue,
+          condition.visionLevelValue,
+        );
+      } else {
+        // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
+        const activeEffectToRemove = <ActiveEffect>(
+          await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
+        );
+        if (activeEffectToRemove) {
+          await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
+        }
+        await API.addEffectConditionalVisibilityOnToken(
+          <string>sourceToken.id,
+          effectNameToCheckOnActor,
+          false,
+          condition.visionDistanceValue,
+          condition.visionLevelValue,
         );
       }
     } else {
@@ -407,82 +540,3 @@ export function getDistanceFromActiveEffect(effectEntity: ActiveEffect): number 
 
 // ========================================================================================
 
-// /**
-//  * Returns the first selected token
-//  */
-// export function getFirstPlayerTokenSelected(): Token | null {
-//   // Get first token ownted by the player
-//   const selectedTokens = <Token[]>canvas.tokens?.controlled;
-//   if (selectedTokens.length > 1) {
-//     //iteractionFailNotification(i18n("foundryvtt-arms-reach.warningNoSelectMoreThanOneToken"));
-//     return null;
-//   }
-//   if (!selectedTokens || selectedTokens.length == 0) {
-//     //if(game.user.character.data.token){
-//     //  //@ts-ignore
-//     //  return game.user.character.data.token;
-//     //}else{
-//     return null;
-//     //}
-//   }
-//   return selectedTokens[0];
-// }
-
-// /**
-//  * Returns a list of selected (or owned, if no token is selected)
-//  * note: ex getSelectedOrOwnedToken
-//  */
-// function getFirstPlayerToken(): Token | null {
-//   // Get controlled token
-//   let token: Token;
-//   const controlled: Token[] = <Token[]>canvas.tokens?.controlled;
-//   // Do nothing if multiple tokens are selected
-//   if (controlled.length && controlled.length > 1) {
-//     //iteractionFailNotification(i18n("foundryvtt-arms-reach.warningNoSelectMoreThanOneToken"));
-//     return null;
-//   }
-//   // If exactly one token is selected, take that
-//   token = controlled[0];
-//   if (!token) {
-//     if (!controlled.length || controlled.length == 0) {
-//       // If no token is selected use the token of the users character
-//       token = <Token>canvas.tokens?.placeables.find((token) => token.data._id === game.user?.character?.data?._id);
-//     }
-//     // If no token is selected use the first owned token of the users character you found
-//     if (!token) {
-//       token = <Token>canvas.tokens?.ownedTokens[0];
-//     }
-//   }
-//   return token;
-// }
-
-function getElevationToken(token: Token): number {
-  const base = token.document.data;
-  return getElevationPlaceableObject(base);
-}
-
-function getElevationWall(wall: Wall): number {
-  const base = wall.document.data;
-  return getElevationPlaceableObject(base);
-}
-
-function getElevationPlaceableObject(placeableObject: any): number {
-  let base = placeableObject;
-  if (base.document) {
-    base = base.document.data;
-  }
-  const base_elevation =
-    //@ts-ignore
-    typeof _levels !== 'undefined' &&
-    //@ts-ignore
-    _levels?.advancedLOS &&
-    (placeableObject instanceof Token || placeableObject instanceof TokenDocument)
-      ? //@ts-ignore
-        _levels.getTokenLOSheight(token)
-      : base.elevation ??
-        base.flags['levels']?.elevation ??
-        base.flags['levels']?.rangeBottom ??
-        base.flags['wallHeight']?.wallHeightBottom ??
-        0;
-  return base_elevation;
-}

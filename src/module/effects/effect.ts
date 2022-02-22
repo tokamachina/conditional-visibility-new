@@ -219,6 +219,11 @@ export default class Effect {
     const changes = effect.data.changes.filter(
       (change) => !change.key.startsWith('ATL') && change.key !== 'macro.tokenMagic' && !change.key.startsWith('ATCV'),
     );
+    const isDisabled = effect.data.disabled || false;
+    //@ts-ignore
+    const isSuppressed = effect.data.document.isSuppressed || false;
+    const isTemporary = effect.isTemporary || false;
+    const isPassive = !isTemporary;
 
     return new Effect({
       customId: <string>effect.id,

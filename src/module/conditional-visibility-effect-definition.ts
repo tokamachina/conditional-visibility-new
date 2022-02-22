@@ -21,6 +21,10 @@ export class EffectDefinitions {
    */
   static all(distance = 0, visionLevel = 0): Effect[] {
     const effects: Effect[] = [];
+
+    // EffectDefinitions.shadowEffect(distance),
+
+    // SENSES
     const blinded = EffectDefinitions.blinded(distance, visionLevel);
     if (blinded) {
       effects.push(blinded);
@@ -45,7 +49,6 @@ export class EffectDefinitions {
     if (seeinvisible) {
       effects.push(seeinvisible);
     }
-    // EffectDefinitions.shadowEffect(distance),
     const tremorsense = EffectDefinitions.tremorsense(distance, visionLevel);
     if (tremorsense) {
       effects.push(tremorsense);
@@ -54,6 +57,24 @@ export class EffectDefinitions {
     if (truesight) {
       effects.push(truesight);
     }
+    // CONDITIONS
+    const hidden = EffectDefinitions.hidden(visionLevel);
+    if (hidden) {
+      effects.push(hidden);
+    }
+    const invisible = EffectDefinitions.invisible(visionLevel);
+    if (invisible) {
+      effects.push(invisible);
+    }
+    const obscured = EffectDefinitions.obscured(visionLevel);
+    if (obscured) {
+      effects.push(obscured);
+    }
+    const indarkness = EffectDefinitions.indarkness(visionLevel);
+    if (indarkness) {
+      effects.push(indarkness);
+    }
+
     return effects;
   }
 
@@ -518,7 +539,39 @@ export class EffectDefinitions {
   // The target effect
   // =================================================
 
-  static invisible(visionLevel) {
+  static hidden(visionLevel = 0) {
+    const effectSight = API.CONDITIONS.find((a: StatusSight) => {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      return a.id
+        .replace(EffectDefinitions.regex, '')
+        .toLowerCase()
+        .startsWith(StatusEffectConditionFlags.HIDDEN.replace(EffectDefinitions.regex, '').toLowerCase());
+    });
+    if (!effectSight) {
+      debug(`Cannot find for system '${game.system.id}' the status with id '${StatusEffectConditionFlags.HIDDEN}'`);
+      return;
+    }
+    return new Effect({
+      customId: StatusEffectConditionFlags.HIDDEN,
+      name: i18n(`${CONSTANTS.MODULE_NAME}.effects.hidden.name`),
+      description: i18n(`${CONSTANTS.MODULE_NAME}.effects.hidden.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/hidden.svg`,
+      // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
+      transfer: true,
+      changes: [],
+      atlChanges: [],
+      atcvChanges: [
+        {
+          key: 'ATCV.' + StatusEffectConditionFlags.HIDDEN,
+          mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+          value: `${visionLevel}`,
+          priority: 5,
+        },
+      ],
+    });
+  }
+
+  static invisible(visionLevel = 0) {
     const effectSight = API.CONDITIONS.find((a: StatusSight) => {
       // use replace() method to match and remove all the non-alphanumeric characters
       return a.id
@@ -542,6 +595,72 @@ export class EffectDefinitions {
       atcvChanges: [
         {
           key: 'ATCV.' + StatusEffectConditionFlags.INVISIBLE,
+          mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+          value: `${visionLevel}`,
+          priority: 5,
+        },
+      ],
+    });
+  }
+
+  static obscured(visionLevel = 0) {
+    const effectSight = API.CONDITIONS.find((a: StatusSight) => {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      return a.id
+        .replace(EffectDefinitions.regex, '')
+        .toLowerCase()
+        .startsWith(StatusEffectConditionFlags.OBSCURED.replace(EffectDefinitions.regex, '').toLowerCase());
+    });
+    if (!effectSight) {
+      debug(`Cannot find for system '${game.system.id}' the status with id '${StatusEffectConditionFlags.OBSCURED}'`);
+      return;
+    }
+    return new Effect({
+      customId: StatusEffectConditionFlags.OBSCURED,
+      name: i18n(`${CONSTANTS.MODULE_NAME}.effects.obscured.name`),
+      description: i18n(`${CONSTANTS.MODULE_NAME}.effects.obscured.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/obscured.svg`,
+      // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
+      transfer: true,
+      changes: [],
+      atlChanges: [],
+      atcvChanges: [
+        {
+          key: 'ATCV.' + StatusEffectConditionFlags.OBSCURED,
+          mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+          value: `${visionLevel}`,
+          priority: 5,
+        },
+      ],
+    });
+  }
+
+  static indarkness(visionLevel = 0) {
+    const effectSight = API.CONDITIONS.find((a: StatusSight) => {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      return a.id
+        .replace(EffectDefinitions.regex, '')
+        .toLowerCase()
+        .startsWith(StatusEffectConditionFlags.IN_DARKNESS.replace(EffectDefinitions.regex, '').toLowerCase());
+    });
+    if (!effectSight) {
+      debug(
+        `Cannot find for system '${game.system.id}' the status with id '${StatusEffectConditionFlags.IN_DARKNESS}'`,
+      );
+      return;
+    }
+    return new Effect({
+      customId: StatusEffectConditionFlags.OBSCURED,
+      name: i18n(`${CONSTANTS.MODULE_NAME}.effects.indarkness.name`),
+      description: i18n(`${CONSTANTS.MODULE_NAME}.effects.indarkness.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/indarkness.svg`,
+      // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
+      transfer: true,
+      changes: [],
+      atlChanges: [],
+      atcvChanges: [
+        {
+          key: 'ATCV.' + StatusEffectConditionFlags.IN_DARKNESS,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,

@@ -133,7 +133,7 @@ const module = {
     const token = <Token>document.object;
     if (change.flags && change.flags[CONSTANTS.MODULE_NAME]) {
       const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(<Token>document.object);
-      if (sourceVisionCapabilities.hasSenses()) {
+      if (sourceVisionCapabilities.hasSenses() || sourceVisionCapabilities.hasConditions()) {
         // const sourceVisionLevels = getSensesFromToken(<Token>document.object);
         prepareActiveEffectForConditionalVisibility(token, sourceVisionCapabilities);
         // const sourceVisionLevels = getSensesFromToken(<Token>document.object);

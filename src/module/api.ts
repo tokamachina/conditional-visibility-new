@@ -300,8 +300,10 @@ export default class API {
     }
 
     let allSensesAndConditions:StatusSight[] = [];
-    allSensesAndConditions = mergeByProperty(allSensesAndConditions,API.SENSES,'id');
-    allSensesAndConditions = mergeByProperty(allSensesAndConditions,API.CONDITIONS,'id');
+    const senses = API.SENSES;
+    const conditions = API.CONDITIONS;
+    allSensesAndConditions = mergeByProperty(allSensesAndConditions,senses,'id');
+    allSensesAndConditions = mergeByProperty(allSensesAndConditions,conditions,'id');
 
     const sensesOrderByName = <StatusSight[]>allSensesAndConditions.sort((a, b) => a.name.localeCompare(b.name));
 

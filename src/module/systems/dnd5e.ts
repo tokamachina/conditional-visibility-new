@@ -113,7 +113,7 @@ export default {
     {
       id: StatusEffectConditionFlags.HIDDEN,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.HIDDEN}`,
-      path: `data.skills.ste.passive`,
+      path: ``,//`data.skills.ste.passive`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/newspaper.svg`,
       visionLevelMin: 0,
       visionLevelMax: 1,
@@ -122,7 +122,7 @@ export default {
     {
       id: StatusEffectConditionFlags.INVISIBLE,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.INVISIBLE}`,
-      path: ``,
+      path: undefined,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/unknown.svg`,
       visionLevelMin: 0,
       visionLevelMax: 4,
@@ -131,7 +131,7 @@ export default {
     {
       id: StatusEffectConditionFlags.OBSCURED,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.OBSCURED}`,
-      path: ``,
+      path: undefined,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/foggy.svg`,
       visionLevelMin: 0,
       visionLevelMax: 6,
@@ -140,7 +140,7 @@ export default {
     {
       id: StatusEffectConditionFlags.IN_DARKNESS,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.IN_DARKNESS}`,
-      path: ``,
+      path: undefined,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/moon.svg`,
       visionLevelMin: 0,
       visionLevelMax: 6,

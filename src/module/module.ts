@@ -100,7 +100,6 @@ const module = {
   onRenderTokenConfig(tokenConfig: TokenConfig, jQuery: JQuery, data: object): void {
     const visionTab = $('div.tab[data-tab="vision"]');
     const senses = API.SENSES ?? [];
-
     const sensesData: any[] = [];
     for (const s of senses) {
       if (s.id != StatusEffectSenseFlags.NONE && s.id != StatusEffectSenseFlags.NORMAL) {

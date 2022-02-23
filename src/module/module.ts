@@ -215,7 +215,11 @@ const module = {
         for(const statusSight of API.getAllSensesAndConditions()){
           if (updateKey === statusSight.id) {
             // no await 
-            actor?.token?.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
+            if(actor?.token){
+              actor?.token?.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
+            }else{
+              actor?.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
+            }
             if (statusSight?.path) {
               setProperty(this.token, <string>statusSight?.path, change.value);
             }

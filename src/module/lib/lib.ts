@@ -503,6 +503,10 @@ export function getVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effec
       return aee;
     }
   });
+  if(!atcvValue){
+    // Ignore ???
+    return 0;
+  }
   return Number(atcvValue.value);
 }
 

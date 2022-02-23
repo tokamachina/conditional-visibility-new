@@ -56,45 +56,45 @@ export function registerSocket() {
   // conditionalVisibilitySocket.register('addActorDataChanges', (...args) => API._actorUpdater.addActorDataChanges(...args));
   // conditionalVisibilitySocket.register('removeActorDataChanges', (...args) => API._actorUpdater.removeActorDataChanges(...args));
   conditionalVisibilitySocket.register('toggleEffect', (...args) =>
-    API.effectInterface._effectHandler.toggleEffectArr(...args),
+    API.toggleEffectArr(...args),
   );
   conditionalVisibilitySocket.register('addEffect', (...args) =>
-    API.effectInterface._effectHandler.addEffectArr(...args),
+    API.addEffectArr(...args),
   );
   conditionalVisibilitySocket.register('removeEffect', (...args) =>
-    API.effectInterface._effectHandler.removeEffectArr(...args),
+    API.removeEffectArr(...args),
   );
 
   conditionalVisibilitySocket.register('addEffectOnActor', (...args) =>
-    API.effectInterface._effectHandler.addEffectOnActorArr(...args),
+    API.addEffectOnActorArr(...args),
   );
   conditionalVisibilitySocket.register('removeEffectOnActor', (...args) =>
-    API.effectInterface._effectHandler.removeEffectOnActorArr(...args),
+    API.removeEffectOnActorArr(...args),
   );
   conditionalVisibilitySocket.register('removeEffectFromIdOnActor', (...args) =>
-    API.effectInterface._effectHandler.removeEffectFromIdOnActorArr(...args),
+    API.removeEffectFromIdOnActorArr(...args),
   );
   conditionalVisibilitySocket.register('toggleEffectFromIdOnActor', (...args) =>
-    API.effectInterface._effectHandler.toggleEffectFromIdOnActorArr(...args),
+    API.toggleEffectFromIdOnActorArr(...args),
   );
   conditionalVisibilitySocket.register('findEffectByNameOnActor', (...args) =>
-    API.effectInterface._effectHandler.findEffectByNameOnActorArr(...args),
+    API.findEffectByNameOnActorArr(...args),
   );
 
   conditionalVisibilitySocket.register('addEffectOnToken', (...args) =>
-    API.effectInterface._effectHandler.addEffectOnTokenArr(...args),
+    API.addEffectOnTokenArr(...args),
   );
   conditionalVisibilitySocket.register('removeEffectOnToken', (...args) =>
-    API.effectInterface._effectHandler.removeEffectOnTokenArr(...args),
+    API.removeEffectOnTokenArr(...args),
   );
   conditionalVisibilitySocket.register('removeEffectFromIdOnToken', (...args) =>
-    API.effectInterface._effectHandler.removeEffectFromIdOnTokenArr(...args),
+    API.removeEffectFromIdOnTokenArr(...args),
   );
   conditionalVisibilitySocket.register('toggleEffectFromIdOnToken', (...args) =>
-    API.effectInterface._effectHandler.toggleEffectFromIdOnTokenArr(...args),
+    API.toggleEffectFromIdOnTokenArr(...args),
   );
   conditionalVisibilitySocket.register('findEffectByNameOnToken', (...args) =>
-    API.effectInterface._effectHandler.findEffectByNameOnTokenArr(...args),
+    API.findEffectByNameOnTokenArr(...args),
   );
   return conditionalVisibilitySocket;
 }

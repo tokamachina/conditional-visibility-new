@@ -8,56 +8,77 @@ import { canvas, game } from './settings';
 import Effect from './effects/effect';
 import { EffectDefinitions } from './conditional-visibility-effect-definition';
 
-export default class API {
-  // static get effectInterface(): EffectInterface {
-  //   return new EffectInterface(CONSTANTS.MODULE_NAME);
+const API = {
+  effectInterface: EffectInterface,
+
+  // get enhancedConditions(): EnhancedConditions {
+  //   //@ts-ignore
+  //   return game.cub;
   // }
-
-  static effectInterface: EffectInterface;
-
-  static get enhancedConditions(): EnhancedConditions {
-    //@ts-ignore
-    return game.cub;
-  }
 
   /**
    * The attributes used to track dynamic attributes in this system
    *
    * @returns {array}
    */
-  static get SENSES(): StatusSight[] {
+  get SENSES(): StatusSight[] {
     return <any[]>game.settings.get(CONSTANTS.MODULE_NAME, 'senses');
-  }
+  },
 
   /**
    * The attributes used to track dynamic attributes in this system
    *
    * @returns {array}
    */
-  static get CONDITIONS(): StatusSight[] {
+  get CONDITIONS(): StatusSight[] {
     return <any[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
-  }
+  },
 
-  // /**
-  //  * The filters for item types eligible for interaction within this system
-  //  *
-  //  * @returns {Array}
-  //  */
-  // static get ITEM_TYPE_FILTERS() {
-  //   return (<string>game.settings?.get(CONSTANTS.MODULE_NAME, 'visibilityTypeFilters'))
-  //     .split(',')
-  //     .map((str) => str.trim().toLowerCase());
-  // }
+  /**
+   * The attribute used to track the quantity of items in this system
+   *
+   * @returns {String}
+   */
+  get PERCEPTION_PASSIVE_SKILL() {
+    return game.settings.get(CONSTANTS.MODULE_NAME, 'passivePerceptionSkill');
+  },
 
-  // static async _onRenderTokenConfig(...inAttributes: any[]) {
-  //   if (!Array.isArray(inAttributes)) {
-  //     throw error('_onRenderTokenConfig | inAttributes must be of type array');
-  //   }
-  //   const [tokenConfig, html, data] = inAttributes;
-  //   const hookResult = Hooks.call(HOOKS.ON_RENDER_TOKEN_CONFIG, tokenConfig, html, data);
-  //   if (hookResult === false) return;
-  //   return true; //conditionalVisibilitySocket.executeAsGM(SOCKET_HANDLERS.ON_RENDER_TOKEN_CONFIG, tokenConfig, html, data);
-  // }
+  /**
+   * The attribute used to track the quantity of items in this system
+   *
+   * @returns {String}
+   */
+  get STEALTH_PASSIVE_SKILL() {
+    return game.settings.get(CONSTANTS.MODULE_NAME, 'passiveStealthSkill');
+  },
+
+  /**
+   * Sets the inAttribute used to track the passive perceptions in this system
+   *
+   * @param {String} inAttribute
+   * @returns {Promise}
+   */
+  async setPassivePerceptionSkill(inAttribute) {
+    if (typeof inAttribute !== 'string') {
+      throw error('setPassivePerceptionSkill | inAttribute must be of type string');
+    }
+    await game.settings.set(CONSTANTS.MODULE_NAME, 'preconfiguredSystem', true);
+    return game.settings.set(CONSTANTS.MODULE_NAME, 'passivePerceptionSkill', inAttribute);
+  },
+
+  /**
+   * Sets the inAttribute used to track the passive perceptions in this system
+   *
+   * @param {String} inAttribute
+   * @returns {Promise}
+   */
+  async setPassiveStealthSkill(inAttribute) {
+    if (typeof inAttribute !== 'string') {
+      throw error('setPassiveStealthSkill | inAttribute must be of type string');
+    }
+    await game.settings.set(CONSTANTS.MODULE_NAME, 'preconfiguredSystem', true);
+    return game.settings.set(CONSTANTS.MODULE_NAME, 'passiveStealthSkill', inAttribute);
+  },
 
   /**
    * Sets the attributes used to track dynamic attributes in this system
@@ -65,7 +86,7 @@ export default class API {
    * @param {array} inAttributes
    * @returns {Promise}
    */
-  static async setSenses(inAttributes) {
+  async setSenses(inAttributes) {
     if (!Array.isArray(inAttributes)) {
       throw error('setSenses | inAttributes must be of type array');
     }
@@ -84,7 +105,7 @@ export default class API {
       }
     });
     return game.settings.set(CONSTANTS.MODULE_NAME, 'senses', inAttributes);
-  }
+  },
 
   /**
    * Sets the attributes used to track dynamic attributes in this system
@@ -92,7 +113,7 @@ export default class API {
    * @param {array} inAttributes
    * @returns {Promise}
    */
-  static async setConditions(inAttributes) {
+  async setConditions(inAttributes) {
     if (!Array.isArray(inAttributes)) {
       throw error('setConditions | inAttributes must be of type array');
     }
@@ -111,33 +132,149 @@ export default class API {
       }
     });
     return game.settings.set(CONSTANTS.MODULE_NAME, 'conditions', inAttributes);
-  }
+  },
+
+  // ======================
+  // Effect Management
+  // ======================
+
+  async removeEffectArr(...inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('removeEffectArr | inAttributes must be of type array');
+    }
+    const [params] = inAttributes;
+    return this.effectInterface.removeEffect(params);
+  },
+
+  async toggleEffectArr(...inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('toggleEffectArr | inAttributes must be of type array');
+    }
+    const [effectName, params] = inAttributes;
+    return this.effectInterface.toggleEffect(effectName, params);
+  },
+
+  async addEffectArr(...inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('addEffectArr | inAttributes must be of type array');
+    }
+    const [params] = inAttributes;
+    return this.effectInterface.addEffect(params);
+  },
+
+  async hasEffectAppliedArr(...inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('hasEffectAppliedArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid] = inAttributes;
+    return this.effectInterface.hasEffectApplied(effectName, uuid);
+  },
+
+  async addEffectOnActorArr(...inAttributes) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('addEffectOnActorArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid, origin, overlay, effect] = inAttributes;
+    return this.effectInterface.addEffectOnActor(effectName, uuid, origin, overlay, effect);
+  },
+
+  async removeEffectOnActorArr(...inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('removeEffectOnActorArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid] = inAttributes;
+    return this.effectInterface.removeEffectOnActor(effectName, uuid);
+  },
+
+  async removeEffectFromIdOnActorArr(...inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('removeEffectFromIdOnActor | inAttributes must be of type array');
+    }
+    const [effectId, uuid] = inAttributes;
+    return this.effectInterface.removeEffectFromIdOnActor(effectId, uuid);
+  },
+
+  async toggleEffectFromIdOnActorArr(...inAttributes) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('addEffectOnActorArr | inAttributes must be of type array');
+    }
+    const [effectId, uuid, alwaysDelete, forceEnabled, forceDisabled] = inAttributes;
+    return this.effectInterface.toggleEffectFromIdOnActor(effectId, uuid, alwaysDelete, forceEnabled, forceDisabled);
+  },
+
+  async findEffectByNameOnActorArr(...inAttributes: any[]): Promise<ActiveEffect | null> {
+    if (!Array.isArray(inAttributes)) {
+      throw error('findEffectByNameOnActorArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid] = inAttributes;
+    return this.effectInterface.findEffectByNameOnActor(effectName, uuid);
+  },
+
+  async addEffectOnTokenArr(...inAttributes) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('addEffectOnTokenArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid, origin, overlay, effect] = inAttributes;
+    return this.effectInterface.addEffectOnToken(effectName, uuid, origin, overlay, effect);
+  },
+
+  async removeEffectOnTokenArr(...inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('removeEffectOnTokenArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid] = inAttributes;
+    return this.effectInterface.removeEffectOnToken(effectName, uuid);
+  },
+
+  async removeEffectFromIdOnTokenArr(...inAttributes: any[]) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('removeEffectFromIdOnToken | inAttributes must be of type array');
+    }
+    const [effectId, uuid] = inAttributes;
+    return this.effectInterface.removeEffectFromIdOnToken(effectId, uuid);
+  },
+
+  async toggleEffectFromIdOnTokenArr(...inAttributes) {
+    if (!Array.isArray(inAttributes)) {
+      throw error('addEffectOnTokenArr | inAttributes must be of type array');
+    }
+    const [effectId, uuid, alwaysDelete, forceEnabled, forceDisabled] = inAttributes;
+    return this.effectInterface.toggleEffectFromIdOnToken(effectId, uuid, alwaysDelete, forceEnabled, forceDisabled);
+  },
+
+  async findEffectByNameOnTokenArr(...inAttributes: any[]): Promise<ActiveEffect | null> {
+    if (!Array.isArray(inAttributes)) {
+      throw error('findEffectByNameOnTokenArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid] = inAttributes;
+    return this.effectInterface.findEffectByNameOnToken(effectName, uuid);
+  },
 
   // ======================
   // Actor Management
   // ======================
   /*
-  static async addEffectOnActor(actorId: string, effectName: string, effect: Effect) {
+  async addEffectOnActor(actorId: string, effectName: string, effect: Effect) {
     const result = await API.effectInterface.addEffectOnActor(effectName, <string>actorId, effect);
     return result;
-  }
+  }.
 
-  static async findEffectByNameOnActor(actorId: string, effectName: string): Promise<ActiveEffect | null> {
+  async findEffectByNameOnActor(actorId: string, effectName: string): Promise<ActiveEffect | null> {
     const result = await API.effectInterface.findEffectByNameOnActor(effectName, <string>actorId);
     return result;
-  }
+  },
 
-  static async hasEffectAppliedOnActor(actorId: string, effectName: string, includeDisabled:boolean) {
+  async hasEffectAppliedOnActor(actorId: string, effectName: string, includeDisabled:boolean) {
     const result = await API.effectInterface.hasEffectAppliedOnActor(effectName, <string>actorId, includeDisabled);
     return result;
-  }
+  },
 
-  static async hasEffectAppliedFromIdOnActor(actorId: string, effectId: string, includeDisabled:boolean) {
+  async hasEffectAppliedFromIdOnActor(actorId: string, effectId: string, includeDisabled:boolean) {
     const result = await API.effectInterface.hasEffectAppliedFromIdOnActor(effectId, <string>actorId, includeDisabled);
     return result;
-  }
+  },
 
-  static async toggleEffectFromIdOnActor(
+  async toggleEffectFromIdOnActor(
     actorId: string,
     effectId: string,
     alwaysDelete: boolean,
@@ -152,55 +289,55 @@ export default class API {
       forceDisabled,
     );
     return result;
-  }
+  },
 
-  static async addActiveEffectOnActor(actorId: string, activeEffect: ActiveEffect) {
+  async addActiveEffectOnActor(actorId: string, activeEffect: ActiveEffect) {
     const result = API.effectInterface.addActiveEffectOnActor(<string>actorId, activeEffect.data);
     return result;
-  }
+  },
 
   static async removeEffectOnActor(actorId: string, effectName: string) {
     const result = await API.effectInterface.removeEffectOnActor(effectName, <string>actorId);
     return result;
   }
 
-  static async removeEffectFromIdOnActor(actorId: string, effectId: string) {
+  async removeEffectFromIdOnActor(actorId: string, effectId: string) {
     const result = await API.effectInterface.removeEffectFromIdOnActor(effectId, <string>actorId);
     return result;
-  }
+  },
   */
   // ======================
   // Token Management
   // ======================
 
-  static async addEffectOnToken(tokenId: string, effectName: string, effect: Effect) {
-    const result = await API.effectInterface.addEffectOnToken(effectName, <string>tokenId, effect);
+  async addEffectOnToken(tokenId: string, effectName: string, effect: Effect) {
+    const result = await this.effectInterface.addEffectOnToken(effectName, <string>tokenId, effect);
     return result;
-  }
+  },
 
-  static async findEffectByNameOnToken(tokenId: string, effectName: string): Promise<ActiveEffect | null> {
-    const result = await API.effectInterface.findEffectByNameOnToken(effectName, <string>tokenId);
+  async findEffectByNameOnToken(tokenId: string, effectName: string): Promise<ActiveEffect | null> {
+    const result = await this.effectInterface.findEffectByNameOnToken(effectName, <string>tokenId);
     return result;
-  }
+  },
 
-  static async hasEffectAppliedOnToken(tokenId: string, effectName: string, includeDisabled: boolean) {
-    const result = await API.effectInterface.hasEffectAppliedOnToken(effectName, <string>tokenId, includeDisabled);
+  async hasEffectAppliedOnToken(tokenId: string, effectName: string, includeDisabled: boolean) {
+    const result = await this.effectInterface.hasEffectAppliedOnToken(effectName, <string>tokenId, includeDisabled);
     return result;
-  }
+  },
 
-  static async hasEffectAppliedFromIdOnToken(tokenId: string, effectId: string, includeDisabled: boolean) {
-    const result = await API.effectInterface.hasEffectAppliedFromIdOnToken(effectId, <string>tokenId, includeDisabled);
+  async hasEffectAppliedFromIdOnToken(tokenId: string, effectId: string, includeDisabled: boolean) {
+    const result = await this.effectInterface.hasEffectAppliedFromIdOnToken(effectId, <string>tokenId, includeDisabled);
     return result;
-  }
+  },
 
-  static async toggleEffectFromIdOnToken(
+  async toggleEffectFromIdOnToken(
     tokenId: string,
     effectId: string,
     alwaysDelete: boolean,
     forceEnabled?: boolean,
     forceDisabled?: boolean,
   ) {
-    const result = await API.effectInterface.toggleEffectFromIdOnToken(
+    const result = await this.effectInterface.toggleEffectFromIdOnToken(
       effectId,
       <string>tokenId,
       alwaysDelete,
@@ -208,22 +345,22 @@ export default class API {
       forceDisabled,
     );
     return result;
-  }
+  },
 
-  static async addActiveEffectOnToken(tokenId: string, activeEffect: ActiveEffect) {
-    const result = API.effectInterface.addActiveEffectOnToken(<string>tokenId, activeEffect.data);
+  async addActiveEffectOnToken(tokenId: string, activeEffect: ActiveEffect) {
+    const result = this.effectInterface.addActiveEffectOnToken(<string>tokenId, activeEffect.data);
     return result;
-  }
+  },
 
-  static async removeEffectOnToken(tokenId: string, effectName: string) {
-    const result = await API.effectInterface.removeEffectOnToken(effectName, <string>tokenId);
+  async removeEffectOnToken(tokenId: string, effectName: string) {
+    const result = await this.effectInterface.removeEffectOnToken(effectName, <string>tokenId);
     return result;
-  }
+  },
 
-  static async removeEffectFromIdOnToken(tokenId: string, effectId: string) {
-    const result = await API.effectInterface.removeEffectFromIdOnToken(effectId, <string>tokenId);
+  async removeEffectFromIdOnToken(tokenId: string, effectId: string) {
+    const result = await this.effectInterface.removeEffectFromIdOnToken(effectId, <string>tokenId);
     return result;
-  }
+  },
 
   // =======================================================================================
   /*
@@ -267,7 +404,7 @@ export default class API {
   }
   */
 
-  static async setCondition(
+  async setCondition(
     tokenNameOrId: string,
     effectName: string,
     disabled: boolean,
@@ -275,9 +412,9 @@ export default class API {
     visionLevel: number | undefined,
   ) {
     return API.addEffectConditionalVisibilityOnToken(tokenNameOrId, effectName, disabled, distance, visionLevel);
-  }
+  },
 
-  static async addEffectConditionalVisibilityOnToken(
+  async addEffectConditionalVisibilityOnToken(
     tokenNameOrId: string,
     effectName: string,
     disabled: boolean,
@@ -299,13 +436,7 @@ export default class API {
       visionLevel = 0;
     }
 
-    let allSensesAndConditions: StatusSight[] = [];
-    const senses = API.SENSES;
-    const conditions = API.CONDITIONS;
-    allSensesAndConditions = mergeByProperty(allSensesAndConditions, senses, 'id');
-    allSensesAndConditions = mergeByProperty(allSensesAndConditions, conditions, 'id');
-
-    const sensesOrderByName = <StatusSight[]>allSensesAndConditions.sort((a, b) => a.name.localeCompare(b.name));
+    const sensesOrderByName =  this.getAllSensesAndConditions();
 
     let effect: Effect | undefined = undefined;
     for (const a of sensesOrderByName) {
@@ -324,9 +455,22 @@ export default class API {
       warn(`No effect found with reference '${effectName}'`, true);
     } else {
       if (token && effect) {
-        await API.effectInterface.addEffectOnToken(effectName, <string>token.id, effect);
+        await this.effectInterface.addEffectOnToken(effectName, <string>token.id, effect);
         await token?.document?.setFlag(CONSTANTS.MODULE_NAME, (<Effect>effect).customId, visionLevel);
       }
     }
+  },
+
+  getAllSensesAndConditions():StatusSight[]{
+    let allSensesAndConditions: StatusSight[] = [];
+    const senses = API.SENSES;
+    const conditions = API.CONDITIONS;
+    allSensesAndConditions = mergeByProperty(allSensesAndConditions, senses, 'id');
+    allSensesAndConditions = mergeByProperty(allSensesAndConditions, conditions, 'id');
+
+    const sensesOrderByName = <StatusSight[]>allSensesAndConditions.sort((a, b) => a.name.localeCompare(b.name));
+    return sensesOrderByName;
   }
-}
+};
+
+export default API;

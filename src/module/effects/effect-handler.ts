@@ -110,7 +110,7 @@ export default class EffectHandler {
    */
   async hasEffectAppliedArr(...inAttributes: any[]) {
     if (!Array.isArray(inAttributes)) {
-      throw error('removeEffectArr | inAttributes must be of type array');
+      throw error('hasEffectAppliedArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
     return this.hasEffectApplied(effectName, uuid);
@@ -761,7 +761,10 @@ export default class EffectHandler {
         if (includeDisabled) {
           if (
             activeEffect?.data.label.replace(regex, '').toLowerCase() == effectName.replace(regex, '').toLowerCase() ||
-            activeEffect?.data.label.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase())
+            activeEffect?.data.label
+              .replace(regex, '')
+              .toLowerCase()
+              .startsWith(effectName.replace(regex, '').toLowerCase())
             // && !activeEffect.disabled
           ) {
             return true;

@@ -4,6 +4,8 @@ import CONSTANTS from '../constants';
 
 export default {
   HP_ATTRIBUTE: 'data.attributes.hp.value',
+  PERCEPTION_PASSIVE_SKILL: `data.skills.prc.passive`,
+  STEALTH_PASSIVE_SKILL: `data.skills.ste.passive`,
   SENSES: <StatusSight[]>[
     {
       id: StatusEffectSenseFlags.NONE,

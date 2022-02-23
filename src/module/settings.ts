@@ -38,9 +38,9 @@ function getGame(): Game {
   return game;
 }
 
-export function getAPI(): API {
-  return game[CONSTANTS.MODULE_NAME].API;
-}
+// export function getAPI(): API {
+//   return game[CONSTANTS.MODULE_NAME].API;
+// }
 
 export const registerSettings = function (): void {
   game.settings.registerMenu(CONSTANTS.MODULE_NAME, 'resetAllSettings', {
@@ -52,6 +52,15 @@ export const registerSettings = function (): void {
   });
 
   // =====================================================================
+
+  game.settings.register(CONSTANTS.MODULE_NAME, 'autoStealth', {
+    name: `${CONSTANTS.MODULE_NAME}.setting.autoStealth.name`,
+    hint: `${CONSTANTS.MODULE_NAME}.setting.autoStealth.hint`,
+    scope: 'world',
+    config: true,
+    default: false,
+    type: Boolean,
+  });
 
   game.settings.register(CONSTANTS.MODULE_NAME, 'useEagleEye', {
     name: `${CONSTANTS.MODULE_NAME}.setting.useEagleEye.name`,
@@ -96,7 +105,7 @@ export const registerSettings = function (): void {
 
   const settings = defaultSettings();
   for (const [name, data] of Object.entries(settings)) {
-    game.settings.register(CONSTANTS.MODULE_NAME, name, data);
+    game.settings.register(CONSTANTS.MODULE_NAME, name, <any>data);
   }
 
   // for (const [name, data] of Object.entries(otherSettings)) {
@@ -153,27 +162,37 @@ async function applyDefaultSettings() {
 function defaultSettings(apply = false) {
   return {
     senses: {
+      name: `${CONSTANTS.MODULE_NAME}.setting.senses.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.senses.hint`,
       scope: 'world',
       config: false,
-      //@ts-ignore
       default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.SENSES : [],
       type: Array,
     },
     conditions: {
+      name: `${CONSTANTS.MODULE_NAME}.setting.conditions.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.conditions.hint`,
       scope: 'world',
       config: false,
-      //@ts-ignore
       default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.CONDITIONS : [],
       type: Array,
     },
-    // visibilityDefaultValue: {
-    //   name: `${CONSTANTS.MODULE_NAME}.setting.visibilityDefaultValue.name`,
-    //   hint: `${CONSTANTS.MODULE_NAME}.setting.visibilityDefaultValue.hint`,
-    //   scope: 'world',
-    //   config: true,
-    //   default: 10,
-    //   type: Number,
-    // },
+    passivePerceptionSkill: {
+      name: `${CONSTANTS.MODULE_NAME}.setting.passivePerceptionSkill.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.passivePerceptionSkill.hint`,
+      scope: 'world',
+      config: true,
+      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.PERCEPTION_PASSIVE_SKILL : '',
+      type: String,
+    },
+    passiveStealthSkill: {
+      name: `${CONSTANTS.MODULE_NAME}.setting.passiveStealthSkill.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.passiveStealthSkill.hint`,
+      scope: 'world',
+      config: true,
+      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.STEALTH_PASSIVE_SKILL : '',
+      type: String,
+    },
   };
 }
 
@@ -209,6 +228,15 @@ function otherSettings(apply = false) {
     systemNotFoundWarningShown: {
       name: `${CONSTANTS.MODULE_NAME}.setting.systemNotFoundWarningShown.name`,
       hint: `${CONSTANTS.MODULE_NAME}.setting.systemNotFoundWarningShown.hint`,
+      scope: 'world',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
+
+    preconfiguredSystem: {
+      name: `${CONSTANTS.MODULE_NAME}.setting.preconfiguredSystem.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.preconfiguredSystem.hint`,
       scope: 'world',
       config: false,
       default: false,

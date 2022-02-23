@@ -12,6 +12,11 @@
   "conditional-visibility.setting.debug.label": "Prints debug messages to the console",
   "conditional-visibility.setting.debug.hint": " ",
 
+  "conditional-visibility.setting.passivePerceptionSkill.name": "Passive perception skill",
+  "conditional-visibility.setting.passivePerceptionSkill.hint": "Make sense only with 'Auto hide on stealth rolls' setting set to true. Here you can configure what the attribute path is for each actor's passive perception. For example, in D&D5e system, each actor's passive perception is stored in the item's \"actor.data.data.skills.prc.passive\" attribute, so you'd put \"data.skills.prc.passive\" in this setting.",
+  "conditional-visibility.setting.passiveStealthSkill.name": "Passive stealth skill",
+  "conditional-visibility.setting.passiveStealthSkill.hint": "Make sense only with 'Auto hide on stealth rolls' setting set to true. Here you can configure what the attribute path is for each actor's passive stealth. For example, in D&D5e system, each actor's passive stealth is stored in the item's \"actor.data.data.skills.ste.passive\" attribute, so you'd put \"data.skills.ste.passive\" in this setting.",
+
   "conditional-visibility.popup.dismissuntilupdated": "Dismiss until updated",
   "conditional-visibility.popup.close": "Close",
   "conditional-visibility.popup.version0910.1": "A compendium has is now part of this module, for those who wish to use macros instead of conditions icons to apply conditions, or to apply them in bulk.",

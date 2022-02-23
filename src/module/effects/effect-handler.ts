@@ -700,21 +700,23 @@ export default class EffectHandler {
       effectName = i18n(effectName);
     }
     const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
-    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
+    // const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
+    const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>token.actor?.data.effects;
     let effect: ActiveEffect | null = null;
     if (!effectName) {
       return effect;
     }
     // regex expression to match all non-alphanumeric characters in string
     const regex = /[^A-Za-z0-9]/g;
-    for (const effectEntity of tokenEffects) {
-      const effectNameToSet = effectEntity.label;
+    for (const effectEntity of actorEffects) {
+      const effectNameToSet = effectEntity.data.label;
       if (!effectNameToSet) {
         continue;
       }
       // use replace() method to match and remove all the non-alphanumeric characters
       if (effectNameToSet.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase())) {
-        effect = Effect.convertActiveEffectDataPropertiesToActiveEffect(effectEntity);
+        //effect = Effect.convertActiveEffectDataPropertiesToActiveEffect(effectEntity);
+        effect = effectEntity;
         break;
       }
     }
@@ -750,15 +752,16 @@ export default class EffectHandler {
       effectName = i18n(effectName);
     }
     const token = await this._foundryHelpers.getTokenByUuid(uuid);
-    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
+    // const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
+    const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>token.actor?.data.effects;
     const regex = /[^A-Za-z0-9]/g;
-    const isApplied = tokenEffects.some(
+    const isApplied = actorEffects.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
       (activeEffect) => {
         if (includeDisabled) {
           if (
-            activeEffect?.label.replace(regex, '').toLowerCase() == effectName.replace(regex, '').toLowerCase() ||
-            activeEffect?.label.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase())
+            activeEffect?.data.label.replace(regex, '').toLowerCase() == effectName.replace(regex, '').toLowerCase() ||
+            activeEffect?.data.label.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase())
             // && !activeEffect.disabled
           ) {
             return true;
@@ -767,12 +770,12 @@ export default class EffectHandler {
           }
         } else {
           if (
-            (activeEffect?.label.replace(regex, '').toLowerCase() == effectName.replace(regex, '').toLowerCase() ||
-              activeEffect?.label
+            (activeEffect?.data.label.replace(regex, '').toLowerCase() == effectName.replace(regex, '').toLowerCase() ||
+              activeEffect?.data.label
                 .replace(regex, '')
                 .toLowerCase()
                 .startsWith(effectName.replace(regex, '').toLowerCase())) &&
-            !activeEffect.disabled
+            !activeEffect.data.disabled
           ) {
             return true;
           } else {
@@ -812,13 +815,14 @@ export default class EffectHandler {
    */
   async hasEffectAppliedFromIdOnToken(effectId, uuid, includeDisabled = false): Promise<boolean> {
     const token = await this._foundryHelpers.getTokenByUuid(uuid);
-    const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
-    const isApplied = tokenEffects.some(
+    //const tokenEffects = <PropertiesToSource<ActiveEffectDataProperties>[]>token?.data.actorData.effects ?? [];
+    const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>token.actor?.data.effects;
+    const isApplied = actorEffects.some(
       // (activeEffect) => <boolean>activeEffect?.data?.flags?.isConvenient && <string>activeEffect?.data?.label == effectName,
       (activeEffect) => {
         if (includeDisabled) {
           if (
-            activeEffect._id == effectId
+            activeEffect.data._id == effectId
             // && !activeEffect.disabled
           ) {
             return true;
@@ -826,7 +830,7 @@ export default class EffectHandler {
             return false;
           }
         } else {
-          if (activeEffect._id == effectId && !activeEffect.disabled) {
+          if (activeEffect.data._id == effectId && !activeEffect.data.disabled) {
             return true;
           } else {
             return false;

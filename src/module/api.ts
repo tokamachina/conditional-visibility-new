@@ -299,21 +299,21 @@ export default class API {
       visionLevel = 0;
     }
 
-    let allSensesAndConditions:StatusSight[] = [];
+    let allSensesAndConditions: StatusSight[] = [];
     const senses = API.SENSES;
     const conditions = API.CONDITIONS;
-    allSensesAndConditions = mergeByProperty(allSensesAndConditions,senses,'id');
-    allSensesAndConditions = mergeByProperty(allSensesAndConditions,conditions,'id');
+    allSensesAndConditions = mergeByProperty(allSensesAndConditions, senses, 'id');
+    allSensesAndConditions = mergeByProperty(allSensesAndConditions, conditions, 'id');
 
     const sensesOrderByName = <StatusSight[]>allSensesAndConditions.sort((a, b) => a.name.localeCompare(b.name));
 
     let effect: Effect | undefined = undefined;
-    for(const a of sensesOrderByName){
+    for (const a of sensesOrderByName) {
       if (a.id == effectName || i18n(a.name) == effectName) {
         effect = <Effect>EffectDefinitions.all(distance, visionLevel).find((e: Effect) => {
           return e.customId == a.id;
         });
-        if(effect){
+        if (effect) {
           effect.transfer = !disabled;
           break;
         }
@@ -322,7 +322,7 @@ export default class API {
 
     if (!effect) {
       warn(`No effect found with reference '${effectName}'`, true);
-    }else{
+    } else {
       if (token && effect) {
         await API.effectInterface.addEffectOnToken(effectName, <string>token.id, effect);
         await token?.document?.setFlag(CONSTANTS.MODULE_NAME, (<Effect>effect).customId, visionLevel);

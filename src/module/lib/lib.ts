@@ -99,22 +99,21 @@ export function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O):
 
 /**
  * @href https://stackoverflow.com/questions/7146217/merge-2-arrays-of-objects
- * @param target 
- * @param source 
- * @param prop 
+ * @param target
+ * @param source
+ * @param prop
  */
-export function mergeByProperty(target:any[], source:any[], prop:any){
-  source.forEach(sourceElement => {
-    const targetElement = target.find(targetElement => {
+export function mergeByProperty(target: any[], source: any[], prop: any) {
+  source.forEach((sourceElement) => {
+    const targetElement = target.find((targetElement) => {
       return sourceElement[prop] === targetElement[prop];
-    })
+    });
     targetElement ? Object.assign(targetElement, sourceElement) : target.push(sourceElement);
-  })
+  });
   return target;
 }
 
 // =========================================================================================
-
 
 // /**
 //  * Returns the first selected token
@@ -489,24 +488,22 @@ export function getVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effec
   const regex = /[^A-Za-z0-9]/g;
   //Look up for ATCV to manage vision level
   // TODO for now every active effect can have only one ATCV key ate the time not sure if manage
-  let atcvValue = 0;
+  let atcvValue: any = 0;
   const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
   if (!effectNameToSet) {
     return atcvValue;
   }
-  atcvValue = Number(
-    effectEntity.data.changes.find((aee) => {
-      if (
-        aee.key
-          .replace(regex, '')
-          .toLowerCase()
-          .startsWith(('ATCV.' + effectSight.id).replace(regex, '').toLowerCase())
-      ) {
-        return aee.value;
-      }
-    }),
-  );
-  return atcvValue;
+  atcvValue = effectEntity.data.changes.find((aee) => {
+    if (
+      aee.key
+        .replace(regex, '')
+        .toLowerCase()
+        .startsWith(('ATCV.' + effectSight.id).replace(regex, '').toLowerCase())
+    ) {
+      return aee;
+    }
+  });
+  return Number(atcvValue.value);
 }
 
 export function getDistanceFromActiveEffect(effectEntity: ActiveEffect): number {
@@ -518,20 +515,10 @@ export function getDistanceFromActiveEffect(effectEntity: ActiveEffect): number 
   }
   // if is a AE with the label of the module (no id sorry)
   //Look up for ATL dim and bright sight to manage distance
-  const dimSight = Number(
-    effectEntity.data.changes.find((aee) => {
-      if (aee.key == 'ATL.dimSight') {
-        return aee.value;
-      }
-    }),
-  );
-  const brightSight = Number(
-    effectEntity.data.changes.find((aee) => {
-      if (aee.key == 'ATL.brightSight') {
-        return aee.value;
-      }
-    }),
-  );
+  const dimSightAE = effectEntity.data.changes.find((aee) => aee.key == 'ATL.dimSight');
+  const brightSightAE = effectEntity.data.changes.find((aee) => aee.key == 'ATL.brightSight');
+  const brightSight = Number(brightSightAE?.value);
+  const dimSight = Number(dimSightAE?.value);
   if (brightSight || dimSight) {
     distance = Math.max(brightSight, dimSight);
   }
@@ -539,4 +526,3 @@ export function getDistanceFromActiveEffect(effectEntity: ActiveEffect): number 
 }
 
 // ========================================================================================
-

@@ -44,15 +44,15 @@ This module uses the [libWrapper](https://github.com/ruipin/fvtt-lib-wrapper) li
 
 This module uses the [socketlib](https://github.com/manuelVo/foundryvtt-socketlib) library for wrapping core methods. It is a hard dependency and it is recommended for the best experience and compatibility with other modules.
 
-### levels (optional but suggested)
+### levels (optional but it should work)
 
 This module uses the [levels](https://github.com/theripper93/Levels) library. It is a optional but suggested dependency and it is recommended for the best experience and compatibility with other modules.
 
 ## Usage
 
-A usage documentation is reachable [here](./wiki/tuotrial.md)
+A usage documentation is reachable [here](./wiki/tutorial.md)
 
-## Conditions Panel
+## Conditions and sense combination by system deafult
 
 ### [System Dnd5e](./wiki/table_dnd5e.md)
 
@@ -64,17 +64,7 @@ A usage documentation is reachable [here](./wiki/tuotrial.md)
 
 The API documentation is reachable here [API](./wiki/api.md)
 
-## Feature
-
-#### Auto-applied from Stealth Rolls
-
-Conditional Visibility contains an setting to auto-apply the hidden condition based on a stealth roll.  Currently only 5e; again, contributions for other systems are welcomed.
-
-![Vision Panel](./wiki/images/autoStealth.png)
-
-When this setting is true, then rolling stealth from that token's character sheet will apply the hidden condition based on the value of that roll.
-
-[![Watch the video](https://img.youtube.com/vi/U308ksxblZU/hqdefault.jpg)](https://youtu.be/U308ksxblZU)
+## Features
 
 ## Note for Combat Utility Belt Users
 If you use Combat Utility Belt and check "Remove Default Status Effects," it will remove those Status Effects necessary for this module to function.  They can be re-added using Combat Utility Belt's Condition Lab:

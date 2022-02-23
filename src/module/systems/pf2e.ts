@@ -70,7 +70,7 @@ export default {
     {
       id: StatusEffectConditionFlags.HIDDEN,
       name: `${CONSTANTS.MODULE_NAME}.${StatusEffectConditionFlags.HIDDEN}`,
-      path: ``,//`data.skills.ste.passive`,
+      path: ``, //`data.skills.ste.passive`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/newspaper.svg`,
       visionLevelMin: 0,
       visionLevelMax: 1,

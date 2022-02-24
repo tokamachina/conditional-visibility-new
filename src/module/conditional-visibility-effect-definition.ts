@@ -29,7 +29,7 @@ export class ConditionalVisibilityEffectDefinitions {
     if (blinded) {
       effects.push(blinded);
     }
-    const blindsight = ConditionalVisibilityEffectDefinitions.blindsigth(distance, visionLevel);
+    const blindsight = ConditionalVisibilityEffectDefinitions.blindsight(distance, visionLevel);
     if (blindsight) {
       effects.push(blindsight);
     }
@@ -86,7 +86,7 @@ export class ConditionalVisibilityEffectDefinitions {
       return ConditionalVisibilityEffectDefinitions.blinded(distance, visionLevel);
     }
     if (effect?.customId == AtcvEffectSenseFlags.BLIND_SIGHT) {
-      return ConditionalVisibilityEffectDefinitions.blindsigth(distance, visionLevel);
+      return ConditionalVisibilityEffectDefinitions.blindsight(distance, visionLevel);
     }
     if (effect?.customId == AtcvEffectSenseFlags.DARKVISION) {
       return ConditionalVisibilityEffectDefinitions.darkvision(distance, visionLevel);
@@ -191,7 +191,7 @@ export class ConditionalVisibilityEffectDefinitions {
     });
   }
 
-  static blindsigth(number: number, visionLevel) {
+  static blindsight(number: number, visionLevel) {
     const effectSight = API.SENSES.find((a: SenseData) => {
       // use replace() method to match and remove all the non-alphanumeric characters
       return a.id
@@ -211,13 +211,13 @@ export class ConditionalVisibilityEffectDefinitions {
       customId: AtcvEffectSenseFlags.BLIND_SIGHT,
       name:
         number && number > 0
-          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.name2`, { number: number })
-          : i18n(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.name`),
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blindsight.name2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.blindsight.name`),
       description:
         number && number > 0
-          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.description2`, { number: number })
-          : i18n(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.description`),
-      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/affliction_24.jpg`,
+          ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blindsight.description2`, { number: number })
+          : i18n(`${CONSTANTS.MODULE_NAME}.effects.blindsight.description`),
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/green_18.jpg`,
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
       changes: [
@@ -523,7 +523,7 @@ export class ConditionalVisibilityEffectDefinitions {
         number && number > 0
           ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blinded.description2`, { number: number })
           : i18n(`${CONSTANTS.MODULE_NAME}.effects.blinded.description`),
-      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/light_01.jpg`,
+      icon: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/affliction_24.jpg`,
       // seconds: Constants.SECONDS.IN_EIGHT_HOURS,
       transfer: true,
       changes: [],

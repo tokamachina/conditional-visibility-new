@@ -20,6 +20,7 @@ import {
   EffectChangeData,
   EffectChangeDataSource,
 } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
+import { EffectSupport } from './effects/effect';
 
 export const initHooks = async (): Promise<void> => {
   // registerSettings();
@@ -91,6 +92,7 @@ export const readyHooks = async (): Promise<void> => {
     module.updateToken(document, change, options, userId);
   });
 
+  // TODO Seem to much complex
   Hooks.on('updateActiveEffect', async (effect, options) => {
     module.updateActiveEffect(effect, options);
   });
@@ -215,11 +217,13 @@ const module = {
           if (updateKey === statusSight.id) {
             // TODO TO CHECK IF WE NEED TO FILTER THE TOKENS AGAIN MAYBE WITH A ADDTIONAL ATCV active change data effect ?
             for (const tokenToSet of tokenArray) {
-              tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
+              //await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
+              setProperty(tokenToSet.document, `data.flags.${CONSTANTS.MODULE_NAME}.${statusSight.id}`, change.value);
               if (statusSight?.path) {
-                setProperty(this.token, <string>statusSight?.path, change.value);
+                setProperty(tokenToSet.document, <string>statusSight?.path, change.value);
               }
             }
+            break;
           }
         }
       }
@@ -228,11 +232,27 @@ const module = {
   async dfredsConvenientEffectsReady(...args) {
     // https://github.com/DFreds/dfreds-convenient-effects/issues/110
     //@ts-ignore
-    if (game.dfred) {
+    if (game.dfreds) {
       const effects = ConditionalVisibilityEffectDefinitions.all();
+      const activeEffectsData:any[] = [];
+      for(const effect of effects){
+        // I also added this for specifically checking for custom effects. 
+        // It will return undefined if it doesn't exist:
+        //@ts-ignore
+        const effectFounded = game.dfreds.effectInterface.findCustomEffectByName(effect.name);
+        if(!effectFounded){
+          const origin = undefined;
+          const overlay = false;
+          activeEffectsData.push(effect.convertToActiveEffectData({origin,overlay}));
+        }
+      } 
+
+      //The data that is passed in are standard ActiveEffectData... i.e. from 
+      //canvas.tokens.controlled[0].actor.effects.get('some key').data.toObject()
       //@ts-ignore
-      game.dfreds.effectInterface.createNewCustomEffectWith({
-        activeEffects: effects,
+      game.dfreds.effectInterface.createNewCustomEffectsWith({
+      // game.dfreds.effectInterface._customEffectsHandler.createNewCustomEffectsWith({
+        activeEffects: activeEffectsData,
       });
     }
   },

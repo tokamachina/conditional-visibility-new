@@ -9,7 +9,7 @@ import Effect from './effects/effect';
 import { ConditionalVisibilityEffectDefinitions } from './conditional-visibility-effect-definition';
 
 const API = {
-  effectInterface: EffectInterface,
+  effectInterface:EffectInterface,
 
   get CUB(): EnhancedConditions {
     //@ts-ignore
@@ -143,7 +143,7 @@ const API = {
       throw error('removeEffectArr | inAttributes must be of type array');
     }
     const [params] = inAttributes;
-    const result = await this.effectInterface.removeEffect(params);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.removeEffect(params);
     return result;
   },
 
@@ -161,7 +161,7 @@ const API = {
       throw error('addEffectArr | inAttributes must be of type array');
     }
     const [params] = inAttributes;
-    const result = await this.effectInterface.addEffect(params);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.addEffect(params);
     return result;
   },
 
@@ -170,7 +170,7 @@ const API = {
       throw error('hasEffectAppliedArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    const result = await this.effectInterface.hasEffectApplied(effectName, uuid);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.hasEffectApplied(effectName, uuid);
     return result;
   },
 
@@ -179,7 +179,7 @@ const API = {
       throw error('addEffectOnActorArr | inAttributes must be of type array');
     }
     const [effectName, uuid, origin, overlay, effect] = inAttributes;
-    const result = await this.effectInterface.addEffectOnActor(effectName, uuid, origin, overlay, effect);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.addEffectOnActor(effectName, uuid, origin, overlay, effect);
     return result;
   },
 
@@ -188,7 +188,7 @@ const API = {
       throw error('removeEffectOnActorArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    const result = await this.effectInterface.removeEffectOnActor(effectName, uuid);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.removeEffectOnActor(effectName, uuid);
     return result;
   },
 
@@ -197,7 +197,7 @@ const API = {
       throw error('removeEffectFromIdOnActor | inAttributes must be of type array');
     }
     const [effectId, uuid] = inAttributes;
-    const result = await this.effectInterface.removeEffectFromIdOnActor(effectId, uuid);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.removeEffectFromIdOnActor(effectId, uuid);
     return result;
   },
 
@@ -206,7 +206,7 @@ const API = {
       throw error('addEffectOnActorArr | inAttributes must be of type array');
     }
     const [effectId, uuid, alwaysDelete, forceEnabled, forceDisabled] = inAttributes;
-    const result = await this.effectInterface.toggleEffectFromIdOnActor(
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.toggleEffectFromIdOnActor(
       effectId,
       uuid,
       alwaysDelete,
@@ -221,7 +221,7 @@ const API = {
       throw error('findEffectByNameOnActorArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    const result = await this.effectInterface.findEffectByNameOnActor(effectName, uuid);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.findEffectByNameOnActor(effectName, uuid);
     return result;
   },
 
@@ -230,7 +230,7 @@ const API = {
       throw error('addEffectOnTokenArr | inAttributes must be of type array');
     }
     const [effectName, uuid, origin, overlay, effect] = inAttributes;
-    const result = await this.effectInterface.addEffectOnToken(effectName, uuid, origin, overlay, effect);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.addEffectOnToken(effectName, uuid, origin, overlay, effect);
     return result;
   },
 
@@ -239,7 +239,7 @@ const API = {
       throw error('removeEffectOnTokenArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    const result = await this.effectInterface.removeEffectOnToken(effectName, uuid);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.removeEffectOnToken(effectName, uuid);
     return result;
   },
 
@@ -248,7 +248,7 @@ const API = {
       throw error('removeEffectFromIdOnToken | inAttributes must be of type array');
     }
     const [effectId, uuid] = inAttributes;
-    const result = await this.effectInterface.removeEffectFromIdOnToken(effectId, uuid);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.removeEffectFromIdOnToken(effectId, uuid);
     return result;
   },
 
@@ -257,7 +257,7 @@ const API = {
       throw error('addEffectOnTokenArr | inAttributes must be of type array');
     }
     const [effectId, uuid, alwaysDelete, forceEnabled, forceDisabled] = inAttributes;
-    const result = await this.effectInterface.toggleEffectFromIdOnToken(
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.toggleEffectFromIdOnToken(
       effectId,
       uuid,
       alwaysDelete,
@@ -272,7 +272,7 @@ const API = {
       throw error('findEffectByNameOnTokenArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    const result = await this.effectInterface.findEffectByNameOnToken(effectName, uuid);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.findEffectByNameOnToken(effectName, uuid);
     return result;
   },
 
@@ -472,23 +472,30 @@ const API = {
       // Check for dfred convenient effect and retrieve the effect with the specific name
       // https://github.com/DFreds/dfreds-convenient-effects/issues/110
       //@ts-ignore
-      if (a.effectCustomId && game.dfred) {
+      if (a.effectCustomId && game.dfreds) {
         //@ts-ignore
-        effect = await game.dfreds.effectInterface.findCustomEffectByName(a.name);
-      }
-      if (effect) {
+        effect = <Effect>await game.dfreds.effectInterface.findCustomEffectByName(a.name);
         effect.transfer = !disabled;
         senseData = a;
         break;
       }
-      effect = <Effect>effectsDefinition.find((e: Effect) => {
-        return e.customId == a.id || i18n(e.name) == i18n(a.name);
+      if(senseDataId == a.id){
+        effect = <Effect>effectsDefinition.find((e: Effect) => {
+          return e.customId == a.id || i18n(e.name) == i18n(a.name);
+        });
+        senseData = a;
+        break;
+      }
+    }
+
+    if (effect) {
+      const isSense = API.SENSES.find((s: SenseData) => {
+        return s.id == (<SenseData>senseData).id || i18n(s.name) == i18n((<SenseData>senseData).name);
       });
-      if (effect) {
-        effect.transfer = !disabled;
-        senseData = a;
-        break;
+      if(isSense){
+        effect.isTemporary = false; // passive ae
       }
+      effect.transfer = !disabled;
     }
 
     if (!effect) {

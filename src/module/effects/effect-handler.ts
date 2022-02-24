@@ -201,7 +201,15 @@ export default class EffectHandler {
       overlay,
     });
     await actor.createEmbeddedDocuments('ActiveEffect', [activeEffectData]);
-
+    // Update
+    // const nameToUpdated = activeEffectData.name;
+    // const effectUpdate = <ActiveEffect>actor.data.effects.find((entity: ActiveEffect) => {
+    //   return <string>entity.name == nameToUpdated || entity.data.label == nameToUpdated;
+    // });
+    // await effectUpdate.data?.document?.update({
+    //   isSuppressed: effect.isSuppressed,
+    //   isTemporary: effect.isTemporary,
+    // });
     log(`Added effect ${effect.name} to ${actor.name} - ${actor.id}`);
   }
 
@@ -591,7 +599,16 @@ export default class EffectHandler {
         origin,
         overlay,
       });
-      actor.createEmbeddedDocuments('ActiveEffect', [activeEffectData]);
+      await actor.createEmbeddedDocuments('ActiveEffect', [activeEffectData]);
+      // Update
+      // const nameToUpdated = activeEffectData.name;
+      // const effectUpdate = <ActiveEffect>actor.data.effects.find((entity: ActiveEffect) => {
+      //   return <string>entity.name == nameToUpdated || entity.data.label == nameToUpdated;
+      // });
+      // await effectUpdate.data?.document?.update({
+      //   isSuppressed: effect.isSuppressed,
+      //   isTemporary: effect.isTemporary,
+      // });
       log(`Added effect ${effect.name ? effect.name : effectName} to ${actor.name} - ${actor.id}`);
     }
   }
@@ -671,7 +688,7 @@ export default class EffectHandler {
     if (activeEffectData) {
       const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
       activeEffectData.origin = `Actor.${actor.id}`;
-      actor.createEmbeddedDocuments('ActiveEffect', [<Record<string, any>>activeEffectData]);
+      await actor.createEmbeddedDocuments('ActiveEffect', [<Record<string, any>>activeEffectData]);
       log(`Added effect ${activeEffectData.label} to ${actor.name} - ${actor.id}`);
     }
   }
@@ -989,7 +1006,16 @@ export default class EffectHandler {
         origin,
         overlay,
       });
-      token.actor?.createEmbeddedDocuments('ActiveEffect', [activeEffectData]);
+      await token.actor?.createEmbeddedDocuments('ActiveEffect', [activeEffectData]);
+      // Update
+      // const nameToUpdated = activeEffectData.name;
+      // const effectUpdate = <ActiveEffect>token.actor?.data.effects.find((entity: ActiveEffect) => {
+      //   return <string>entity.name == nameToUpdated || entity.data.label == nameToUpdated;
+      // });
+      // await effectUpdate.data?.document?.update({
+      //   isSuppressed: effect.isSuppressed,
+      //   isTemporary: effect.isTemporary,
+      // });
       log(`Added effect ${effect.name ? effect.name : effectName} to ${token.name} - ${token.id}`);
     }
   }
@@ -1083,7 +1109,7 @@ export default class EffectHandler {
     if (activeEffectData) {
       const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
       activeEffectData.origin = `Actor.${token.actor ? token.actor?.id : token.id}`;
-      token.actor?.createEmbeddedDocuments('ActiveEffect', [<Record<string, any>>activeEffectData]);
+      await token.actor?.createEmbeddedDocuments('ActiveEffect', [<Record<string, any>>activeEffectData]);
       log(`Added effect ${activeEffectData.label} to ${token.name} - ${token.id}`);
     }
   }

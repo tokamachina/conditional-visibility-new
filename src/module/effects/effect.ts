@@ -74,11 +74,13 @@ export default class Effect {
     this.tokenMagicChanges = tokenMagicChanges;
     this.nestedEffects = nestedEffects;
     this.transfer = transfer;
+    // 4535992 ADDED
     this.atcvChanges = atcvChanges;
-    (this.isDisabled = isDisabled),
-      (this.isTemporary = isTemporary),
-      (this.isSuppressed = isSuppressed),
-      (this.dae = {});
+    this.dae = {};
+    // This are not effect data
+    this.isDisabled = isDisabled;
+    this.isTemporary = isTemporary;
+    this.isSuppressed = isSuppressed;
   }
 
   /**
@@ -113,6 +115,10 @@ export default class Effect {
       transfer: this.transfer ?? false,
       //changes: this.changes, // MOD 4535992
       changes: this._handleIntegrations(),
+      // 4535992 these are not under data
+      // isDisabled: this.isDisabled ?? false,
+      // isTemporary: this.isTemporary ?? false,
+      // isSuppressed: this.isSuppressed ?? false,
     };
   }
 
@@ -191,7 +197,7 @@ export default class Effect {
     // because Object.keys(new Date()).length === 0;
     // we have to do some additional check
     const result =
-      obj && // 👈 null and undefined check
+      obj && // null and undefined check
       Object.keys(obj).length === 0 &&
       Object.getPrototypeOf(obj) === Object.prototype;
     return result;
@@ -243,7 +249,7 @@ export class EffectSupport {
     // because Object.keys(new Date()).length === 0;
     // we have to do some additional check
     const result =
-      obj && // 👈 null and undefined check
+      obj && // null and undefined check
       Object.keys(obj).length === 0 &&
       Object.getPrototypeOf(obj) === Object.prototype;
     return result;

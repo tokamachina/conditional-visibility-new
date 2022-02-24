@@ -241,7 +241,6 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   const sourceVisionLevelsValid: AtcvEffect[] = [];
 
   const visibleForTypeOfSenseByIndex = [...sourceVisionLevels].map((sourceVisionLevel: AtcvEffect) => {
-    let result = false;
     if (sourceVisionLevel?.visionElevation) {
       const tokenElevation = getElevationToken(sourceToken);
       const targetElevation = getElevationToken(targetToken);
@@ -251,10 +250,12 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
     }
     const resultsOnTarget = targetVisionLevels.map((targetVisionLevel) => {
       if (!targetVisionLevel || !targetVisionLevel.statusSight) {
-        result = true;
+        sourceVisionLevelsValid.push(sourceVisionLevel);
+        return true;
       }
       if (sourceVisionLevel?.visionTargets?.length > 0) {
         if (sourceVisionLevel?.visionTargets.includes(<string>targetVisionLevel.statusSight?.id)) {
+          sourceVisionLevelsValid.push(sourceVisionLevel);
           return true;
         } else {
           return false;
@@ -262,6 +263,7 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
       }
       if (targetVisionLevel?.visionSources?.length > 0) {
         if (targetVisionLevel?.visionSources.includes(<string>sourceVisionLevel.statusSight?.id)) {
+          sourceVisionLevelsValid.push(sourceVisionLevel);
           return true;
         } else {
           return false;
@@ -271,18 +273,22 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
         targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NORMAL ||
         targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NONE
       ) {
-        result = true;
+        sourceVisionLevelsValid.push(sourceVisionLevel);
+        return true;
       }
-      result =
+      const result =
         <number>sourceVisionLevel?.statusSight?.visionLevelMinIndex <=
           <number>targetVisionLevel.statusSight?.visionLevelMinIndex &&
         <number>sourceVisionLevel?.statusSight?.visionLevelMaxIndex >=
           <number>targetVisionLevel.statusSight?.visionLevelMaxIndex;
+      if(result){
+        sourceVisionLevelsValid.push(sourceVisionLevel);
+      }
       return result;
     });
     // if any source has vision to the token, the token is visible
-    result = resultsOnTarget.reduce((total, curr) => total || curr, false);
-    return result;
+    const resultFinal = resultsOnTarget.reduce((total, curr) => total || curr, false);
+    return resultFinal;
   });
 
   let canYouSeeMeByLevelIndex = false;
@@ -298,30 +304,29 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   // =========================================
 
   const visibleForTypeOfSenseByValue = [...sourceVisionLevelsValid].map((sourceVisionLevel: AtcvEffect) => {
-    let result = false;
     const resultsOnTarget = targetVisionLevels.map((targetVisionLevel) => {
       if (!targetVisionLevel || !targetVisionLevel.statusSight) {
-        result = true;
+        return true;
       }
       if (
         targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NORMAL ||
         targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NONE
       ) {
-        result = true;
+        return true;
       }
       // the "-1" case
       if (<number>targetVisionLevel.visionLevelValue == -1) {
-        result = false;
+        return false;
       } else {
-        result =
+        const result =
           <number>sourceVisionLevel.visionLevelValue == -1 ||
           <number>sourceVisionLevel.visionLevelValue >= <number>targetVisionLevel.visionLevelValue;
+        return result;
       }
-      return result;
     });
     // if any source has vision to the token, the token is visible
-    result = resultsOnTarget.reduce((total, curr) => total || curr, false);
-    return result;
+    const resultFinal = resultsOnTarget.reduce((total, curr) => total || curr, false);
+    return resultFinal;
   });
 
   let canYouSeeMeByLevelValue = false;

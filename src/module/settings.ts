@@ -103,6 +103,15 @@ export const registerSettings = function (): void {
     type: Boolean,
   });
 
+  game.settings.register(CONSTANTS.MODULE_NAME, 'preconfiguredSystem', {
+    name: `${CONSTANTS.MODULE_NAME}.setting.preconfiguredSystem.name`,
+    hint: `${CONSTANTS.MODULE_NAME}.setting.preconfiguredSystem.hint`,
+    scope: 'world',
+    config: false,
+    default: false,
+    type: Boolean,
+  });
+
   const settings = defaultSettings();
   for (const [name, data] of Object.entries(settings)) {
     game.settings.register(CONSTANTS.MODULE_NAME, name, <any>data);

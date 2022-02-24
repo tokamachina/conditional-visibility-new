@@ -83,7 +83,7 @@ export default {
       name: `${CONSTANTS.MODULE_NAME}.${AtcvEffectSenseFlags.BLIND_SIGHT}`,
       path: `data.attributes.senses.blindsight`,
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/green_18.jpg`,
-      //effect: EffectDefinitions.blindsigth(0),
+      //effect: EffectDefinitions.blindsight(0),
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 6,
       conditionElevation: false,

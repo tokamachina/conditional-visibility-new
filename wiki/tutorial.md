@@ -57,8 +57,8 @@ ConditionalVisibility.API.registerSense({
     visionLevelMinIndex: number; // [OPTIONAL] check a min index for filter a range of sense can see these conditions, or viceversa conditions can be seen only from this sense
     visionLevelMaxIndex: number; // [OPTIONAL] check a max index for filter a range of sense can see these conditions, or viceversa conditions can be seen only from this sense
     conditionElevation: boolean; // [OPTIONAL] force to check the elevation between the source token and the target token, useful when using module like 'Levels'
-    conditionTargets:string[]; // [OPTIONAL] force to apply the check only for these sources (you can set this but is used only from sense)
-    conditionSources:string[]; // [OPTIONAL] force to apply the check only for these sources (you can set this but is used only from condition)
+    conditionTargets:string[]; // [OPTIONAL] force to apply the check only for these sources (you can set this but is used only from sense active effect)
+    conditionSources:string[]; // [OPTIONAL] force to apply the check only for these sources (you can set this but is used only from condition active effect)
     effectCustomId:string;  // [OPTIONAL] if you use the module 'DFreds Convenient Effects', you can associate a custom active effect by using the customId string of the DFred effect
 });
 ```

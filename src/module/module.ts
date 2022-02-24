@@ -28,13 +28,9 @@ export const initHooks = async (): Promise<void> => {
 
   Hooks.once('socketlib.ready', registerSocket);
 
-  // Hooks.on('dfreds-convenient-effects.ready', () => {
-  //   const effects = EffectDefinitions.all();
-  //   //@ts-ignore
-  //   game.dfreds.effectInterface.createNewCustomEffectWith({
-  //     activeEffects: effects,
-  //   });
-  // });
+  Hooks.on('dfreds-convenient-effects.ready', (...args) => {
+    module.dfredsConvenientEffectsReady(...args);
+  });
 
   if (game.settings.get(CONSTANTS.MODULE_NAME, 'debugHooks')) {
     for (const hook of Object.values(HOOKS)) {
@@ -215,7 +211,7 @@ const module = {
         const sensesData = await API.getAllSensesAndConditions()
         for(const statusSight of sensesData){
           if (updateKey === statusSight.id) {
-            // TODO TO CHECK IF WE NEED TO FILTER THE TOKENS AGAIN
+            // TODO TO CHECK IF WE NEED TO FILTER THE TOKENS AGAIN MAYBE WITH A ADDTIONAL ATCV active change data effect ?
             for(const tokenToSet of tokenArray){
               tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
               if (statusSight?.path) {
@@ -225,6 +221,17 @@ const module = {
           }
         }
       }
+    }
+  },
+  async dfredsConvenientEffectsReady(...args){
+    // https://github.com/DFreds/dfreds-convenient-effects/issues/110
+    //@ts-ignore
+    if(game.dfred){
+      const effects = ConditionalVisibilityEffectDefinitions.all();
+      //@ts-ignore
+      game.dfreds.effectInterface.createNewCustomEffectWith({
+        activeEffects: effects,
+      });
     }
   }
 };

@@ -18,12 +18,6 @@ And when that Drow casts Darkness, players should need Devil's Sight to see any 
 Conditional Visibility allows you to set conditions on tokens that will display them only to players whose senses meet the conditions necessary to see
 the token.
 
-## Suggestion for future developing for anyone want to help
-
-- A integration with the 'levels' module it's seem to be the right road to follow, we can use the method `overrideVisibilityTets(sourceToken, token){}` of levels for override the levels visibility test
-- Sync the status with the flags on the token
-- With the advent of foundry version 9 it could be done much better by synchronizing it with modules like levels and Active Token Effect.
-
 ## Installation
 
 It's always easiest to install modules from the in game add-on browser.
@@ -51,13 +45,36 @@ This module uses the [levels](https://github.com/theripper93/Levels) library. It
 ## Usage
 
 A usage documentation is reachable [here](./wiki/tutorial.md)
+### Conditions and sense combination by system default
 
-## Conditions and sense combination by system default
+#### [System Dnd5e](./wiki/table_dnd5e.md)
+#### [System Pathfinder 2e](./wiki/table_pf2e.md)
+#### Did you want ot help with your system prepare some table like the one i do it for Dnd5e for help me to define some rule for your system
 
-### [System Dnd5e](./wiki/table_dnd5e.md)
-### [System Pathfinder 2e](./wiki/table_pf2e.md)
+## Features
 
-## Did you want ot help with your system prepare some table like the one i do it for Dnd5e for help me to define some rule for your system
+### [Removed we manage everything with Active effects] Hidden (currently 5e only)
+
+When the hidden condition is selected, a stealth roll is automatically made, which can be customized before closing. The token will only be seen by a token whose passive perception exceeds that stealth roll.
+#### [Removed we manage everything with Active effects] Auto-applied from Stealth Rolls
+
+Conditional Visibility contains an setting to auto-apply the hidden condition based on a stealth roll. Currently only 5e; again, contributions for other systems are welcomed.
+
+When this setting is true, then rolling stealth from that token's character sheet will apply the hidden condition based on the value of that roll.
+
+### Integration with [Shared vision](https://github.com/CDeenen/SharedVision/)
+
+The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the levels module.
+
+### Integration with [Levels](https://github.com/theripper93/Levels)
+
+The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the levels module.
+
+### Integration with [DFreds Convenient Effects](https://github.com/DFreds/dfreds-convenient-effects)
+
+documentation work in progress, but is basically all automatic so it should work all senses and conditions are present on the graphic ui of this module.
+
+### [On developing or maybe never...] Integration with [Combat utility belt](https://github.com/death-save/combat-utility-belt)
 
 ## Api
 
@@ -68,7 +85,7 @@ The API documentation is reachable here [API](./wiki/api.md)
 ## Note for Combat Utility Belt Users
 If you use Combat Utility Belt and check "Remove Default Status Effects," it will remove those Status Effects necessary for this module to function.  They can be re-added using Combat Utility Belt's Condition Lab:
 
-![Example: Adding Unknown](https://user-images.githubusercontent.com/87745/95407444-06d6a880-08eb-11eb-9478-6401fc1d02f8.png)
+![Example: Adding Unknown](./wiki/images/95407444-06d6a880-08eb-11eb-9478-6401fc1d02f8.png)
 
 If each condition is added to the CUB set, Conditional Visibility will again function, even if CUB has removed the default set.  The pairs would be:
 

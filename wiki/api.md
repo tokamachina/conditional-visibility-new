@@ -112,4 +112,7 @@ Add a active effect for work with the module, the `effectId` parameter must be p
 
 `game.conditional-visibility.API.addEffectOnToken('Zruggig Widebrain','darkvision',60)`
 
+
+
+
 ## Work in progress for add the others function, but you can read directly the API class if you want [API](../src/module/api.ts)...

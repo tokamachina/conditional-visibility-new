@@ -140,7 +140,9 @@ export class ConditionalVisibilityEffectDefinitions {
       return a.id
         .replace(ConditionalVisibilityEffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(AtcvEffectSenseFlags.DARKVISION.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase());
+        .startsWith(
+          AtcvEffectSenseFlags.DARKVISION.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
+        );
     });
     if (!effectSight) {
       debug(
@@ -195,7 +197,9 @@ export class ConditionalVisibilityEffectDefinitions {
       return a.id
         .replace(ConditionalVisibilityEffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(AtcvEffectSenseFlags.BLIND_SIGHT.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase());
+        .startsWith(
+          AtcvEffectSenseFlags.BLIND_SIGHT.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
+        );
     });
     if (!effectSight) {
       debug(
@@ -242,7 +246,9 @@ export class ConditionalVisibilityEffectDefinitions {
       return a.id
         .replace(ConditionalVisibilityEffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(AtcvEffectSenseFlags.TREMOR_SENSE.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase());
+        .startsWith(
+          AtcvEffectSenseFlags.TREMOR_SENSE.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
+        );
     });
     if (!effectSight) {
       debug(
@@ -289,7 +295,9 @@ export class ConditionalVisibilityEffectDefinitions {
       return a.id
         .replace(ConditionalVisibilityEffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(AtcvEffectSenseFlags.TRUE_SIGHT.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase());
+        .startsWith(
+          AtcvEffectSenseFlags.TRUE_SIGHT.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
+        );
     });
     if (!effectSight) {
       debug(
@@ -336,7 +344,9 @@ export class ConditionalVisibilityEffectDefinitions {
       return a.id
         .replace(ConditionalVisibilityEffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(AtcvEffectSenseFlags.SEE_INVISIBLE.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase());
+        .startsWith(
+          AtcvEffectSenseFlags.SEE_INVISIBLE.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
+        );
     });
     if (!effectSight) {
       debug(
@@ -383,7 +393,9 @@ export class ConditionalVisibilityEffectDefinitions {
       return a.id
         .replace(ConditionalVisibilityEffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(AtcvEffectSenseFlags.DEVILS_SIGHT.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase());
+        .startsWith(
+          AtcvEffectSenseFlags.DEVILS_SIGHT.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
+        );
     });
     if (!effectSight) {
       debug(
@@ -430,7 +442,9 @@ export class ConditionalVisibilityEffectDefinitions {
       return a.id
         .replace(ConditionalVisibilityEffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(AtcvEffectSenseFlags.LOW_LIGHT_VISION.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase());
+        .startsWith(
+          AtcvEffectSenseFlags.LOW_LIGHT_VISION.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
+        );
     });
     if (!effectSight) {
       debug(
@@ -491,7 +505,9 @@ export class ConditionalVisibilityEffectDefinitions {
       return a.id
         .replace(ConditionalVisibilityEffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(AtcvEffectSenseFlags.BLINDED.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase());
+        .startsWith(
+          AtcvEffectSenseFlags.BLINDED.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
+        );
     });
     if (!effectSight) {
       debug(`Cannot find for system '${game.system.id}' the active effect with id '${AtcvEffectSenseFlags.BLINDED}'`);
@@ -553,7 +569,9 @@ export class ConditionalVisibilityEffectDefinitions {
       return a.id
         .replace(ConditionalVisibilityEffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(AtcvEffectConditionFlags.HIDDEN.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase());
+        .startsWith(
+          AtcvEffectConditionFlags.HIDDEN.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
+        );
     });
     if (!effectSight) {
       debug(`Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.HIDDEN}'`);
@@ -586,7 +604,9 @@ export class ConditionalVisibilityEffectDefinitions {
       return a.id
         .replace(ConditionalVisibilityEffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(AtcvEffectConditionFlags.INVISIBLE.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase());
+        .startsWith(
+          AtcvEffectConditionFlags.INVISIBLE.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
+        );
     });
     if (!effectSight) {
       debug(`Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.INVISIBLE}'`);
@@ -619,7 +639,9 @@ export class ConditionalVisibilityEffectDefinitions {
       return a.id
         .replace(ConditionalVisibilityEffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(AtcvEffectConditionFlags.OBSCURED.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase());
+        .startsWith(
+          AtcvEffectConditionFlags.OBSCURED.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
+        );
     });
     if (!effectSight) {
       debug(`Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.OBSCURED}'`);
@@ -652,12 +674,12 @@ export class ConditionalVisibilityEffectDefinitions {
       return a.id
         .replace(ConditionalVisibilityEffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(AtcvEffectConditionFlags.IN_DARKNESS.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase());
+        .startsWith(
+          AtcvEffectConditionFlags.IN_DARKNESS.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
+        );
     });
     if (!effectSight) {
-      debug(
-        `Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.IN_DARKNESS}'`,
-      );
+      debug(`Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.IN_DARKNESS}'`);
       return;
     }
     return new Effect({

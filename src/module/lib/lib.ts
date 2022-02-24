@@ -97,7 +97,7 @@ export function dialogWarning(message, icon = 'fas fa-exclamation-triangle') {
  * @href https://www.petermorlion.com/iterating-a-typescript-enum/
  * @returns
  */
- export function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
+export function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
   return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[];
 }
 
@@ -234,7 +234,6 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
     return true;
   }
 
-
   // ========================================
   // 2 - Check for the correct status sight
   // =========================================
@@ -255,14 +254,14 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
         result = true;
       }
       if (sourceVisionLevel?.visionTargets?.length > 0) {
-        if(sourceVisionLevel?.visionTargets.includes(<string>targetVisionLevel.statusSight?.id)){
+        if (sourceVisionLevel?.visionTargets.includes(<string>targetVisionLevel.statusSight?.id)) {
           return true;
         } else {
           return false;
         }
       }
       if (targetVisionLevel?.visionSources?.length > 0) {
-        if(targetVisionLevel?.visionSources.includes(<string>sourceVisionLevel.statusSight?.id)){
+        if (targetVisionLevel?.visionSources.includes(<string>sourceVisionLevel.statusSight?.id)) {
           return true;
         } else {
           return false;
@@ -275,10 +274,11 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
         result = true;
       }
       result =
-        <number>sourceVisionLevel?.statusSight?.visionLevelMinIndex <= <number>targetVisionLevel.statusSight?.visionLevelMinIndex &&
-        <number>sourceVisionLevel?.statusSight?.visionLevelMaxIndex >= <number>targetVisionLevel.statusSight?.visionLevelMaxIndex;
+        <number>sourceVisionLevel?.statusSight?.visionLevelMinIndex <=
+          <number>targetVisionLevel.statusSight?.visionLevelMinIndex &&
+        <number>sourceVisionLevel?.statusSight?.visionLevelMaxIndex >=
+          <number>targetVisionLevel.statusSight?.visionLevelMaxIndex;
       return result;
-
     });
     // if any source has vision to the token, the token is visible
     result = resultsOnTarget.reduce((total, curr) => total || curr, false);
@@ -310,9 +310,9 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
         result = true;
       }
       // the "-1" case
-      if(<number>targetVisionLevel.visionLevelValue == -1){
+      if (<number>targetVisionLevel.visionLevelValue == -1) {
         result = false;
-      }else{
+      } else {
         result =
           <number>sourceVisionLevel.visionLevelValue == -1 ||
           <number>sourceVisionLevel.visionLevelValue >= <number>targetVisionLevel.visionLevelValue;
@@ -346,8 +346,8 @@ export async function prepareActiveEffectForConditionalVisibility(
   // REMOVE EVERY SENSES WITH THE SAME NAME
 
   for (const [key, sense] of visionCapabilities.retrieveSenses()) {
-  // use replace() method to match and remove all the non-alphanumeric characters
-  const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
+    // use replace() method to match and remove all the non-alphanumeric characters
+    const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
     if (await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true)) {
       const activeEffectToRemove = <ActiveEffect>(
         await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
@@ -427,10 +427,12 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
   const actor = <Actor>token.document.getActor();
   const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects;
   //const totalEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects.contents.filter(i => !i.data.disabled);
-  const ATCVeffects = actorEffects.filter(entity => !!entity.data.changes.find(effect => effect.key.includes("ATCV")));
+  const ATCVeffects = actorEffects.filter(
+    (entity) => !!entity.data.changes.find((effect) => effect.key.includes('ATCV')),
+  );
   let visionElevation = true;
-  let conditionTargets:string[] = [];
-  let conditionSources:string[] = [];
+  let conditionTargets: string[] = [];
+  let conditionSources: string[] = [];
   const statusEffects: AtcvEffect[] = [];
   // regex expression to match all non-alphanumeric characters in string
   const regex = /[^A-Za-z0-9]/g;
@@ -451,17 +453,19 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
     // if is a AE with the label of the module (no id sorry)
     if (effectSight) {
       // Organize non-disabled effects by their application priority
-      const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e:ActiveEffect) => {
-          if (e.data.disabled){
-            return changes;
-          }
+      const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e: ActiveEffect) => {
+        if (e.data.disabled) {
+          return changes;
+        }
+        return changes.concat(
           //@ts-ignore
-          return changes.concat((<EffectChangeData[]>e.data.changes).map((c:EffectChangeData) => {
-              const c2 = <EffectChangeData>duplicate(c);
-              // c2.effect = e;
-              c2.priority = <number>c2.priority ?? (c2.mode * 10);
-              return c2;
-          }));
+          (<EffectChangeData[]>e.data.changes).map((c: EffectChangeData) => {
+            const c2 = <EffectChangeData>duplicate(c);
+            // c2.effect = e;
+            c2.priority = <number>c2.priority ?? c2.mode * 10;
+            return c2;
+          }),
+        );
       }, []);
       changes.sort((a, b) => <number>a.priority - <number>b.priority);
 
@@ -498,8 +502,8 @@ export function retrieveAtcvElevationFromActiveEffect(effectEntityChanges: Effec
   let checkElevationAcvt = false;
   // Apply all changes
   for (const change of effectEntityChanges) {
-    if (change.key.includes("ATCV.conditionElevation")){
-      if(change.value){
+    if (change.key.includes('ATCV.conditionElevation')) {
+      if (change.value) {
         checkElevationAcvt = Boolean(change.value);
       }
     }
@@ -508,26 +512,26 @@ export function retrieveAtcvElevationFromActiveEffect(effectEntityChanges: Effec
 }
 
 export function retrieveAtcvTargetsFromActiveEffect(effectEntityChanges: EffectChangeData[]): string[] {
-  let checkTargetsAcvt:string[] = [];
+  let checkTargetsAcvt: string[] = [];
   // Apply all changes
   for (const change of effectEntityChanges) {
-    if (change.key.includes("ATCV.conditionTargets")){
-      if(change.value){
+    if (change.key.includes('ATCV.conditionTargets')) {
+      if (change.value) {
         const inTags = <any>change.value;
-        if (!(typeof inTags === "string" || inTags instanceof RegExp || Array.isArray(inTags))) {
+        if (!(typeof inTags === 'string' || inTags instanceof RegExp || Array.isArray(inTags))) {
           error(`'ATCV.conditionTargets' must be of type string or array`);
         }
-        let providedTags = typeof inTags === "string" ? inTags.split(",") : inTags;
+        let providedTags = typeof inTags === 'string' ? inTags.split(',') : inTags;
 
-        if(!Array.isArray(providedTags)) providedTags = [providedTags]
+        if (!Array.isArray(providedTags)) providedTags = [providedTags];
 
-        providedTags.forEach(t => {
-            if (!(typeof t === "string" || t instanceof RegExp)){
-              error(`'ATCV.conditionTargets' in array must be of type string or regexp`);
-            }
+        providedTags.forEach((t) => {
+          if (!(typeof t === 'string' || t instanceof RegExp)) {
+            error(`'ATCV.conditionTargets' in array must be of type string or regexp`);
+          }
         });
 
-        checkTargetsAcvt = providedTags.map(t => t instanceof RegExp ? t : t.trim());
+        checkTargetsAcvt = providedTags.map((t) => (t instanceof RegExp ? t : t.trim()));
       }
     }
   }
@@ -535,26 +539,26 @@ export function retrieveAtcvTargetsFromActiveEffect(effectEntityChanges: EffectC
 }
 
 export function retrieveAtcvSourcesFromActiveEffect(effectEntityChanges: EffectChangeData[]): string[] {
-  let checkSourcesAcvt:string[] = [];
+  let checkSourcesAcvt: string[] = [];
   // Apply all changes
   for (const change of effectEntityChanges) {
-    if (change.key.includes("ATCV.conditionSources")){
-      if(change.value){
+    if (change.key.includes('ATCV.conditionSources')) {
+      if (change.value) {
         const inTags = <any>change.value;
-        if (!(typeof inTags === "string" || inTags instanceof RegExp || Array.isArray(inTags))) {
+        if (!(typeof inTags === 'string' || inTags instanceof RegExp || Array.isArray(inTags))) {
           error(`'ATCV.conditionSources' must be of type string or array`);
         }
-        let providedTags = typeof inTags === "string" ? inTags.split(",") : inTags;
+        let providedTags = typeof inTags === 'string' ? inTags.split(',') : inTags;
 
-        if(!Array.isArray(providedTags)) providedTags = [providedTags]
+        if (!Array.isArray(providedTags)) providedTags = [providedTags];
 
-        providedTags.forEach(t => {
-            if (!(typeof t === "string" || t instanceof RegExp)){
-              error(`'ATCV.conditionSources' in array must be of type string or regexp`);
-            }
+        providedTags.forEach((t) => {
+          if (!(typeof t === 'string' || t instanceof RegExp)) {
+            error(`'ATCV.conditionSources' in array must be of type string or regexp`);
+          }
         });
 
-        checkSourcesAcvt = providedTags.map(t => t instanceof RegExp ? t : t.trim());
+        checkSourcesAcvt = providedTags.map((t) => (t instanceof RegExp ? t : t.trim()));
       }
     }
   }
@@ -583,7 +587,7 @@ export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffe
       return aee;
     }
   });
-  if(!atcvValue){
+  if (!atcvValue) {
     // Ignore ???
     return 0;
   }

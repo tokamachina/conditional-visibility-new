@@ -1,28 +1,36 @@
 import API from './api';
 import CONSTANTS from './constants';
 import Effect from './effects/effect';
-import { error, retrieveAtcvVisionLevelDistanceFromActiveEffect, retrieveAtcvVisionLevelFromActiveEffect, i18n, retrieveAtcvTargetsFromActiveEffect, retrieveAtcvElevationFromActiveEffect, retrieveAtcvSourcesFromActiveEffect } from './lib/lib';
+import {
+  error,
+  retrieveAtcvVisionLevelDistanceFromActiveEffect,
+  retrieveAtcvVisionLevelFromActiveEffect,
+  i18n,
+  retrieveAtcvTargetsFromActiveEffect,
+  retrieveAtcvElevationFromActiveEffect,
+  retrieveAtcvSourcesFromActiveEffect,
+} from './lib/lib';
 
 export interface AtcvEffect {
   visionElevation: boolean;
   statusSight: SenseData | undefined;
   visionLevelValue: number | undefined;
   visionDistanceValue: number | undefined;
-  visionTargets:string[];
-  visionSources:string[];
+  visionTargets: string[];
+  visionSources: string[];
 }
 
 export interface SenseData {
-  id: string;     // This is the unique id used for sync all the senses and conditions (please no strange character, no whitespace and all in lowercase...)
-  name: string;   // This is the unique name used for sync all the senses and conditions (here you cna put any dirty character you want)
-  path: string;   // This is the path to the property you want to associate with this sense e.g. data.skills.prc.passive
-  img: string;    // [OPTIONAL] Image to associate to this sense
+  id: string; // This is the unique id used for sync all the senses and conditions (please no strange character, no whitespace and all in lowercase...)
+  name: string; // This is the unique name used for sync all the senses and conditions (here you cna put any dirty character you want)
+  path: string; // This is the path to the property you want to associate with this sense e.g. data.skills.prc.passive
+  img: string; // [OPTIONAL] Image to associate to this sense
   visionLevelMinIndex: number; // [OPTIONAL] check a min index for filter a range of sense can see these conditions, or viceversa conditions can be seen only from this sense
   visionLevelMaxIndex: number; // [OPTIONAL] check a max index for filter a range of sense can see these conditions, or viceversa conditions can be seen only from this sense
   conditionElevation: boolean; // [OPTIONAL] force to check the elevation between the source token and the target token, useful when using module like 'Levels'
-  conditionTargets:string[]; // [OPTIONAL] force to apply the check only for these sources (you can set this but is used only from sense)
-  conditionSources:string[]; // [OPTIONAL] force to apply the check only for these sources (you can set this but is used only from condition)
-  effectCustomId:string;  // [OPTIONAL] if you use the module 'DFreds Convenient Effects', you can associate a custom active effect by using the customId string of the DFred effect
+  conditionTargets: string[]; // [OPTIONAL] force to apply the check only for these sources (you can set this but is used only from sense)
+  conditionSources: string[]; // [OPTIONAL] force to apply the check only for these sources (you can set this but is used only from condition)
+  effectCustomId: string; // [OPTIONAL] if you use the module 'DFreds Convenient Effects', you can associate a custom active effect by using the customId string of the DFred effect
 }
 
 export enum AtcvEffectSenseFlags {
@@ -213,8 +221,8 @@ export class VisionCapabilities {
         let visionLevelValue = this.token?.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id);
         let visionDistanceValue = 0;
         let conditionElevation = false;
-        let conditionTargets:string[] = [];
-        let conditionSources:string[] = [];
+        let conditionTargets: string[] = [];
+        let conditionSources: string[] = [];
         if (!visionLevelValue || visionLevelValue == 0) {
           // try to serach on active effect
           if (await API.hasEffectAppliedOnToken(this.token.id, i18n(statusSight.name), true)) {
@@ -228,9 +236,9 @@ export class VisionCapabilities {
         }
 
         const statusEffect = <AtcvEffect>{
-          visionElevation:conditionElevation ?? false,
-          visionTargets:conditionTargets ?? [],
-          visionSources:conditionSources ?? [],
+          visionElevation: conditionElevation ?? false,
+          visionTargets: conditionTargets ?? [],
+          visionSources: conditionSources ?? [],
           visionLevelValue: visionLevelValue ?? 0,
           visionDistanceValue: visionDistanceValue ?? 0,
           statusSight: statusSight,
@@ -267,8 +275,8 @@ export class VisionCapabilities {
         let visionLevelValue = this.token.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id);
         let visionDistanceValue = 0;
         let conditionElevation = false;
-        let conditionTargets:string[] = [];
-        let conditionSources:string[] = [];
+        let conditionTargets: string[] = [];
+        let conditionSources: string[] = [];
         if (!visionLevelValue || visionLevelValue == 0) {
           // try to serach on active effect
           if (await API.hasEffectAppliedOnToken(this.token.id, i18n(statusSight.name), true)) {
@@ -282,9 +290,9 @@ export class VisionCapabilities {
         }
 
         const statusEffect = <AtcvEffect>{
-          visionElevation:conditionElevation ?? false,
-          visionTargets:conditionTargets ?? [],
-          visionSources:conditionSources ?? [],
+          visionElevation: conditionElevation ?? false,
+          visionTargets: conditionTargets ?? [],
+          visionSources: conditionSources ?? [],
           visionLevelValue: visionLevelValue ?? 0,
           visionDistanceValue: visionDistanceValue ?? 0,
           statusSight: statusSight,

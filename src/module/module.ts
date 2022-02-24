@@ -15,12 +15,11 @@ import EffectInterface from './effects/effect-interface';
 import { registerHotkeys } from './hotkeys';
 import { canvas, game } from './settings';
 import { checkSystem } from './settings';
+import { AtcvEffectConditionFlags, AtcvEffectSenseFlags, VisionCapabilities } from './conditional-visibility-models';
 import {
-  AtcvEffectConditionFlags,
-  AtcvEffectSenseFlags,
-  VisionCapabilities,
-} from './conditional-visibility-models';
-import { EffectChangeData, EffectChangeDataSource } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
+  EffectChangeData,
+  EffectChangeDataSource,
+} from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
 
 export const initHooks = async (): Promise<void> => {
   // registerSettings();
@@ -92,7 +91,7 @@ export const readyHooks = async (): Promise<void> => {
     module.updateToken(document, change, options, userId);
   });
 
-  Hooks.on("updateActiveEffect", async (effect, options) => {
+  Hooks.on('updateActiveEffect', async (effect, options) => {
     module.updateActiveEffect(effect, options);
   });
 };
@@ -157,62 +156,65 @@ const module = {
     //   }
     // }
   },
-  async updateActiveEffect(effect:ActiveEffect, options){
-    if (!effect.data.changes?.find(effect => effect.key.includes("ATCV"))){
+  async updateActiveEffect(effect: ActiveEffect, options) {
+    if (!effect.data.changes?.find((effect) => effect.key.includes('ATCV'))) {
       return;
     }
     const actor = <Actor>effect.parent;
-    const totalEffects = <ActiveEffect[]>actor?.effects.contents.filter(i => !i.data.disabled);
-    const ATCVeffects = totalEffects.filter(entity => !!entity.data.changes.find(effect => effect.key.includes("ATCV")));
-    if (effect.data.disabled){
+    const totalEffects = <ActiveEffect[]>actor?.effects.contents.filter((i) => !i.data.disabled);
+    const ATCVeffects = totalEffects.filter(
+      (entity) => !!entity.data.changes.find((effect) => effect.key.includes('ATCV')),
+    );
+    if (effect.data.disabled) {
       ATCVeffects.push(effect);
     }
     if (ATCVeffects.length > 0) {
       const entity = <Actor>effect.parent;
-      if(entity.documentName !== "Actor"){
+      if (entity.documentName !== 'Actor') {
         return;
       }
-      let link = getProperty(entity, "data.token.actorLink")
-      if (link === undefined){
+      let link = getProperty(entity, 'data.token.actorLink');
+      if (link === undefined) {
         link = true;
       }
-      let tokenArray:Token[] = []
-      if (!link){
+      let tokenArray: Token[] = [];
+      if (!link) {
         //@ts-ignore
-        tokenArray = [entity.token?.object]
-      }
-      else {
+        tokenArray = [entity.token?.object];
+      } else {
         tokenArray = entity.getActiveTokens();
       }
-      if (tokenArray === []){
+      if (tokenArray === []) {
         return;
       }
       // Organize non-disabled effects by their application priority
-      const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e:ActiveEffect) => {
-          if (e.data.disabled){
-            return changes;
-          }
+      const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e: ActiveEffect) => {
+        if (e.data.disabled) {
+          return changes;
+        }  
+        return changes.concat(
           //@ts-ignore
-          return changes.concat((<EffectChangeData[]>e.data.changes).map((c:EffectChangeData) => {
-              const c2 = <EffectChangeData>duplicate(c);
-              // c2.effect = e;
-              c2.priority = <number>c2.priority ?? (c2.mode * 10);
-              return c2;
-          }));
+          (<EffectChangeData[]>e.data.changes).map((c: EffectChangeData) => {
+            const c2 = <EffectChangeData>duplicate(c);
+            // c2.effect = e;
+            c2.priority = <number>c2.priority ?? c2.mode * 10;
+            return c2;
+          }),
+        );
       }, []);
       changes.sort((a, b) => <number>a.priority - <number>b.priority);
       // const changes = effect.data.changes;
       // Apply all changes
       for (const change of changes) {
-        if (!change.key.includes("ATCV")){
+        if (!change.key.includes('ATCV')) {
           continue;
         }
         const updateKey = change.key.slice(5);
-        const sensesData = await API.getAllSensesAndConditions()
-        for(const statusSight of sensesData){
+        const sensesData = await API.getAllSensesAndConditions();
+        for (const statusSight of sensesData) {
           if (updateKey === statusSight.id) {
             // TODO TO CHECK IF WE NEED TO FILTER THE TOKENS AGAIN MAYBE WITH A ADDTIONAL ATCV active change data effect ?
-            for(const tokenToSet of tokenArray){
+            for (const tokenToSet of tokenArray) {
               tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
               if (statusSight?.path) {
                 setProperty(this.token, <string>statusSight?.path, change.value);
@@ -223,15 +225,15 @@ const module = {
       }
     }
   },
-  async dfredsConvenientEffectsReady(...args){
+  async dfredsConvenientEffectsReady(...args) {
     // https://github.com/DFreds/dfreds-convenient-effects/issues/110
     //@ts-ignore
-    if(game.dfred){
+    if (game.dfred) {
       const effects = ConditionalVisibilityEffectDefinitions.all();
       //@ts-ignore
       game.dfreds.effectInterface.createNewCustomEffectWith({
         activeEffects: effects,
       });
     }
-  }
+  },
 };

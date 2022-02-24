@@ -75,10 +75,10 @@ export default class Effect {
     this.nestedEffects = nestedEffects;
     this.transfer = transfer;
     this.atcvChanges = atcvChanges;
-    this.isDisabled = isDisabled,
-    this.isTemporary = isTemporary,
-    this.isSuppressed = isSuppressed,
-    this.dae = {};
+    (this.isDisabled = isDisabled),
+      (this.isTemporary = isTemporary),
+      (this.isSuppressed = isSuppressed),
+      (this.dae = {});
   }
 
   /**
@@ -187,12 +187,13 @@ export default class Effect {
     return arrChanges;
   }
 
-  _isEmptyObject(obj:any){
+  _isEmptyObject(obj: any) {
     // because Object.keys(new Date()).length === 0;
     // we have to do some additional check
-    const result = obj // 👈 null and undefined check
-      && Object.keys(obj).length === 0
-      && Object.getPrototypeOf(obj) === Object.prototype
+    const result =
+      obj && // 👈 null and undefined check
+      Object.keys(obj).length === 0 &&
+      Object.getPrototypeOf(obj) === Object.prototype;
     return result;
   }
 }
@@ -220,10 +221,9 @@ export class Constants {
   };
 }
 
-export class EffectSupport{
-
-  static _handleIntegrations(changes:any[]):EffectChangeData[] {
-    let arrChanges:EffectChangeData[] = [];
+export class EffectSupport {
+  static _handleIntegrations(changes: any[]): EffectChangeData[] {
+    let arrChanges: EffectChangeData[] = [];
     // if (this.atlChanges.length > 0) {
     //   arrChanges.push(...this.atlChanges);
     // }
@@ -239,12 +239,13 @@ export class EffectSupport{
     return arrChanges;
   }
 
-  static _isEmptyObject(obj:any){
+  static _isEmptyObject(obj: any) {
     // because Object.keys(new Date()).length === 0;
     // we have to do some additional check
-    const result = obj // 👈 null and undefined check
-      && Object.keys(obj).length === 0
-      && Object.getPrototypeOf(obj) === Object.prototype
+    const result =
+      obj && // 👈 null and undefined check
+      Object.keys(obj).length === 0 &&
+      Object.getPrototypeOf(obj) === Object.prototype;
     return result;
   }
 
@@ -330,7 +331,11 @@ export class EffectSupport{
       label: p.label,
       icon: p.icon,
       tint: p.tint,
-      duration: EffectSupport._getDurationData(<number>p.duration.seconds,<number>p.duration.rounds,<number>p.duration.turns),
+      duration: EffectSupport._getDurationData(
+        <number>p.duration.seconds,
+        <number>p.duration.rounds,
+        <number>p.duration.turns,
+      ),
       flags: foundry.utils.mergeObject(p.flags, {
         core: {
           statusId: p._id,
@@ -353,33 +358,35 @@ export class EffectSupport{
     });
   }
 
-  static retrieveChangesOrderedByPriority(changesTmp:EffectChangeData[]){
+  static retrieveChangesOrderedByPriority(changesTmp: EffectChangeData[]) {
     // Organize non-disabled effects by their application priority
     const changes = <EffectChangeData[]>changesTmp.reduce((changes) => {
-      return changes.map((c:EffectChangeData) => {
-          const c2 = <EffectChangeData>duplicate(c);
-          // c2.effect = e;
-          c2.priority = <number>c2.priority ?? (c2.mode * 10);
-          return c2;
+      return changes.map((c: EffectChangeData) => {
+        const c2 = <EffectChangeData>duplicate(c);
+        // c2.effect = e;
+        c2.priority = <number>c2.priority ?? c2.mode * 10;
+        return c2;
       });
     }, []);
     changes.sort((a, b) => <number>a.priority - <number>b.priority);
     return changes;
   }
 
-  static retrieveChangesOrderedByPriorityFromAE(effectEntity:ActiveEffect){
+  static retrieveChangesOrderedByPriorityFromAE(effectEntity: ActiveEffect) {
     // Organize non-disabled effects by their application priority
-    const changes = <EffectChangeData[]>[effectEntity].reduce((changes, e:ActiveEffect) => {
-      if (e.data.disabled){
+    const changes = <EffectChangeData[]>[effectEntity].reduce((changes, e: ActiveEffect) => {
+      if (e.data.disabled) {
         return changes;
       }
-      //@ts-ignore
-      return changes.concat((<EffectChangeData[]>e.data.changes).map((c:EffectChangeData) => {
+      return changes.concat(
+        //@ts-ignore
+        (<EffectChangeData[]>e.data.changes).map((c: EffectChangeData) => {
           const c2 = <EffectChangeData>duplicate(c);
           // c2.effect = e;
-          c2.priority = <number>c2.priority ?? (c2.mode * 10);
+          c2.priority = <number>c2.priority ?? c2.mode * 10;
           return c2;
-      }));
+        }),
+      );
     }, []);
     changes.sort((a, b) => <number>a.priority - <number>b.priority);
     return changes;

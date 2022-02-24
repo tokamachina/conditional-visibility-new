@@ -1,12 +1,12 @@
-import { EffectDefinitions } from '../conditional-visibility-effect-definition';
-import { AtcvEffectSenseFlags, AtcvEffectConditionFlags, StatusSight } from '../conditional-visibility-models';
+import { ConditionalVisibilityEffectDefinitions } from '../conditional-visibility-effect-definition';
+import { AtcvEffectSenseFlags, AtcvEffectConditionFlags, SenseData } from '../conditional-visibility-models';
 import CONSTANTS from '../constants';
 
 export default {
   HP_ATTRIBUTE: 'data.attributes.hp.value',
   PERCEPTION_PASSIVE_SKILL: `data.skills.prc.passive`,
   STEALTH_PASSIVE_SKILL: `data.skills.ste.passive`,
-  SENSES: <StatusSight[]>[
+  SENSES: <SenseData[]>[
     {
       id: AtcvEffectSenseFlags.NONE,
       name: `${CONSTANTS.MODULE_NAME}.${AtcvEffectSenseFlags.NONE}`,
@@ -15,7 +15,7 @@ export default {
       //effect: undefined,
       visionLevelMinIndex: -2,
       visionLevelMaxIndex: -1,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectSenseFlags.NORMAL,
@@ -25,7 +25,7 @@ export default {
       //effect: EffectDefinitions.blinded(0),
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 1,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectSenseFlags.BLINDED,
@@ -35,7 +35,7 @@ export default {
       //effect: EffectDefinitions.blinded(0),
       visionLevelMinIndex: -1,
       visionLevelMaxIndex: 0,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectSenseFlags.LOW_LIGHT_VISION,
@@ -45,7 +45,7 @@ export default {
       //effect: EffectDefinitions.lowlightvision(0),
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 2,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectSenseFlags.DARKVISION,
@@ -55,7 +55,7 @@ export default {
       //effect: EffectDefinitions.darkvision(0),
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 3,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectSenseFlags.GREATER_DARKVISION,
@@ -65,10 +65,10 @@ export default {
       //effect: EffectDefinitions.darkvision(120),
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 4,
-      checkElevation: false,
+      conditionElevation: false,
     },
   ],
-  CONDITIONS: <StatusSight[]>[
+  CONDITIONS: <SenseData[]>[
     {
       id: AtcvEffectConditionFlags.HIDDEN,
       name: `${CONSTANTS.MODULE_NAME}.${AtcvEffectConditionFlags.HIDDEN}`,
@@ -76,7 +76,7 @@ export default {
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/newspaper.svg`,
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 1,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectConditionFlags.INVISIBLE,
@@ -85,7 +85,7 @@ export default {
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/unknown.svg`,
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 4,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectConditionFlags.OBSCURED,
@@ -94,7 +94,7 @@ export default {
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/foggy.svg`,
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 6,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectConditionFlags.IN_DARKNESS,
@@ -103,7 +103,7 @@ export default {
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/moon.svg`,
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 6,
-      checkElevation: false,
+      conditionElevation: false,
     },
   ],
 };

@@ -1,12 +1,12 @@
 import CONSTANTS from './constants';
-import { error, i18n, mergeByProperty, warn } from './lib/lib';
+import { dialogWarning, error, i18n, mergeByProperty, warn } from './lib/lib';
 import EffectInterface from './effects/effect-interface';
-import { StatusSight } from './conditional-visibility-models';
+import { SenseData } from './conditional-visibility-models';
 import HOOKS from './hooks';
 import { EnhancedConditions } from './cub/enhanced-conditions';
 import { canvas, game } from './settings';
 import Effect from './effects/effect';
-import { EffectDefinitions } from './conditional-visibility-effect-definition';
+import { ConditionalVisibilityEffectDefinitions } from './conditional-visibility-effect-definition';
 
 const API = {
   effectInterface: EffectInterface,
@@ -21,8 +21,8 @@ const API = {
    *
    * @returns {array}
    */
-  get SENSES(): StatusSight[] {
-    return <any[]>game.settings.get(CONSTANTS.MODULE_NAME, 'senses');
+  get SENSES(): SenseData[] {
+    return <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'senses');
   },
 
   /**
@@ -30,8 +30,8 @@ const API = {
    *
    * @returns {array}
    */
-  get CONDITIONS(): StatusSight[] {
-    return <any[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
+  get CONDITIONS(): SenseData[] {
+    return <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
   },
 
   /**
@@ -420,17 +420,17 @@ const API = {
 
   async setCondition(
     tokenNameOrId: string,
-    effectName: string,
+    senseDataId: string,
     disabled: boolean,
     distance: number | undefined,
     visionLevel: number | undefined,
   ) {
-    return API.addEffectConditionalVisibilityOnToken(tokenNameOrId, effectName, disabled, distance, visionLevel);
+    return API.addEffectConditionalVisibilityOnToken(tokenNameOrId, senseDataId, disabled, distance, visionLevel);
   },
 
   async addEffectConditionalVisibilityOnToken(
     tokenNameOrId: string,
-    effectName: string,
+    senseDataId: string,
     disabled: boolean,
     distance: number | undefined,
     visionLevel: number | undefined,
@@ -450,40 +450,102 @@ const API = {
       visionLevel = 0;
     }
 
-    const sensesOrderByName =  this.getAllSensesAndConditions();
+    const sensesOrderByName =  <SenseData[]>await this.getAllSensesAndConditions();
+    const effectsDefinition = <Effect[]>ConditionalVisibilityEffectDefinitions.all(distance, visionLevel);
 
     let effect: Effect | undefined = undefined;
+    let senseData: SenseData | undefined = undefined;
+
     for (const a of sensesOrderByName) {
-      if (a.id == effectName || i18n(a.name) == effectName) {
-        effect = <Effect>EffectDefinitions.all(distance, visionLevel).find((e: Effect) => {
-          return e.customId == a.id;
-        });
-        if (effect) {
-          effect.transfer = !disabled;
-          break;
-        }
+      // Check for dfred convienient effect
+      //@ts-ignore
+      if(a.effectCustomId && game.dfred){
+        //@ts-ignore
+        effect = await game.dfreds.effectInterface.findCustomEffectByName(a.name);
       }
+      if(effect){
+        effect.transfer = !disabled;
+        senseData = a;
+        break;
+      }
+      effect = <Effect>effectsDefinition.find((e: Effect) => {
+        return e.customId == a.id || i18n(e.name) == i18n(a.name);
+      });
+      if (effect) {
+        effect.transfer = !disabled;
+        senseData = a;
+        break;
+      }
+
     }
 
     if (!effect) {
-      warn(`No effect found with reference '${effectName}'`, true);
+      warn(`No effect found with reference '${senseDataId}'`, true);
     } else {
       if (token && effect) {
-        await this.effectInterface.addEffectOnToken(effectName, <string>token.id, effect);
+        const nameToUse = senseData?.name ? senseData?.name : effect?.name;
+        await this.effectInterface.addEffectOnToken(nameToUse, <string>token.id, effect);
         await token?.document?.setFlag(CONSTANTS.MODULE_NAME, (<Effect>effect).customId, visionLevel);
       }
     }
   },
 
-  getAllSensesAndConditions():StatusSight[]{
-    let allSensesAndConditions: StatusSight[] = [];
+  async getAllSensesAndConditions():Promise<SenseData[]>{
+    let allSensesAndConditions: SenseData[] = [];
     const senses = API.SENSES;
     const conditions = API.CONDITIONS;
     allSensesAndConditions = mergeByProperty(allSensesAndConditions, senses, 'id');
     allSensesAndConditions = mergeByProperty(allSensesAndConditions, conditions, 'id');
 
-    const sensesOrderByName = <StatusSight[]>allSensesAndConditions.sort((a, b) => a.name.localeCompare(b.name));
+    const sensesOrderByName = <SenseData[]>allSensesAndConditions.sort((a, b) => a.name.localeCompare(b.name));
     return sensesOrderByName;
+  },
+
+  async registerSense(senseData:SenseData){
+    const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'senses');
+    const newSensesData = await this._registerSenseData(senseData,sensesData,'sense');
+    await game.settings.set(CONSTANTS.MODULE_NAME, 'senses', newSensesData);
+  },
+
+  async registerCondition(senseData:SenseData){
+    const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
+    const newSensesData = await this._registerSenseData(senseData,sensesData,'condition');
+    await game.settings.set(CONSTANTS.MODULE_NAME, 'conditions', newSensesData);
+  },
+
+  async _registerSenseData(senseData:SenseData, sensesDataList:SenseData[], valueComment:string){
+    if(!senseData.id){
+      dialogWarning(`Cannot register the ${valueComment} with id empty or null`);
+      return;
+    }
+    if(!senseData.name){
+      dialogWarning(`Cannot register the ${valueComment} with name empty or null`);
+      return;
+    }
+    // if(!senseData.visionLevelMinIndex){
+    //   dialogWarning(`Cannot register the ${valueComment} with visionLevelMinIndex empty or null`);
+    //   return;
+    // }
+    // if(!senseData.visionLevelMaxIndex){
+    //   dialogWarning(`Cannot register the ${valueComment} with visionLevelMaxIndex empty or null`);
+    //   return;
+    // }
+
+    const sensesAndConditionDataList = <SenseData[]>await this.getAllSensesAndConditions();
+
+    const senseAlreadyExistsId = sensesAndConditionDataList.find((a:SenseData) => a.id == senseData.id);
+    if(senseAlreadyExistsId){
+      dialogWarning(`Cannot register the ${valueComment} with id '${senseData.id}' because already exists`);
+      return;
+    }
+    const senseAlreadyExistsName = sensesAndConditionDataList.find((a:SenseData) => a.name == senseData.name);
+    if(senseAlreadyExistsName){
+      dialogWarning(`Cannot register the ${valueComment} with name '${senseData.name}' because already exists`);
+      return;
+    }
+
+    sensesDataList.push(senseData);
+    return sensesDataList;
   }
 };
 

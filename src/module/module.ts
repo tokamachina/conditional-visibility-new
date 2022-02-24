@@ -1,4 +1,4 @@
-import { EffectDefinitions } from './conditional-visibility-effect-definition';
+import { ConditionalVisibilityEffectDefinitions } from './conditional-visibility-effect-definition';
 import { registerLibwrappers, updateTokenHandler } from './libwrapper';
 import { registerSocket, conditionalVisibilitySocket } from './socket';
 
@@ -161,7 +161,7 @@ const module = {
     //   }
     // }
   },
-  updateActiveEffect(effect:ActiveEffect, options){
+  async updateActiveEffect(effect:ActiveEffect, options){
     if (!effect.data.changes?.find(effect => effect.key.includes("ATCV"))){
       return;
     }
@@ -212,7 +212,8 @@ const module = {
           continue;
         }
         const updateKey = change.key.slice(5);
-        for(const statusSight of API.getAllSensesAndConditions()){
+        const sensesData = await API.getAllSensesAndConditions()
+        for(const statusSight of sensesData){
           if (updateKey === statusSight.id) {
             // TODO TO CHECK IF WE NEED TO FILTER THE TOKENS AGAIN
             for(const tokenToSet of tokenArray){

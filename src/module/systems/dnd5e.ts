@@ -1,4 +1,4 @@
-import { AtcvEffectSenseFlags, AtcvEffectConditionFlags, StatusSight } from '../conditional-visibility-models';
+import { AtcvEffectSenseFlags, AtcvEffectConditionFlags, SenseData } from '../conditional-visibility-models';
 import CONSTANTS from '../constants';
 
 export default {
@@ -9,7 +9,7 @@ export default {
    * The set of possible sensory perception types which an Actor may have.
    * @enum {string}
    */
-  SENSES: <StatusSight[]>[
+  SENSES: <SenseData[]>[
     // {
     //   id: `stealthpassive`,
     //   name: `${CONSTANTS.MODULE_NAME}.stealthpassive`),
@@ -26,7 +26,7 @@ export default {
       //effect: undefined,
       visionLevelMinIndex: -2,
       visionLevelMaxIndex: -1,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectSenseFlags.NORMAL,
@@ -36,7 +36,7 @@ export default {
       //effect: undefined,
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 1,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectSenseFlags.BLINDED,
@@ -46,7 +46,7 @@ export default {
       //effect: EffectDefinitions.blinded(0),
       visionLevelMinIndex: -1,
       visionLevelMaxIndex: 0,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectSenseFlags.DARKVISION,
@@ -56,7 +56,7 @@ export default {
       //effect: EffectDefinitions.darkvision(0),
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 3,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectSenseFlags.TREMOR_SENSE,
@@ -66,7 +66,7 @@ export default {
       //effect: EffectDefinitions.tremorsense(0),
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 10,
-      checkElevation: true,
+      conditionElevation: true,
     },
     {
       id: AtcvEffectSenseFlags.SEE_INVISIBLE,
@@ -76,7 +76,7 @@ export default {
       //effect: EffectDefinitions.seeinvisible(0),
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 5,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectSenseFlags.BLIND_SIGHT,
@@ -86,7 +86,7 @@ export default {
       //effect: EffectDefinitions.blindsigth(0),
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 6,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectSenseFlags.TRUE_SIGHT,
@@ -96,7 +96,7 @@ export default {
       //effect: EffectDefinitions.truesight(0),
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 7,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectSenseFlags.DEVILS_SIGHT,
@@ -106,10 +106,10 @@ export default {
       //effect: EffectDefinitions.devilssight(0),
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 8,
-      checkElevation: false,
+      conditionElevation: false,
     },
   ],
-  CONDITIONS: <StatusSight[]>[
+  CONDITIONS: <SenseData[]>[
     {
       id: AtcvEffectConditionFlags.HIDDEN,
       name: `${CONSTANTS.MODULE_NAME}.${AtcvEffectConditionFlags.HIDDEN}`,
@@ -117,7 +117,7 @@ export default {
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/newspaper.svg`,
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 1,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectConditionFlags.INVISIBLE,
@@ -126,7 +126,7 @@ export default {
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/unknown.svg`,
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 4,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectConditionFlags.OBSCURED,
@@ -135,7 +135,7 @@ export default {
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/foggy.svg`,
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 6,
-      checkElevation: false,
+      conditionElevation: false,
     },
     {
       id: AtcvEffectConditionFlags.IN_DARKNESS,
@@ -144,7 +144,7 @@ export default {
       img: `modules/${CONSTANTS.MODULE_NAME}/icons/moon.svg`,
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 6,
-      checkElevation: false,
+      conditionElevation: false,
     },
   ],
 };

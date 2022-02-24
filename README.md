@@ -52,10 +52,9 @@ This module uses the [levels](https://github.com/theripper93/Levels) library. It
 
 A usage documentation is reachable [here](./wiki/tutorial.md)
 
-## Conditions and sense combination by system deafult
+## Conditions and sense combination by system default
 
 ### [System Dnd5e](./wiki/table_dnd5e.md)
-
 ### [System Pathfinder 2e](./wiki/table_pf2e.md)
 
 ## Did you want ot help with your system prepare some table like the one i do it for Dnd5e for help me to define some rule for your system

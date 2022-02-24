@@ -7,7 +7,7 @@ import {
   AtcvEffect,
   AtcvEffectSenseFlags,
   AtcvEffectConditionFlags,
-  StatusSight,
+  SenseData,
   VisionCapabilities,
 } from '../conditional-visibility-models.js';
 import EmbeddedCollection from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs';
@@ -234,6 +234,7 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
     return true;
   }
 
+
   // ========================================
   // 2 - Check for the correct status sight
   // =========================================
@@ -242,52 +243,45 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
 
   const visibleForTypeOfSenseByIndex = [...sourceVisionLevels].map((sourceVisionLevel: AtcvEffect) => {
     let result = false;
-    if (sourceVisionLevel?.conditionElevation) {
+    if (sourceVisionLevel?.visionElevation) {
       const tokenElevation = getElevationToken(sourceToken);
       const targetElevation = getElevationToken(targetToken);
       if (tokenElevation < targetElevation) {
-        result = false;
-      } else {
-        const resultsOnTarget = targetVisionLevels.map((targetVisionLevel) => {
-          if (!targetVisionLevel || !targetVisionLevel.statusSight) {
-            result = true;
-          }
-          if (
-            targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NORMAL ||
-            targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NONE
-          ) {
-            result = true;
-          }
-          result =
-            <number>sourceVisionLevel?.statusSight?.visionLevelMinIndex <= <number>targetVisionLevel.statusSight?.visionLevelMinIndex &&
-            <number>sourceVisionLevel?.statusSight?.visionLevelMaxIndex >= <number>targetVisionLevel.statusSight?.visionLevelMaxIndex;
-          return result;
-        });
-        // if any source has vision to the token, the token is visible
-        result = resultsOnTarget.reduce((total, curr) => total || curr, false);
+        return false;
       }
-    } else {
-      const resultsOnTarget = targetVisionLevels.map((targetVisionLevel) => {
-        if (!targetVisionLevel || !targetVisionLevel.statusSight) {
-          result = true;
-        }
-        if (
-          targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NORMAL ||
-          targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NONE
-        ) {
-          result = true;
-        }
-        result =
-          <number>sourceVisionLevel?.statusSight?.visionLevelMinIndex <= <number>targetVisionLevel.statusSight?.visionLevelMinIndex &&
-          <number>sourceVisionLevel?.statusSight?.visionLevelMaxIndex >= <number>targetVisionLevel.statusSight?.visionLevelMaxIndex;
-        return result;
-      });
-      // if any source has vision to the token, the token is visible
-      result = resultsOnTarget.reduce((total, curr) => total || curr, false);
     }
-    if (result) {
-      sourceVisionLevelsValid.push(sourceVisionLevel);
-    }
+    const resultsOnTarget = targetVisionLevels.map((targetVisionLevel) => {
+      if (!targetVisionLevel || !targetVisionLevel.statusSight) {
+        result = true;
+      }
+      if (sourceVisionLevel?.visionTargets?.length > 0) {
+        if(sourceVisionLevel?.visionTargets.includes(<string>targetVisionLevel.statusSight?.id)){
+          return true;
+        } else {
+          return false;
+        }
+      }
+      if (targetVisionLevel?.visionSources?.length > 0) {
+        if(targetVisionLevel?.visionSources.includes(<string>sourceVisionLevel.statusSight?.id)){
+          return true;
+        } else {
+          return false;
+        }
+      }
+      if (
+        targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NORMAL ||
+        targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NONE
+      ) {
+        result = true;
+      }
+      result =
+        <number>sourceVisionLevel?.statusSight?.visionLevelMinIndex <= <number>targetVisionLevel.statusSight?.visionLevelMinIndex &&
+        <number>sourceVisionLevel?.statusSight?.visionLevelMaxIndex >= <number>targetVisionLevel.statusSight?.visionLevelMaxIndex;
+      return result;
+
+    });
+    // if any source has vision to the token, the token is visible
+    result = resultsOnTarget.reduce((total, curr) => total || curr, false);
     return result;
   });
 
@@ -372,7 +366,7 @@ export async function prepareActiveEffectForConditionalVisibility(
       if (sense.visionLevelValue && sense.visionLevelValue != 0) {
         await API.addEffectConditionalVisibilityOnToken(
           <string>sourceToken.id,
-          effectNameToCheckOnActor,
+          <string>sense.statusSight?.id,
           false,
           sense.visionDistanceValue,
           sense.visionLevelValue,
@@ -407,7 +401,7 @@ export async function prepareActiveEffectForConditionalVisibility(
       if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
         await API.addEffectConditionalVisibilityOnToken(
           <string>sourceToken.id,
-          effectNameToCheckOnActor,
+          <string>condition.statusSight?.id,
           false,
           condition.visionDistanceValue,
           condition.visionLevelValue,
@@ -429,13 +423,14 @@ export function getConditionsFromToken(token: Token): AtcvEffect[] {
   return _getCVFromToken(token, API.CONDITIONS);
 }
 
-function _getCVFromToken(token: Token, statusSights: StatusSight[]): AtcvEffect[] {
+function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] {
   const actor = <Actor>token.document.getActor();
   const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects;
   //const totalEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects.contents.filter(i => !i.data.disabled);
   const ATCVeffects = actorEffects.filter(entity => !!entity.data.changes.find(effect => effect.key.includes("ATCV")));
-  let conditionElevation = true;
+  let visionElevation = true;
   let conditionTargets:string[] = [];
+  let conditionSources:string[] = [];
   const statusEffects: AtcvEffect[] = [];
   // regex expression to match all non-alphanumeric characters in string
   const regex = /[^A-Za-z0-9]/g;
@@ -447,7 +442,7 @@ function _getCVFromToken(token: Token, statusSights: StatusSight[]): AtcvEffect[
     }
     // use replace() method to match and remove all the non-alphanumeric characters
     const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
-    const effectSight = statusSights.find((a: StatusSight) => {
+    const effectSight = statusSights.find((a: SenseData) => {
       return effectNameToCheckOnActor
         .replace(regex, '')
         .toLowerCase()
@@ -470,24 +465,26 @@ function _getCVFromToken(token: Token, statusSights: StatusSight[]): AtcvEffect[
       }, []);
       changes.sort((a, b) => <number>a.priority - <number>b.priority);
 
-      conditionElevation = retrieveAtcvElevationFromActiveEffect(changes);
+      visionElevation = retrieveAtcvElevationFromActiveEffect(changes);
       conditionTargets = retrieveAtcvTargetsFromActiveEffect(changes);
+      conditionSources = retrieveAtcvSourcesFromActiveEffect(changes);
 
       // look up if you have not basic AE and if the check elevation is not enabled
       if (
-        !effectSight.checkElevation &&
+        !effectSight.conditionElevation &&
         effectSight.id != AtcvEffectSenseFlags.NONE &&
         effectSight.id != AtcvEffectSenseFlags.NORMAL &&
         effectSight.id != AtcvEffectSenseFlags.BLINDED
       ) {
-        conditionElevation = false;
+        visionElevation = false;
       }
       const distance = retrieveAtcvVisionLevelDistanceFromActiveEffect(effectEntity);
       const atcvValue = retrieveAtcvVisionLevelFromActiveEffect(effectEntity, effectSight);
 
       statusEffects.push({
-        conditionElevation: conditionElevation,
-        conditionTargets: conditionTargets,
+        visionElevation: visionElevation,
+        visionTargets: conditionTargets,
+        visionSources: conditionSources,
         statusSight: effectSight,
         visionDistanceValue: distance,
         visionLevelValue: atcvValue,
@@ -537,7 +534,34 @@ export function retrieveAtcvTargetsFromActiveEffect(effectEntityChanges: EffectC
   return checkTargetsAcvt;
 }
 
-export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effectSight: StatusSight): number {
+export function retrieveAtcvSourcesFromActiveEffect(effectEntityChanges: EffectChangeData[]): string[] {
+  let checkSourcesAcvt:string[] = [];
+  // Apply all changes
+  for (const change of effectEntityChanges) {
+    if (change.key.includes("ATCV.conditionSources")){
+      if(change.value){
+        const inTags = <any>change.value;
+        if (!(typeof inTags === "string" || inTags instanceof RegExp || Array.isArray(inTags))) {
+          error(`'ATCV.conditionSources' must be of type string or array`);
+        }
+        let providedTags = typeof inTags === "string" ? inTags.split(",") : inTags;
+
+        if(!Array.isArray(providedTags)) providedTags = [providedTags]
+
+        providedTags.forEach(t => {
+            if (!(typeof t === "string" || t instanceof RegExp)){
+              error(`'ATCV.conditionSources' in array must be of type string or regexp`);
+            }
+        });
+
+        checkSourcesAcvt = providedTags.map(t => t instanceof RegExp ? t : t.trim());
+      }
+    }
+  }
+  return checkSourcesAcvt;
+}
+
+export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effectSight: SenseData): number {
   const regex = /[^A-Za-z0-9]/g;
   //Look up for ATCV to manage vision level
   // TODO for now every active effect can have only one ATCV key ate the time not sure if manage

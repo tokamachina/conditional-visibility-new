@@ -1,26 +1,28 @@
 import API from './api';
 import CONSTANTS from './constants';
 import Effect from './effects/effect';
-import { error, retrieveAtcvVisionLevelDistanceFromActiveEffect, retrieveAtcvVisionLevelFromActiveEffect, i18n, retrieveAtcvTargetsFromActiveEffect, retrieveAtcvElevationFromActiveEffect } from './lib/lib';
+import { error, retrieveAtcvVisionLevelDistanceFromActiveEffect, retrieveAtcvVisionLevelFromActiveEffect, i18n, retrieveAtcvTargetsFromActiveEffect, retrieveAtcvElevationFromActiveEffect, retrieveAtcvSourcesFromActiveEffect } from './lib/lib';
 
 export interface AtcvEffect {
-  // visionLevelMinIndex: number;
-  // visionLevelMaxIndex: number;
-  conditionTargets:string[];
-  conditionElevation: boolean;
-  statusSight: StatusSight | undefined;
+  visionElevation: boolean;
+  statusSight: SenseData | undefined;
   visionLevelValue: number | undefined;
   visionDistanceValue: number | undefined;
+  visionTargets:string[];
+  visionSources:string[];
 }
 
-export interface StatusSight {
-  id: string;
-  name: string;
-  path: string;
-  img: string;
-  visionLevelMinIndex: number;
-  visionLevelMaxIndex: number;
-  checkElevation: boolean;
+export interface SenseData {
+  id: string;     // This is the unique id used for sync all the senses and conditions (please no strange character, no whitespace and all in lowercase...)
+  name: string;   // This is the unique name used for sync all the senses and conditions (here you cna put any dirty character you want)
+  path: string;   // This is the path to the property you want to associate with this sense e.g. data.skills.prc.passive
+  img: string;    // [OPTIONAL] Image to associate to this sense
+  visionLevelMinIndex: number; // [OPTIONAL] check a min index for filter a range of sense can see these conditions, or viceversa conditions can be seen only from this sense
+  visionLevelMaxIndex: number; // [OPTIONAL] check a max index for filter a range of sense can see these conditions, or viceversa conditions can be seen only from this sense
+  conditionElevation: boolean; // [OPTIONAL] force to check the elevation between the source token and the target token, useful when using module like 'Levels'
+  conditionTargets:string[]; // [OPTIONAL] force to apply the check only for these sources (you can set this but is used only from sense)
+  conditionSources:string[]; // [OPTIONAL] force to apply the check only for these sources (you can set this but is used only from condition)
+  effectCustomId:string;  // [OPTIONAL] if you use the module 'DFreds Convenient Effects', you can associate a custom active effect by using the customId string of the DFred effect
 }
 
 export enum AtcvEffectSenseFlags {
@@ -196,7 +198,7 @@ export class VisionCapabilities {
   retrieveSenseValue(statusSense: string): number | undefined {
     let sense: number | undefined = undefined;
     for (const statusEffect of this.senses.values()) {
-      const statusSight = <StatusSight>statusEffect.statusSight;
+      const statusSight = <SenseData>statusEffect.statusSight;
       if (statusSense == statusSight.id) {
         sense = this.senses.get(statusSense)?.visionLevelValue;
         break;
@@ -212,20 +214,23 @@ export class VisionCapabilities {
         let visionDistanceValue = 0;
         let conditionElevation = false;
         let conditionTargets:string[] = [];
+        let conditionSources:string[] = [];
         if (!visionLevelValue || visionLevelValue == 0) {
           // try to serach on active effect
           if (await API.hasEffectAppliedOnToken(this.token.id, i18n(statusSight.name), true)) {
             const ae = <ActiveEffect>await API.findEffectByNameOnToken(this.token.id, i18n(statusSight.name));
             conditionElevation = retrieveAtcvElevationFromActiveEffect(ae.data.changes);
             conditionTargets = retrieveAtcvTargetsFromActiveEffect(ae.data.changes);
+            conditionSources = retrieveAtcvSourcesFromActiveEffect(ae.data.changes);
             visionLevelValue = retrieveAtcvVisionLevelFromActiveEffect(ae, statusSight);
             visionDistanceValue = retrieveAtcvVisionLevelDistanceFromActiveEffect(ae);
           }
         }
 
         const statusEffect = <AtcvEffect>{
-          conditionElevation:conditionElevation ?? false,
-          conditionTargets:conditionTargets ?? [],
+          visionElevation:conditionElevation ?? false,
+          visionTargets:conditionTargets ?? [],
+          visionSources:conditionSources ?? [],
           visionLevelValue: visionLevelValue ?? 0,
           visionDistanceValue: visionDistanceValue ?? 0,
           statusSight: statusSight,
@@ -263,20 +268,23 @@ export class VisionCapabilities {
         let visionDistanceValue = 0;
         let conditionElevation = false;
         let conditionTargets:string[] = [];
+        let conditionSources:string[] = [];
         if (!visionLevelValue || visionLevelValue == 0) {
           // try to serach on active effect
           if (await API.hasEffectAppliedOnToken(this.token.id, i18n(statusSight.name), true)) {
             const ae = <ActiveEffect>await API.findEffectByNameOnToken(this.token.id, i18n(statusSight.name));
             conditionElevation = retrieveAtcvElevationFromActiveEffect(ae.data.changes);
             conditionTargets = retrieveAtcvTargetsFromActiveEffect(ae.data.changes);
+            conditionSources = retrieveAtcvSourcesFromActiveEffect(ae.data.changes);
             visionLevelValue = retrieveAtcvVisionLevelFromActiveEffect(ae, statusSight);
             visionDistanceValue = retrieveAtcvVisionLevelDistanceFromActiveEffect(ae);
           }
         }
 
         const statusEffect = <AtcvEffect>{
-          conditionElevation:conditionElevation ?? false,
-          conditionTargets:conditionTargets ?? [],
+          visionElevation:conditionElevation ?? false,
+          visionTargets:conditionTargets ?? [],
+          visionSources:conditionSources ?? [],
           visionLevelValue: visionLevelValue ?? 0,
           visionDistanceValue: visionDistanceValue ?? 0,
           statusSight: statusSight,
@@ -289,7 +297,7 @@ export class VisionCapabilities {
   retrieveConditionValue(statusSense: string): number | undefined {
     let sense: number | undefined = undefined;
     for (const statusEffect of this.conditions.values()) {
-      const statusSight = <StatusSight>statusEffect.statusSight;
+      const statusSight = <SenseData>statusEffect.statusSight;
       if (statusSense == statusSight.id) {
         sense = this.senses.get(statusSense)?.visionLevelValue;
         break;

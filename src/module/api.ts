@@ -143,7 +143,8 @@ const API = {
       throw error('removeEffectArr | inAttributes must be of type array');
     }
     const [params] = inAttributes;
-    return this.effectInterface.removeEffect(params);
+    const result = await this.effectInterface.removeEffect(params);
+    return result;
   },
 
   async toggleEffectArr(...inAttributes: any[]) {
@@ -151,7 +152,8 @@ const API = {
       throw error('toggleEffectArr | inAttributes must be of type array');
     }
     const [effectName, params] = inAttributes;
-    return this.effectInterface.toggleEffect(effectName, params);
+    const result = await this.effectInterface.toggleEffect(effectName, params);
+    return result;
   },
 
   async addEffectArr(...inAttributes: any[]) {
@@ -159,7 +161,8 @@ const API = {
       throw error('addEffectArr | inAttributes must be of type array');
     }
     const [params] = inAttributes;
-    return this.effectInterface.addEffect(params);
+    const result = await this.effectInterface.addEffect(params);
+    return result;
   },
 
   async hasEffectAppliedArr(...inAttributes: any[]) {
@@ -167,7 +170,8 @@ const API = {
       throw error('hasEffectAppliedArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    return this.effectInterface.hasEffectApplied(effectName, uuid);
+    const result = await this.effectInterface.hasEffectApplied(effectName, uuid);
+    return result;
   },
 
   async addEffectOnActorArr(...inAttributes) {
@@ -175,7 +179,8 @@ const API = {
       throw error('addEffectOnActorArr | inAttributes must be of type array');
     }
     const [effectName, uuid, origin, overlay, effect] = inAttributes;
-    return this.effectInterface.addEffectOnActor(effectName, uuid, origin, overlay, effect);
+    const result = await this.effectInterface.addEffectOnActor(effectName, uuid, origin, overlay, effect);
+    return result;
   },
 
   async removeEffectOnActorArr(...inAttributes: any[]) {
@@ -183,7 +188,8 @@ const API = {
       throw error('removeEffectOnActorArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    return this.effectInterface.removeEffectOnActor(effectName, uuid);
+    const result = await this.effectInterface.removeEffectOnActor(effectName, uuid);
+    return result;
   },
 
   async removeEffectFromIdOnActorArr(...inAttributes: any[]) {
@@ -191,7 +197,8 @@ const API = {
       throw error('removeEffectFromIdOnActor | inAttributes must be of type array');
     }
     const [effectId, uuid] = inAttributes;
-    return this.effectInterface.removeEffectFromIdOnActor(effectId, uuid);
+    const result = await this.effectInterface.removeEffectFromIdOnActor(effectId, uuid);
+    return result;
   },
 
   async toggleEffectFromIdOnActorArr(...inAttributes) {
@@ -199,7 +206,8 @@ const API = {
       throw error('addEffectOnActorArr | inAttributes must be of type array');
     }
     const [effectId, uuid, alwaysDelete, forceEnabled, forceDisabled] = inAttributes;
-    return this.effectInterface.toggleEffectFromIdOnActor(effectId, uuid, alwaysDelete, forceEnabled, forceDisabled);
+    const result = await this.effectInterface.toggleEffectFromIdOnActor(effectId, uuid, alwaysDelete, forceEnabled, forceDisabled);
+    return result;
   },
 
   async findEffectByNameOnActorArr(...inAttributes: any[]): Promise<ActiveEffect | null> {
@@ -207,7 +215,8 @@ const API = {
       throw error('findEffectByNameOnActorArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    return this.effectInterface.findEffectByNameOnActor(effectName, uuid);
+    const result = await this.effectInterface.findEffectByNameOnActor(effectName, uuid);
+    return result;
   },
 
   async addEffectOnTokenArr(...inAttributes) {
@@ -215,7 +224,8 @@ const API = {
       throw error('addEffectOnTokenArr | inAttributes must be of type array');
     }
     const [effectName, uuid, origin, overlay, effect] = inAttributes;
-    return this.effectInterface.addEffectOnToken(effectName, uuid, origin, overlay, effect);
+    const result = await this.effectInterface.addEffectOnToken(effectName, uuid, origin, overlay, effect);
+    return result;
   },
 
   async removeEffectOnTokenArr(...inAttributes: any[]) {
@@ -223,7 +233,8 @@ const API = {
       throw error('removeEffectOnTokenArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    return this.effectInterface.removeEffectOnToken(effectName, uuid);
+    const result = await this.effectInterface.removeEffectOnToken(effectName, uuid);
+    return result;
   },
 
   async removeEffectFromIdOnTokenArr(...inAttributes: any[]) {
@@ -231,7 +242,8 @@ const API = {
       throw error('removeEffectFromIdOnToken | inAttributes must be of type array');
     }
     const [effectId, uuid] = inAttributes;
-    return this.effectInterface.removeEffectFromIdOnToken(effectId, uuid);
+    const result = await this.effectInterface.removeEffectFromIdOnToken(effectId, uuid);
+    return result;
   },
 
   async toggleEffectFromIdOnTokenArr(...inAttributes) {
@@ -239,7 +251,8 @@ const API = {
       throw error('addEffectOnTokenArr | inAttributes must be of type array');
     }
     const [effectId, uuid, alwaysDelete, forceEnabled, forceDisabled] = inAttributes;
-    return this.effectInterface.toggleEffectFromIdOnToken(effectId, uuid, alwaysDelete, forceEnabled, forceDisabled);
+    const result = await this.effectInterface.toggleEffectFromIdOnToken(effectId, uuid, alwaysDelete, forceEnabled, forceDisabled);
+    return result;
   },
 
   async findEffectByNameOnTokenArr(...inAttributes: any[]): Promise<ActiveEffect | null> {
@@ -247,11 +260,12 @@ const API = {
       throw error('findEffectByNameOnTokenArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    return this.effectInterface.findEffectByNameOnToken(effectName, uuid);
+    const result = await this.effectInterface.findEffectByNameOnToken(effectName, uuid);
+    return result;
   },
 
   // ======================
-  // Actor Management
+  // Effect Actor Management
   // ======================
   /*
   async addEffectOnActor(actorId: string, effectName: string, effect: Effect) {
@@ -307,7 +321,7 @@ const API = {
   },
   */
   // ======================
-  // Token Management
+  // Effect Token Management
   // ======================
 
   async addEffectOnToken(tokenId: string, effectName: string, effect: Effect) {

@@ -1,5 +1,5 @@
 import API from './api';
-import { StatusEffectSenseFlags, StatusEffectConditionFlags, StatusSight } from './conditional-visibility-models';
+import { AtcvEffectSenseFlags, AtcvEffectConditionFlags, StatusSight } from './conditional-visibility-models';
 import CONSTANTS from './constants';
 import Effect, { Constants } from './effects/effect';
 import { debug, i18n, i18nFormat, warn } from './lib/lib';
@@ -82,31 +82,31 @@ export class EffectDefinitions {
     const effect = <Effect>EffectDefinitions.all(distance).find((effect: Effect) => {
       return effect.name.toLowerCase() === name.toLowerCase();
     });
-    if (effect?.customId == StatusEffectSenseFlags.BLINDED) {
+    if (effect?.customId == AtcvEffectSenseFlags.BLINDED) {
       return EffectDefinitions.blinded(distance, visionLevel);
     }
-    if (effect?.customId == StatusEffectSenseFlags.BLIND_SIGHT) {
+    if (effect?.customId == AtcvEffectSenseFlags.BLIND_SIGHT) {
       return EffectDefinitions.blindsigth(distance, visionLevel);
     }
-    if (effect?.customId == StatusEffectSenseFlags.DARKVISION) {
+    if (effect?.customId == AtcvEffectSenseFlags.DARKVISION) {
       return EffectDefinitions.darkvision(distance, visionLevel);
     }
-    if (effect?.customId == StatusEffectSenseFlags.DEVILS_SIGHT) {
+    if (effect?.customId == AtcvEffectSenseFlags.DEVILS_SIGHT) {
       return EffectDefinitions.devilssight(distance, visionLevel);
     }
-    if (effect?.customId == StatusEffectSenseFlags.GREATER_DARKVISION) {
+    if (effect?.customId == AtcvEffectSenseFlags.GREATER_DARKVISION) {
       return EffectDefinitions.darkvision(distance, visionLevel);
     }
-    if (effect?.customId == StatusEffectSenseFlags.LOW_LIGHT_VISION) {
+    if (effect?.customId == AtcvEffectSenseFlags.LOW_LIGHT_VISION) {
       return EffectDefinitions.lowlightvision(distance, visionLevel);
     }
-    if (effect?.customId == StatusEffectSenseFlags.SEE_INVISIBLE) {
+    if (effect?.customId == AtcvEffectSenseFlags.SEE_INVISIBLE) {
       return EffectDefinitions.seeinvisible(distance, visionLevel);
     }
-    if (effect?.customId == StatusEffectSenseFlags.TREMOR_SENSE) {
+    if (effect?.customId == AtcvEffectSenseFlags.TREMOR_SENSE) {
       return EffectDefinitions.tremorsense(distance, visionLevel);
     }
-    if (effect?.customId == StatusEffectSenseFlags.TRUE_SIGHT) {
+    if (effect?.customId == AtcvEffectSenseFlags.TRUE_SIGHT) {
       return EffectDefinitions.truesight(distance, visionLevel);
     }
     return undefined;
@@ -140,16 +140,16 @@ export class EffectDefinitions {
       return a.id
         .replace(EffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(StatusEffectSenseFlags.DARKVISION.replace(EffectDefinitions.regex, '').toLowerCase());
+        .startsWith(AtcvEffectSenseFlags.DARKVISION.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
       debug(
-        `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.DARKVISION}'`,
+        `Cannot find for system '${game.system.id}' the active effect with id '${AtcvEffectSenseFlags.DARKVISION}'`,
       );
       return;
     }
     return new Effect({
-      customId: StatusEffectSenseFlags.DARKVISION,
+      customId: AtcvEffectSenseFlags.DARKVISION,
       name:
         number && number > 0
           ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.darkvision.name2`, { number: number })
@@ -179,12 +179,13 @@ export class EffectDefinitions {
       ],
       atcvChanges: [
         {
-          key: 'ATCV.' + StatusEffectSenseFlags.DARKVISION,
+          key: 'ATCV.' + AtcvEffectSenseFlags.DARKVISION,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,
         },
       ],
+      isTemporary: false,
     });
   }
 
@@ -194,16 +195,16 @@ export class EffectDefinitions {
       return a.id
         .replace(EffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(StatusEffectSenseFlags.BLIND_SIGHT.replace(EffectDefinitions.regex, '').toLowerCase());
+        .startsWith(AtcvEffectSenseFlags.BLIND_SIGHT.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
       debug(
-        `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.BLIND_SIGHT}'`,
+        `Cannot find for system '${game.system.id}' the active effect with id '${AtcvEffectSenseFlags.BLIND_SIGHT}'`,
       );
       return;
     }
     return new Effect({
-      customId: StatusEffectSenseFlags.BLIND_SIGHT,
+      customId: AtcvEffectSenseFlags.BLIND_SIGHT,
       name:
         number && number > 0
           ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blindsigth.name2`, { number: number })
@@ -225,12 +226,13 @@ export class EffectDefinitions {
       ],
       atcvChanges: [
         {
-          key: 'ATCV.' + StatusEffectSenseFlags.BLIND_SIGHT,
+          key: 'ATCV.' + AtcvEffectSenseFlags.BLIND_SIGHT,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,
         },
       ],
+      isTemporary: false,
     });
   }
 
@@ -240,16 +242,16 @@ export class EffectDefinitions {
       return a.id
         .replace(EffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(StatusEffectSenseFlags.TREMOR_SENSE.replace(EffectDefinitions.regex, '').toLowerCase());
+        .startsWith(AtcvEffectSenseFlags.TREMOR_SENSE.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
       debug(
-        `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.TREMOR_SENSE}'`,
+        `Cannot find for system '${game.system.id}' the active effect with id '${AtcvEffectSenseFlags.TREMOR_SENSE}'`,
       );
       return;
     }
     return new Effect({
-      customId: StatusEffectSenseFlags.TREMOR_SENSE,
+      customId: AtcvEffectSenseFlags.TREMOR_SENSE,
       name:
         number && number > 0
           ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.tremorsense.name2`, { number: number })
@@ -271,12 +273,13 @@ export class EffectDefinitions {
       ],
       atcvChanges: [
         {
-          key: 'ATCV.' + StatusEffectSenseFlags.TREMOR_SENSE,
+          key: 'ATCV.' + AtcvEffectSenseFlags.TREMOR_SENSE,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,
         },
       ],
+      isTemporary: false,
     });
   }
 
@@ -286,16 +289,16 @@ export class EffectDefinitions {
       return a.id
         .replace(EffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(StatusEffectSenseFlags.TRUE_SIGHT.replace(EffectDefinitions.regex, '').toLowerCase());
+        .startsWith(AtcvEffectSenseFlags.TRUE_SIGHT.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
       debug(
-        `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.TRUE_SIGHT}'`,
+        `Cannot find for system '${game.system.id}' the active effect with id '${AtcvEffectSenseFlags.TRUE_SIGHT}'`,
       );
       return;
     }
     return new Effect({
-      customId: StatusEffectSenseFlags.TRUE_SIGHT,
+      customId: AtcvEffectSenseFlags.TRUE_SIGHT,
       name:
         number && number > 0
           ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.truesight.name2`, { number: number })
@@ -317,12 +320,13 @@ export class EffectDefinitions {
       ],
       atcvChanges: [
         {
-          key: 'ATCV.' + StatusEffectSenseFlags.TRUE_SIGHT,
+          key: 'ATCV.' + AtcvEffectSenseFlags.TRUE_SIGHT,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,
         },
       ],
+      isTemporary: false,
     });
   }
 
@@ -332,16 +336,16 @@ export class EffectDefinitions {
       return a.id
         .replace(EffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(StatusEffectSenseFlags.SEE_INVISIBLE.replace(EffectDefinitions.regex, '').toLowerCase());
+        .startsWith(AtcvEffectSenseFlags.SEE_INVISIBLE.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
       debug(
-        `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.SEE_INVISIBLE}'`,
+        `Cannot find for system '${game.system.id}' the active effect with id '${AtcvEffectSenseFlags.SEE_INVISIBLE}'`,
       );
       return;
     }
     return new Effect({
-      customId: StatusEffectSenseFlags.SEE_INVISIBLE,
+      customId: AtcvEffectSenseFlags.SEE_INVISIBLE,
       name:
         number && number > 0
           ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.seeinvisible.name2`, { number: number })
@@ -363,12 +367,13 @@ export class EffectDefinitions {
       ],
       atcvChanges: [
         {
-          key: 'ATCV.' + StatusEffectSenseFlags.SEE_INVISIBLE,
+          key: 'ATCV.' + AtcvEffectSenseFlags.SEE_INVISIBLE,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,
         },
       ],
+      isTemporary: false,
     });
   }
 
@@ -378,16 +383,16 @@ export class EffectDefinitions {
       return a.id
         .replace(EffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(StatusEffectSenseFlags.DEVILS_SIGHT.replace(EffectDefinitions.regex, '').toLowerCase());
+        .startsWith(AtcvEffectSenseFlags.DEVILS_SIGHT.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
       debug(
-        `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.DEVILS_SIGHT}'`,
+        `Cannot find for system '${game.system.id}' the active effect with id '${AtcvEffectSenseFlags.DEVILS_SIGHT}'`,
       );
       return;
     }
     return new Effect({
-      customId: StatusEffectSenseFlags.DEVILS_SIGHT,
+      customId: AtcvEffectSenseFlags.DEVILS_SIGHT,
       name:
         number && number > 0
           ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.devilssight.name2`, { number: number })
@@ -409,12 +414,13 @@ export class EffectDefinitions {
       ],
       atcvChanges: [
         {
-          key: 'ATCV.' + StatusEffectSenseFlags.DEVILS_SIGHT,
+          key: 'ATCV.' + AtcvEffectSenseFlags.DEVILS_SIGHT,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,
         },
       ],
+      isTemporary: false,
     });
   }
 
@@ -424,16 +430,16 @@ export class EffectDefinitions {
       return a.id
         .replace(EffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(StatusEffectSenseFlags.LOW_LIGHT_VISION.replace(EffectDefinitions.regex, '').toLowerCase());
+        .startsWith(AtcvEffectSenseFlags.LOW_LIGHT_VISION.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
       debug(
-        `Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.LOW_LIGHT_VISION}'`,
+        `Cannot find for system '${game.system.id}' the active effect with id '${AtcvEffectSenseFlags.LOW_LIGHT_VISION}'`,
       );
       return;
     }
     return new Effect({
-      customId: StatusEffectSenseFlags.LOW_LIGHT_VISION,
+      customId: AtcvEffectSenseFlags.LOW_LIGHT_VISION,
       name:
         number && number > 0
           ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.lowlightvision.name2`, { number: number })
@@ -469,12 +475,13 @@ export class EffectDefinitions {
       ],
       atcvChanges: [
         {
-          key: 'ATCV.' + StatusEffectSenseFlags.LOW_LIGHT_VISION,
+          key: 'ATCV.' + AtcvEffectSenseFlags.LOW_LIGHT_VISION,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,
         },
       ],
+      isTemporary: false,
     });
   }
 
@@ -484,14 +491,14 @@ export class EffectDefinitions {
       return a.id
         .replace(EffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(StatusEffectSenseFlags.BLINDED.replace(EffectDefinitions.regex, '').toLowerCase());
+        .startsWith(AtcvEffectSenseFlags.BLINDED.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      debug(`Cannot find for system '${game.system.id}' the active effect with id '${StatusEffectSenseFlags.BLINDED}'`);
+      debug(`Cannot find for system '${game.system.id}' the active effect with id '${AtcvEffectSenseFlags.BLINDED}'`);
       return;
     }
     return new Effect({
-      customId: StatusEffectSenseFlags.BLINDED,
+      customId: AtcvEffectSenseFlags.BLINDED,
       name:
         number && number > 0
           ? i18nFormat(`${CONSTANTS.MODULE_NAME}.effects.blinded.name2`, { number: number })
@@ -526,12 +533,13 @@ export class EffectDefinitions {
       ],
       atcvChanges: [
         {
-          key: 'ATCV.' + StatusEffectSenseFlags.BLINDED,
+          key: 'ATCV.' + AtcvEffectSenseFlags.BLINDED,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,
         },
       ],
+      isTemporary: false,
     });
   }
 
@@ -545,14 +553,14 @@ export class EffectDefinitions {
       return a.id
         .replace(EffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(StatusEffectConditionFlags.HIDDEN.replace(EffectDefinitions.regex, '').toLowerCase());
+        .startsWith(AtcvEffectConditionFlags.HIDDEN.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      debug(`Cannot find for system '${game.system.id}' the status with id '${StatusEffectConditionFlags.HIDDEN}'`);
+      debug(`Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.HIDDEN}'`);
       return;
     }
     return new Effect({
-      customId: StatusEffectConditionFlags.HIDDEN,
+      customId: AtcvEffectConditionFlags.HIDDEN,
       name: i18n(`${CONSTANTS.MODULE_NAME}.effects.hidden.name`),
       description: i18n(`${CONSTANTS.MODULE_NAME}.effects.hidden.description`),
       icon: `modules/${CONSTANTS.MODULE_NAME}/icons/hidden.svg`,
@@ -562,12 +570,13 @@ export class EffectDefinitions {
       atlChanges: [],
       atcvChanges: [
         {
-          key: 'ATCV.' + StatusEffectConditionFlags.HIDDEN,
+          key: 'ATCV.' + AtcvEffectConditionFlags.HIDDEN,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,
         },
       ],
+      isTemporary: true,
     });
   }
 
@@ -577,14 +586,14 @@ export class EffectDefinitions {
       return a.id
         .replace(EffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(StatusEffectConditionFlags.INVISIBLE.replace(EffectDefinitions.regex, '').toLowerCase());
+        .startsWith(AtcvEffectConditionFlags.INVISIBLE.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      debug(`Cannot find for system '${game.system.id}' the status with id '${StatusEffectConditionFlags.INVISIBLE}'`);
+      debug(`Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.INVISIBLE}'`);
       return;
     }
     return new Effect({
-      customId: StatusEffectConditionFlags.INVISIBLE,
+      customId: AtcvEffectConditionFlags.INVISIBLE,
       name: i18n(`${CONSTANTS.MODULE_NAME}.effects.invisible.name`),
       description: i18n(`${CONSTANTS.MODULE_NAME}.effects.invisible.description`),
       icon: `modules/${CONSTANTS.MODULE_NAME}/icons/invisible.svg`,
@@ -594,12 +603,13 @@ export class EffectDefinitions {
       atlChanges: [],
       atcvChanges: [
         {
-          key: 'ATCV.' + StatusEffectConditionFlags.INVISIBLE,
+          key: 'ATCV.' + AtcvEffectConditionFlags.INVISIBLE,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,
         },
       ],
+      isTemporary: true,
     });
   }
 
@@ -609,14 +619,14 @@ export class EffectDefinitions {
       return a.id
         .replace(EffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(StatusEffectConditionFlags.OBSCURED.replace(EffectDefinitions.regex, '').toLowerCase());
+        .startsWith(AtcvEffectConditionFlags.OBSCURED.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
-      debug(`Cannot find for system '${game.system.id}' the status with id '${StatusEffectConditionFlags.OBSCURED}'`);
+      debug(`Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.OBSCURED}'`);
       return;
     }
     return new Effect({
-      customId: StatusEffectConditionFlags.OBSCURED,
+      customId: AtcvEffectConditionFlags.OBSCURED,
       name: i18n(`${CONSTANTS.MODULE_NAME}.effects.obscured.name`),
       description: i18n(`${CONSTANTS.MODULE_NAME}.effects.obscured.description`),
       icon: `modules/${CONSTANTS.MODULE_NAME}/icons/obscured.svg`,
@@ -626,12 +636,13 @@ export class EffectDefinitions {
       atlChanges: [],
       atcvChanges: [
         {
-          key: 'ATCV.' + StatusEffectConditionFlags.OBSCURED,
+          key: 'ATCV.' + AtcvEffectConditionFlags.OBSCURED,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,
         },
       ],
+      isTemporary: true,
     });
   }
 
@@ -641,16 +652,16 @@ export class EffectDefinitions {
       return a.id
         .replace(EffectDefinitions.regex, '')
         .toLowerCase()
-        .startsWith(StatusEffectConditionFlags.IN_DARKNESS.replace(EffectDefinitions.regex, '').toLowerCase());
+        .startsWith(AtcvEffectConditionFlags.IN_DARKNESS.replace(EffectDefinitions.regex, '').toLowerCase());
     });
     if (!effectSight) {
       debug(
-        `Cannot find for system '${game.system.id}' the status with id '${StatusEffectConditionFlags.IN_DARKNESS}'`,
+        `Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.IN_DARKNESS}'`,
       );
       return;
     }
     return new Effect({
-      customId: StatusEffectConditionFlags.OBSCURED,
+      customId: AtcvEffectConditionFlags.OBSCURED,
       name: i18n(`${CONSTANTS.MODULE_NAME}.effects.indarkness.name`),
       description: i18n(`${CONSTANTS.MODULE_NAME}.effects.indarkness.description`),
       icon: `modules/${CONSTANTS.MODULE_NAME}/icons/indarkness.svg`,
@@ -660,12 +671,13 @@ export class EffectDefinitions {
       atlChanges: [],
       atcvChanges: [
         {
-          key: 'ATCV.' + StatusEffectConditionFlags.IN_DARKNESS,
+          key: 'ATCV.' + AtcvEffectConditionFlags.IN_DARKNESS,
           mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           value: `${visionLevel}`,
           priority: 5,
         },
       ],
+      isTemporary: true,
     });
   }
 

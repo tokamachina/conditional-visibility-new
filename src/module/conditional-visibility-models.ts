@@ -1,12 +1,13 @@
 import API from './api';
 import CONSTANTS from './constants';
 import Effect from './effects/effect';
-import { error, getDistanceFromActiveEffect, getVisionLevelFromActiveEffect, i18n } from './lib/lib';
+import { error, retrieveAtcvVisionLevelDistanceFromActiveEffect, retrieveAtcvVisionLevelFromActiveEffect, i18n, retrieveAtcvTargetsFromActiveEffect, retrieveAtcvElevationFromActiveEffect } from './lib/lib';
 
-export interface StatusEffect {
-  visionLevelMinIndex: number;
-  visionLevelMaxIndex: number;
-  checkElevation: boolean;
+export interface AtcvEffect {
+  // visionLevelMinIndex: number;
+  // visionLevelMaxIndex: number;
+  conditionTargets:string[];
+  conditionElevation: boolean;
   statusSight: StatusSight | undefined;
   visionLevelValue: number | undefined;
   visionDistanceValue: number | undefined;
@@ -17,14 +18,12 @@ export interface StatusSight {
   name: string;
   path: string;
   img: string;
-  // effect: Effect;
-  visionLevelMin: number;
-  visionLevelMax: number;
+  visionLevelMinIndex: number;
+  visionLevelMaxIndex: number;
   checkElevation: boolean;
-  pathOri?: string;
 }
 
-export enum StatusEffectSenseFlags {
+export enum AtcvEffectSenseFlags {
   // additional generic
   NONE = 'none',
   NORMAL = 'normal',
@@ -44,7 +43,7 @@ export enum StatusEffectSenseFlags {
 }
 
 // TODO PUT THESE IN LOCALIZATION FOR OTHER LANGUAGE
-export enum StatusEffectConditionFlags {
+export enum AtcvEffectConditionFlags {
   INVISIBLE = 'invisible',
   OBSCURED = 'obscured',
   IN_DARKNESS = 'indarkness',
@@ -74,15 +73,15 @@ export class VisionCapabilities {
   // _lowlightvision: number;
   // _blinded: number;
 
-  senses: Map<string, StatusEffect>;
-  conditions: Map<string, StatusEffect>;
+  senses: Map<string, AtcvEffect>;
+  conditions: Map<string, AtcvEffect>;
   token: Token;
 
   constructor(srcToken: Token) {
     if (srcToken) {
       this.token = srcToken;
-      this.senses = new Map<string, StatusEffect>();
-      this.conditions = new Map<string, StatusEffect>();
+      this.senses = new Map<string, AtcvEffect>();
+      this.conditions = new Map<string, AtcvEffect>();
       // SENSES
       this.addSenses();
 
@@ -174,7 +173,7 @@ export class VisionCapabilities {
   }
 
   retrieveSenses() {
-    const sensesTmp = new Map<string, StatusEffect>();
+    const sensesTmp = new Map<string, AtcvEffect>();
     for (const [key, value] of this.senses.entries()) {
       if (value.visionLevelValue && value.visionLevelValue != 0) {
         sensesTmp.set(key, value);
@@ -211,16 +210,22 @@ export class VisionCapabilities {
       API.SENSES.map(async (statusSight) => {
         let visionLevelValue = this.token?.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id);
         let visionDistanceValue = 0;
+        let conditionElevation = false;
+        let conditionTargets:string[] = [];
         if (!visionLevelValue || visionLevelValue == 0) {
           // try to serach on active effect
           if (await API.hasEffectAppliedOnToken(this.token.id, i18n(statusSight.name), true)) {
             const ae = <ActiveEffect>await API.findEffectByNameOnToken(this.token.id, i18n(statusSight.name));
-            visionLevelValue = getVisionLevelFromActiveEffect(ae, statusSight);
-            visionDistanceValue = getDistanceFromActiveEffect(ae);
+            conditionElevation = retrieveAtcvElevationFromActiveEffect(ae.data.changes);
+            conditionTargets = retrieveAtcvTargetsFromActiveEffect(ae.data.changes);
+            visionLevelValue = retrieveAtcvVisionLevelFromActiveEffect(ae, statusSight);
+            visionDistanceValue = retrieveAtcvVisionLevelDistanceFromActiveEffect(ae);
           }
         }
 
-        const statusEffect = <StatusEffect>{
+        const statusEffect = <AtcvEffect>{
+          conditionElevation:conditionElevation ?? false,
+          conditionTargets:conditionTargets ?? [],
           visionLevelValue: visionLevelValue ?? 0,
           visionDistanceValue: visionDistanceValue ?? 0,
           statusSight: statusSight,
@@ -231,7 +236,7 @@ export class VisionCapabilities {
   }
 
   retrieveConditions() {
-    const coditionsTmp = new Map<string, StatusEffect>();
+    const coditionsTmp = new Map<string, AtcvEffect>();
     for (const [key, value] of this.conditions.entries()) {
       if (value.visionLevelValue && value.visionLevelValue != 0) {
         coditionsTmp.set(key, value);
@@ -256,16 +261,22 @@ export class VisionCapabilities {
       API.CONDITIONS.map(async (statusSight) => {
         let visionLevelValue = this.token.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id);
         let visionDistanceValue = 0;
+        let conditionElevation = false;
+        let conditionTargets:string[] = [];
         if (!visionLevelValue || visionLevelValue == 0) {
           // try to serach on active effect
           if (await API.hasEffectAppliedOnToken(this.token.id, i18n(statusSight.name), true)) {
             const ae = <ActiveEffect>await API.findEffectByNameOnToken(this.token.id, i18n(statusSight.name));
-            visionLevelValue = getVisionLevelFromActiveEffect(ae, statusSight);
-            visionDistanceValue = getDistanceFromActiveEffect(ae);
+            conditionElevation = retrieveAtcvElevationFromActiveEffect(ae.data.changes);
+            conditionTargets = retrieveAtcvTargetsFromActiveEffect(ae.data.changes);
+            visionLevelValue = retrieveAtcvVisionLevelFromActiveEffect(ae, statusSight);
+            visionDistanceValue = retrieveAtcvVisionLevelDistanceFromActiveEffect(ae);
           }
         }
 
-        const statusEffect = <StatusEffect>{
+        const statusEffect = <AtcvEffect>{
+          conditionElevation:conditionElevation ?? false,
+          conditionTargets:conditionTargets ?? [],
           visionLevelValue: visionLevelValue ?? 0,
           visionDistanceValue: visionDistanceValue ?? 0,
           statusSight: statusSight,

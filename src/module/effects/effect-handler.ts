@@ -1,7 +1,7 @@
 import { error, i18n, log } from '../lib/lib';
 import FoundryHelpers from './foundry-helpers';
 import { canvas, game } from '../settings';
-import Effect from './effect';
+import Effect, { EffectSupport } from './effect';
 import EmbeddedCollection from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs';
 import {
   ActiveEffectData,
@@ -283,7 +283,7 @@ export default class EffectHandler {
         }
         // use replace() method to match and remove all the non-alphanumeric characters
         if (effectNameToSet.replace(regex, '').toLowerCase().startsWith(effectName.replace(regex, '').toLowerCase())) {
-          effect = Effect.convertActiveEffectToEffect(effectEntity);
+          effect = EffectSupport.convertActiveEffectToEffect(effectEntity);
         }
       }
     }

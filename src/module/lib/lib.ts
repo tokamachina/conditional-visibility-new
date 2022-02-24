@@ -1,10 +1,12 @@
+import { EffectSupport } from './../effects/effect';
+import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
 import CONSTANTS from '../constants.js';
 import API from '../api.js';
 import { canvas, game } from '../settings';
 import {
-  StatusEffect,
-  StatusEffectSenseFlags,
-  StatusEffectConditionFlags,
+  AtcvEffect,
+  AtcvEffectSenseFlags,
+  AtcvEffectConditionFlags,
   StatusSight,
   VisionCapabilities,
 } from '../conditional-visibility-models.js';
@@ -87,13 +89,15 @@ export function dialogWarning(message, icon = 'fas fa-exclamation-triangle') {
     </p>`;
 }
 
+// =========================================================================================
+
 /**
  *
  * @param obj Little helper for loop enum element on typescript
  * @href https://www.petermorlion.com/iterating-a-typescript-enum/
  * @returns
  */
-export function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
+ export function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
   return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[];
 }
 
@@ -113,56 +117,54 @@ export function mergeByProperty(target: any[], source: any[], prop: any) {
   return target;
 }
 
-// =========================================================================================
+/**
+ * Returns the first selected token
+ */
+export function getFirstPlayerTokenSelected(): Token | null {
+  // Get first token ownted by the player
+  const selectedTokens = <Token[]>canvas.tokens?.controlled;
+  if (selectedTokens.length > 1) {
+    //iteractionFailNotification(i18n("foundryvtt-arms-reach.warningNoSelectMoreThanOneToken"));
+    return null;
+  }
+  if (!selectedTokens || selectedTokens.length == 0) {
+    //if(game.user.character.data.token){
+    //  //@ts-ignore
+    //  return game.user.character.data.token;
+    //}else{
+    return null;
+    //}
+  }
+  return selectedTokens[0];
+}
 
-// /**
-//  * Returns the first selected token
-//  */
-// export function getFirstPlayerTokenSelected(): Token | null {
-//   // Get first token ownted by the player
-//   const selectedTokens = <Token[]>canvas.tokens?.controlled;
-//   if (selectedTokens.length > 1) {
-//     //iteractionFailNotification(i18n("foundryvtt-arms-reach.warningNoSelectMoreThanOneToken"));
-//     return null;
-//   }
-//   if (!selectedTokens || selectedTokens.length == 0) {
-//     //if(game.user.character.data.token){
-//     //  //@ts-ignore
-//     //  return game.user.character.data.token;
-//     //}else{
-//     return null;
-//     //}
-//   }
-//   return selectedTokens[0];
-// }
-
-// /**
-//  * Returns a list of selected (or owned, if no token is selected)
-//  * note: ex getSelectedOrOwnedToken
-//  */
-// function getFirstPlayerToken(): Token | null {
-//   // Get controlled token
-//   let token: Token;
-//   const controlled: Token[] = <Token[]>canvas.tokens?.controlled;
-//   // Do nothing if multiple tokens are selected
-//   if (controlled.length && controlled.length > 1) {
-//     //iteractionFailNotification(i18n("foundryvtt-arms-reach.warningNoSelectMoreThanOneToken"));
-//     return null;
-//   }
-//   // If exactly one token is selected, take that
-//   token = controlled[0];
-//   if (!token) {
-//     if (!controlled.length || controlled.length == 0) {
-//       // If no token is selected use the token of the users character
-//       token = <Token>canvas.tokens?.placeables.find((token) => token.data._id === game.user?.character?.data?._id);
-//     }
-//     // If no token is selected use the first owned token of the users character you found
-//     if (!token) {
-//       token = <Token>canvas.tokens?.ownedTokens[0];
-//     }
-//   }
-//   return token;
-// }
+/**
+ * Returns a list of selected (or owned, if no token is selected)
+ * note: ex getSelectedOrOwnedToken
+ */
+export function getFirstPlayerToken(): Token | null {
+  // Get controlled token
+  let token: Token;
+  const controlled: Token[] = <Token[]>canvas.tokens?.controlled;
+  // Do nothing if multiple tokens are selected
+  if (controlled.length && controlled.length > 1) {
+    //iteractionFailNotification(i18n("foundryvtt-arms-reach.warningNoSelectMoreThanOneToken"));
+    return null;
+  }
+  // If exactly one token is selected, take that
+  token = controlled[0];
+  if (!token) {
+    if (!controlled.length || controlled.length == 0) {
+      // If no token is selected use the token of the users character
+      token = <Token>canvas.tokens?.placeables.find((token) => token.data._id === game.user?.character?.data?._id);
+    }
+    // If no token is selected use the first owned token of the users character you found
+    if (!token) {
+      token = <Token>canvas.tokens?.ownedTokens[0];
+    }
+  }
+  return token;
+}
 
 function getElevationToken(token: Token): number {
   const base = token.document.data;
@@ -221,7 +223,7 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
     return true; // default vaue
   }
   for (const sourceStatusEffect of sourceVisionLevels) {
-    if (sourceStatusEffect.statusSight?.id == StatusEffectSenseFlags.BLINDED) {
+    if (sourceStatusEffect.statusSight?.id == AtcvEffectSenseFlags.BLINDED) {
       // Someone is blind
       return false;
     }
@@ -236,11 +238,11 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   // 2 - Check for the correct status sight
   // =========================================
 
-  const sourceVisionLevelsValid: StatusEffect[] = [];
+  const sourceVisionLevelsValid: AtcvEffect[] = [];
 
-  const visibleForTypeOfSenseByIndex = [...sourceVisionLevels].map((sourceVisionLevel: StatusEffect) => {
+  const visibleForTypeOfSenseByIndex = [...sourceVisionLevels].map((sourceVisionLevel: AtcvEffect) => {
     let result = false;
-    if (sourceVisionLevel?.checkElevation) {
+    if (sourceVisionLevel?.conditionElevation) {
       const tokenElevation = getElevationToken(sourceToken);
       const targetElevation = getElevationToken(targetToken);
       if (tokenElevation < targetElevation) {
@@ -251,14 +253,14 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
             result = true;
           }
           if (
-            targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NORMAL ||
-            targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NONE
+            targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NORMAL ||
+            targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NONE
           ) {
             result = true;
           }
           result =
-            sourceVisionLevel.visionLevelMinIndex <= <number>targetVisionLevel.statusSight?.visionLevelMin &&
-            sourceVisionLevel.visionLevelMaxIndex >= <number>targetVisionLevel.statusSight?.visionLevelMax;
+            <number>sourceVisionLevel?.statusSight?.visionLevelMinIndex <= <number>targetVisionLevel.statusSight?.visionLevelMinIndex &&
+            <number>sourceVisionLevel?.statusSight?.visionLevelMaxIndex >= <number>targetVisionLevel.statusSight?.visionLevelMaxIndex;
           return result;
         });
         // if any source has vision to the token, the token is visible
@@ -270,14 +272,14 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
           result = true;
         }
         if (
-          targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NORMAL ||
-          targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NONE
+          targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NORMAL ||
+          targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NONE
         ) {
           result = true;
         }
         result =
-          sourceVisionLevel.visionLevelMinIndex <= <number>targetVisionLevel.statusSight?.visionLevelMin &&
-          sourceVisionLevel.visionLevelMaxIndex >= <number>targetVisionLevel.statusSight?.visionLevelMax;
+          <number>sourceVisionLevel?.statusSight?.visionLevelMinIndex <= <number>targetVisionLevel.statusSight?.visionLevelMinIndex &&
+          <number>sourceVisionLevel?.statusSight?.visionLevelMaxIndex >= <number>targetVisionLevel.statusSight?.visionLevelMaxIndex;
         return result;
       });
       // if any source has vision to the token, the token is visible
@@ -301,21 +303,26 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   // 3 - Check for the correct value number
   // =========================================
 
-  const visibleForTypeOfSenseByValue = [...sourceVisionLevelsValid].map((sourceVisionLevel: StatusEffect) => {
+  const visibleForTypeOfSenseByValue = [...sourceVisionLevelsValid].map((sourceVisionLevel: AtcvEffect) => {
     let result = false;
     const resultsOnTarget = targetVisionLevels.map((targetVisionLevel) => {
       if (!targetVisionLevel || !targetVisionLevel.statusSight) {
         result = true;
       }
       if (
-        targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NORMAL ||
-        targetVisionLevel.statusSight?.id == StatusEffectSenseFlags.NONE
+        targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NORMAL ||
+        targetVisionLevel.statusSight?.id == AtcvEffectSenseFlags.NONE
       ) {
         result = true;
       }
-      result =
-        <number>sourceVisionLevel.visionLevelValue == -1 ||
-        <number>sourceVisionLevel.visionLevelValue >= <number>targetVisionLevel.visionLevelValue;
+      // the "-1" case
+      if(<number>targetVisionLevel.visionLevelValue == -1){
+        result = false;
+      }else{
+        result =
+          <number>sourceVisionLevel.visionLevelValue == -1 ||
+          <number>sourceVisionLevel.visionLevelValue >= <number>targetVisionLevel.visionLevelValue;
+      }
       return result;
     });
     // if any source has vision to the token, the token is visible
@@ -340,43 +347,58 @@ export async function prepareActiveEffectForConditionalVisibility(
 
   // const actor = <Actor>sourceToken.document.getActor();
 
+  // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
+
+  // REMOVE EVERY SENSES WITH THE SAME NAME
+
   for (const [key, sense] of visionCapabilities.retrieveSenses()) {
-    // use replace() method to match and remove all the non-alphanumeric characters
-    const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
-    if (sense.visionLevelValue && sense.visionLevelValue != 0) {
-      if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
-        await API.addEffectConditionalVisibilityOnToken(
-          <string>sourceToken.id,
-          effectNameToCheckOnActor,
-          false,
-          sense.visionDistanceValue,
-          sense.visionLevelValue,
-        );
-      } else {
-        // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
-        const activeEffectToRemove = <ActiveEffect>(
-          await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
-        );
-        if (activeEffectToRemove) {
-          await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
-        }
-        await API.addEffectConditionalVisibilityOnToken(
-          <string>sourceToken.id,
-          effectNameToCheckOnActor,
-          false,
-          sense.visionDistanceValue,
-          sense.visionLevelValue,
-        );
-      }
-    } else {
-      if (await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true)) {
-        const activeEffectToRemove = <ActiveEffect>(
-          await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
-        );
+  // use replace() method to match and remove all the non-alphanumeric characters
+  const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
+    if (await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true)) {
+      const activeEffectToRemove = <ActiveEffect>(
+        await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
+      );
+      if (activeEffectToRemove) {
         await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
       }
     }
   }
+
+  // ADD THE SENSES FINALLY
+
+  for (const [key, sense] of visionCapabilities.retrieveSenses()) {
+    const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
+    if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
+      if (sense.visionLevelValue && sense.visionLevelValue != 0) {
+        await API.addEffectConditionalVisibilityOnToken(
+          <string>sourceToken.id,
+          effectNameToCheckOnActor,
+          false,
+          sense.visionDistanceValue,
+          sense.visionLevelValue,
+        );
+      }
+    }
+  }
+
+  // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
+
+  // REMOVE EVERY CONDITIONS WITH THE SAME NAME
+
+  for (const [key, condition] of visionCapabilities.retrieveConditions()) {
+    // use replace() method to match and remove all the non-alphanumeric characters
+    const effectNameToCheckOnActor = i18n(<string>condition.statusSight?.name);
+    if (condition.visionLevelValue && condition.visionLevelValue != 0) {
+      const activeEffectToRemove = <ActiveEffect>(
+        await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
+      );
+      if (activeEffectToRemove) {
+        await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
+      }
+    }
+  }
+
+  // ADD THE CONDITIONS FINALLY
 
   for (const [key, condition] of visionCapabilities.retrieveConditions()) {
     // use replace() method to match and remove all the non-alphanumeric characters
@@ -390,55 +412,35 @@ export async function prepareActiveEffectForConditionalVisibility(
           condition.visionDistanceValue,
           condition.visionLevelValue,
         );
-      } else {
-        // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
-        const activeEffectToRemove = <ActiveEffect>(
-          await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
-        );
-        if (activeEffectToRemove) {
-          await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
-        }
-        await API.addEffectConditionalVisibilityOnToken(
-          <string>sourceToken.id,
-          effectNameToCheckOnActor,
-          false,
-          condition.visionDistanceValue,
-          condition.visionLevelValue,
-        );
-      }
-    } else {
-      if (await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true)) {
-        const activeEffectToRemove = <ActiveEffect>(
-          await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
-        );
-        await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
       }
     }
   }
+
   // Refresh the flags (this is necessary for retrocompatibility)
   visionCapabilities.refreshSenses();
   visionCapabilities.refreshConditions();
 }
 
-export function getSensesFromToken(token: Token): StatusEffect[] {
-  return _getActiveEffectsFromToken(token, API.SENSES);
+export function getSensesFromToken(token: Token): AtcvEffect[] {
+  return _getCVFromToken(token, API.SENSES);
 }
 
-export function getConditionsFromToken(token: Token): StatusEffect[] {
-  return _getActiveEffectsFromToken(token, API.CONDITIONS);
+export function getConditionsFromToken(token: Token): AtcvEffect[] {
+  return _getCVFromToken(token, API.CONDITIONS);
 }
 
-function _getActiveEffectsFromToken(token: Token, statusSights: StatusSight[]): StatusEffect[] {
+function _getCVFromToken(token: Token, statusSights: StatusSight[]): AtcvEffect[] {
   const actor = <Actor>token.document.getActor();
   const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects;
-  let min = 0;
-  let max = 0;
-  let hasOnlyEffectsWithCheckElevationTrue = true;
-  const statusEffects: StatusEffect[] = [];
+  //const totalEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects.contents.filter(i => !i.data.disabled);
+  const ATCVeffects = actorEffects.filter(entity => !!entity.data.changes.find(effect => effect.key.includes("ATCV")));
+  let conditionElevation = true;
+  let conditionTargets:string[] = [];
+  const statusEffects: AtcvEffect[] = [];
   // regex expression to match all non-alphanumeric characters in string
   const regex = /[^A-Za-z0-9]/g;
 
-  for (const effectEntity of actorEffects) {
+  for (const effectEntity of ATCVeffects) {
     const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
     if (!effectNameToSet) {
       continue;
@@ -453,28 +455,39 @@ function _getActiveEffectsFromToken(token: Token, statusSights: StatusSight[]): 
     });
     // if is a AE with the label of the module (no id sorry)
     if (effectSight) {
-      if (min < <number>effectSight?.visionLevelMin) {
-        min = <number>effectSight?.visionLevelMin;
-      }
-      if (max < <number>effectSight?.visionLevelMax) {
-        max = <number>effectSight?.visionLevelMax;
-      }
+      // Organize non-disabled effects by their application priority
+      const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e:ActiveEffect) => {
+          if (e.data.disabled){
+            return changes;
+          }
+          //@ts-ignore
+          return changes.concat((<EffectChangeData[]>e.data.changes).map((c:EffectChangeData) => {
+              const c2 = <EffectChangeData>duplicate(c);
+              // c2.effect = e;
+              c2.priority = <number>c2.priority ?? (c2.mode * 10);
+              return c2;
+          }));
+      }, []);
+      changes.sort((a, b) => <number>a.priority - <number>b.priority);
+
+      conditionElevation = retrieveAtcvElevationFromActiveEffect(changes);
+      conditionTargets = retrieveAtcvTargetsFromActiveEffect(changes);
+
       // look up if you have not basic AE and if the check elevation is not enabled
       if (
         !effectSight.checkElevation &&
-        effectSight.id != StatusEffectSenseFlags.NONE &&
-        effectSight.id != StatusEffectSenseFlags.NORMAL &&
-        effectSight.id != StatusEffectSenseFlags.BLINDED
+        effectSight.id != AtcvEffectSenseFlags.NONE &&
+        effectSight.id != AtcvEffectSenseFlags.NORMAL &&
+        effectSight.id != AtcvEffectSenseFlags.BLINDED
       ) {
-        hasOnlyEffectsWithCheckElevationTrue = false;
+        conditionElevation = false;
       }
-      const distance = getDistanceFromActiveEffect(effectEntity);
-      const atcvValue = getVisionLevelFromActiveEffect(effectEntity, effectSight);
+      const distance = retrieveAtcvVisionLevelDistanceFromActiveEffect(effectEntity);
+      const atcvValue = retrieveAtcvVisionLevelFromActiveEffect(effectEntity, effectSight);
 
       statusEffects.push({
-        visionLevelMinIndex: min,
-        visionLevelMaxIndex: max,
-        checkElevation: hasOnlyEffectsWithCheckElevationTrue,
+        conditionElevation: conditionElevation,
+        conditionTargets: conditionTargets,
         statusSight: effectSight,
         visionDistanceValue: distance,
         visionLevelValue: atcvValue,
@@ -484,7 +497,47 @@ function _getActiveEffectsFromToken(token: Token, statusSights: StatusSight[]): 
   return statusEffects;
 }
 
-export function getVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effectSight: StatusSight): number {
+export function retrieveAtcvElevationFromActiveEffect(effectEntityChanges: EffectChangeData[]): boolean {
+  let checkElevationAcvt = false;
+  // Apply all changes
+  for (const change of effectEntityChanges) {
+    if (change.key.includes("ATCV.conditionElevation")){
+      if(change.value){
+        checkElevationAcvt = Boolean(change.value);
+      }
+    }
+  }
+  return checkElevationAcvt;
+}
+
+export function retrieveAtcvTargetsFromActiveEffect(effectEntityChanges: EffectChangeData[]): string[] {
+  let checkTargetsAcvt:string[] = [];
+  // Apply all changes
+  for (const change of effectEntityChanges) {
+    if (change.key.includes("ATCV.conditionTargets")){
+      if(change.value){
+        const inTags = <any>change.value;
+        if (!(typeof inTags === "string" || inTags instanceof RegExp || Array.isArray(inTags))) {
+          error(`'ATCV.conditionTargets' must be of type string or array`);
+        }
+        let providedTags = typeof inTags === "string" ? inTags.split(",") : inTags;
+
+        if(!Array.isArray(providedTags)) providedTags = [providedTags]
+
+        providedTags.forEach(t => {
+            if (!(typeof t === "string" || t instanceof RegExp)){
+              error(`'ATCV.conditionTargets' in array must be of type string or regexp`);
+            }
+        });
+
+        checkTargetsAcvt = providedTags.map(t => t instanceof RegExp ? t : t.trim());
+      }
+    }
+  }
+  return checkTargetsAcvt;
+}
+
+export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effectSight: StatusSight): number {
   const regex = /[^A-Za-z0-9]/g;
   //Look up for ATCV to manage vision level
   // TODO for now every active effect can have only one ATCV key ate the time not sure if manage
@@ -493,7 +546,10 @@ export function getVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effec
   if (!effectNameToSet) {
     return atcvValue;
   }
-  atcvValue = effectEntity.data.changes.find((aee) => {
+
+  const atcvChanges = EffectSupport.retrieveChangesOrderedByPriorityFromAE(effectEntity);
+  //atcvValue = effectEntity.data.changes.find((aee) => {
+  atcvValue = atcvChanges.find((aee) => {
     if (
       aee.key
         .replace(regex, '')
@@ -510,8 +566,7 @@ export function getVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effec
   return Number(atcvValue.value);
 }
 
-export function getDistanceFromActiveEffect(effectEntity: ActiveEffect): number {
-  const regex = /[^A-Za-z0-9]/g;
+export function retrieveAtcvVisionLevelDistanceFromActiveEffect(effectEntity: ActiveEffect): number {
   let distance = 0;
   const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
   if (!effectNameToSet) {

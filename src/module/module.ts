@@ -16,8 +16,8 @@ import { registerHotkeys } from './hotkeys';
 import { canvas, game } from './settings';
 import { checkSystem } from './settings';
 import {
-  StatusEffectConditionFlags,
-  StatusEffectSenseFlags,
+  AtcvEffectConditionFlags,
+  AtcvEffectSenseFlags,
   VisionCapabilities,
 } from './conditional-visibility-models';
 import { EffectChangeData, EffectChangeDataSource } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
@@ -107,7 +107,7 @@ const module = {
     const senses = API.SENSES ?? [];
     const sensesData: any[] = [];
     for (const s of senses) {
-      if (s.id != StatusEffectSenseFlags.NONE && s.id != StatusEffectSenseFlags.NORMAL) {
+      if (s.id != AtcvEffectSenseFlags.NONE && s.id != AtcvEffectSenseFlags.NORMAL) {
         const s2: any = duplicate(s);
         s2.value = tokenConfig.object.getFlag(CONSTANTS.MODULE_NAME, s.id);
         sensesData.push(s2);
@@ -116,7 +116,7 @@ const module = {
     const conditions = API.CONDITIONS ?? [];
     const conditionsData: any[] = [];
     for (const s of conditions) {
-      if (s.id != StatusEffectSenseFlags.NONE && s.id != StatusEffectSenseFlags.NORMAL) {
+      if (s.id != AtcvEffectSenseFlags.NONE && s.id != AtcvEffectSenseFlags.NORMAL) {
         const s2: any = duplicate(s);
         s2.value = tokenConfig.object.getFlag(CONSTANTS.MODULE_NAME, s.id);
         conditionsData.push(s2);
@@ -166,8 +166,8 @@ const module = {
       return;
     }
     const actor = <Actor>effect.parent;
-    const totalEffects = <ActiveEffect[]>actor?.effects.contents.filter(i => !i.data.disabled)
-    const ATCVeffects = totalEffects.filter(entity => !!entity.data.changes.find(effect => effect.key.includes("ATCV")))
+    const totalEffects = <ActiveEffect[]>actor?.effects.contents.filter(i => !i.data.disabled);
+    const ATCVeffects = totalEffects.filter(entity => !!entity.data.changes.find(effect => effect.key.includes("ATCV")));
     if (effect.data.disabled){
       ATCVeffects.push(effect);
     }
@@ -192,20 +192,20 @@ const module = {
         return;
       }
       // Organize non-disabled effects by their application priority
-      // const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e:ActiveEffect) => {
-      //     if (e.data.disabled){
-      //       return changes;
-      //     }
-      //     //@ts-ignore
-      //     return changes.concat((<EffectChangeData[]>e.data.changes).map((c:EffectChangeData) => {
-      //         const c2 = <EffectChangeData>duplicate(c);
-      //         c2.effect = e;
-      //         c2.priority = <number>c2.priority ?? (c2.mode * 10);
-      //         return c2;
-      //     }));
-      // }, []);
-      // changes.sort((a, b) => <number>a.priority - <number>b.priority);
-      const changes = effect.data.changes;
+      const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e:ActiveEffect) => {
+          if (e.data.disabled){
+            return changes;
+          }
+          //@ts-ignore
+          return changes.concat((<EffectChangeData[]>e.data.changes).map((c:EffectChangeData) => {
+              const c2 = <EffectChangeData>duplicate(c);
+              // c2.effect = e;
+              c2.priority = <number>c2.priority ?? (c2.mode * 10);
+              return c2;
+          }));
+      }, []);
+      changes.sort((a, b) => <number>a.priority - <number>b.priority);
+      // const changes = effect.data.changes;
       // Apply all changes
       for (const change of changes) {
         if (!change.key.includes("ATCV")){
@@ -214,14 +214,12 @@ const module = {
         const updateKey = change.key.slice(5);
         for(const statusSight of API.getAllSensesAndConditions()){
           if (updateKey === statusSight.id) {
-            // no await 
-            if(actor?.token){
-              actor?.token?.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
-            }else{
-              actor?.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
-            }
-            if (statusSight?.path) {
-              setProperty(this.token, <string>statusSight?.path, change.value);
+            // TODO TO CHECK IF WE NEED TO FILTER THE TOKENS AGAIN
+            for(const tokenToSet of tokenArray){
+              tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
+              if (statusSight?.path) {
+                setProperty(this.token, <string>statusSight?.path, change.value);
+              }
             }
           }
         }

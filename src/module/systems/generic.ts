@@ -1,10 +1,21 @@
-import { SenseData } from '../conditional-visibility-models';
-import StatusEffects from '../effects/status-effects';
+import { AtcvEffectConditionFlags, SenseData } from '../conditional-visibility-models';
+import CONSTANTS from '../constants';
 
 export default {
   VISION_LEVEL: {},
   PERCEPTION_PASSIVE_SKILL: ``,
   STEALTH_PASSIVE_SKILL: ``,
+  STEALTH_ACTIVE_SKILL: ``,
   SENSES: <SenseData[]>[],
-  CONDITIONS: <StatusEffects[]>[],
+  CONDITIONS: <SenseData[]>[
+    {
+      id: AtcvEffectConditionFlags.HIDDEN,
+      name: `${CONSTANTS.MODULE_NAME}.${AtcvEffectConditionFlags.HIDDEN}`,
+      path: ``, //`data.skills.ste.passive`,
+      img: `modules/${CONSTANTS.MODULE_NAME}/icons/newspaper.svg`,
+      visionLevelMinIndex: 0,
+      visionLevelMaxIndex: 1,
+      conditionElevation: false,
+    },
+  ],
 };

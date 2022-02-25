@@ -1,5 +1,9 @@
 <div class="form-group">
-    <label>{{localize "conditional-visibility.stealthroll"}}</label>
-    <input id="conditional-visibility.stealth" value="{{initialValue}}"/>
+    <label>{{localize "conditional-visibility.dialogs.currentstealth"}}</label>
+    <input readonly="true"  id="conditional-visibility.currentstealth" value="{{currentstealth}}"/>
 </div>
-<p class="notes">{{localize "conditional-visibility.stealthrolldescription"}}</p>
+<div class="form-group">
+    <label>{{localize "conditional-visibility.dialogs.stealthroll"}}</label>
+    <input id="conditional-visibility.stealthroll" value="{{stealthroll}}"/>
+</div>
+<p class="notes">{{localize "conditional-visibility.dialogs.stealthrolldescription"}}</p>

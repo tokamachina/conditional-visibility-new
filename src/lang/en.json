@@ -1,6 +1,6 @@
 {
   "conditional-visibility.setting.autoStealth.name": "Auto hide on stealth rolls",
-  "conditional-visibility.setting.autoStealth.hint": "On supported game systems, set the hidden condition on a token's stealth roll",
+  "conditional-visibility.setting.autoStealth.hint": "[Not recommended now you can manage everything and better with AE] On supported game systems, set the hidden condition on a token's stealth roll",
 
   "conditional-visibility.setting.useEagleEye.name": "Use eagle eye (Experimental)",
   "conditional-visibility.setting.useEagleEye.hint": "A embedded version of the module https://github.com/trioderegion/eagle-eye/",
@@ -13,22 +13,11 @@
   "conditional-visibility.setting.debug.hint": " ",
 
   "conditional-visibility.setting.passivePerceptionSkill.name": "Passive perception skill",
-  "conditional-visibility.setting.passivePerceptionSkill.hint": "Make sense only with 'Auto hide on stealth rolls' setting set to true. Here you can configure what the attribute path is for each actor's passive perception. For example, in D&D5e system, each actor's passive perception is stored in the item's \"actor.data.data.skills.prc.passive\" attribute, so you'd put \"data.skills.prc.passive\" in this setting.",
+  "conditional-visibility.setting.passivePerceptionSkill.hint": "[Not recommended now you can manage everything and better with AE] Make sense only with 'Auto hide on stealth rolls' setting set to true. Here you can configure what the attribute path is for each actor's passive perception. For example, in D&D5e system, each actor's passive perception is stored in the item's \"actor.data.data.skills.prc.passive\" attribute, so you'd put \"data.skills.prc.passive\" in this setting.",
   "conditional-visibility.setting.passiveStealthSkill.name": "Passive stealth skill",
-  "conditional-visibility.setting.passiveStealthSkill.hint": "Make sense only with 'Auto hide on stealth rolls' setting set to true. Here you can configure what the attribute path is for each actor's passive stealth. For example, in D&D5e system, each actor's passive stealth is stored in the item's \"actor.data.data.skills.ste.passive\" attribute, so you'd put \"data.skills.ste.passive\" in this setting.",
-
-  "conditional-visibility.popup.dismissuntilupdated": "Dismiss until updated",
-  "conditional-visibility.popup.close": "Close",
-  "conditional-visibility.popup.version0910.1": "A compendium has is now part of this module, for those who wish to use macros instead of conditions icons to apply conditions, or to apply them in bulk.",
-  "conditional-visibility.popup.version0910.2": "There is also a script that makes an effort to migrate tokens from the Foundry 0.6.x model to the Foundry 0.7 model, though you may still have to re-apply some effects",
-  "conditional-visibility.popup.version0910.3": "Using these scripts as macros will require the installation of the Furnace module, as they are asynchronous",
-
-  "conditional-visibility.help.readmeat": "More instructions can be found at the",
-  "conditional-visibility.help.gamesystem": "Game System",
-  "conditional-visibility.help.hasStealth": "Has Stealth",
-  "conditional-visibility.help.availableconditions": "Available Conditions",
-
-  "conditional-visibility.unsupportedsystem": "Conditional Visibility does not support the system {system}, as it has its own condition mechanism.  Issues (especially pull requests) are welcomed",
+  "conditional-visibility.setting.passiveStealthSkill.hint": "[Not recommended now you can manage everything and better with AE] Make sense only with 'Auto hide on stealth rolls' setting set to true. Here you can configure what the attribute path is for each actor's passive stealth. For example, in D&D5e system, each actor's passive stealth is stored in the item's \"actor.data.data.skills.ste.passive\" attribute, so you'd put \"data.skills.ste.passive\" in this setting.",
+  "conditional-visibility.setting.activeStealthSkill.name": "Active stealth skill",
+  "conditional-visibility.setting.activeStealthSkill.hint": "[Not recommended now you can manage everything and better with AE] Make sense only with 'Auto hide on stealth rolls' setting set to true. Here you can configure what the attribute path is for each actor's passive stealth. For example, in D&D5e system, each actor's active stealth is stored in the item's \"actor.data.data.skills.ste.total\" attribute, so you'd put \"data.skills.ste.total\" in this setting.",
 
   "conditional-visibility.token.config.senses.title": "Senses",
   "conditional-visibility.token.config.conditions.title": "Conditions",
@@ -67,12 +56,12 @@
   "conditional-visibility.effects.normal.description2": "This sense is used from the module 'Conditional Visibility'",
   "conditional-visibility.effects.blinded.name": "Blinded",
   "conditional-visibility.effects.blinded.name2": "Blinded ({number})",
-  "conditional-visibility.effects.blinded.description": "A blinded creature can’t see and automatically fails any ability check that requires sight.<br>Attack rolls against the creature have advantage, and the creature’s attack rolls have disadvantage.",
-  "conditional-visibility.effects.blinded.description2": "A blinded creature can’t see and automatically fails any ability check that requires sight.<br>Attack rolls against the creature have advantage, and the creature’s attack rolls have disadvantage.",
+  "conditional-visibility.effects.blinded.description": "A blinded creature can't see and automatically fails any ability check that requires sight.<br>Attack rolls against the creature have advantage, and the creature's attack rolls have disadvantage.",
+  "conditional-visibility.effects.blinded.description2": "A blinded creature can't see and automatically fails any ability check that requires sight.<br>Attack rolls against the creature have advantage, and the creature's attack rolls have disadvantage.",
   "conditional-visibility.effects.darkvision.name": "Darkvision",
   "conditional-visibility.effects.darkvision.name2": "Darkvision ({number})",
-  "conditional-visibility.effects.darkvision.description": "A monster with Darkvision can see in the dark within a specific radius. The monster can see in dim light within the radius as if it were bright light, and in Darkness as if it were dim light. The monster can’t discern color in Darkness, only Shades of Gray. Many Creatures that live Underground have this Special sense.",
-  "conditional-visibility.effects.darkvision.description2": "A monster with Darkvision can see in the dark within a radius of {number}. The monster can see in dim light within the radius as if it were bright light, and in Darkness as if it were dim light. The monster can’t discern color in Darkness, only Shades of Gray. Many Creatures that live Underground have this Special sense.",
+  "conditional-visibility.effects.darkvision.description": "A monster with Darkvision can see in the dark within a specific radius. The monster can see in dim light within the radius as if it were bright light, and in Darkness as if it were dim light. The monster can't discern color in Darkness, only Shades of Gray. Many Creatures that live Underground have this Special sense.",
+  "conditional-visibility.effects.darkvision.description2": "A monster with Darkvision can see in the dark within a radius of {number}. The monster can see in dim light within the radius as if it were bright light, and in Darkness as if it were dim light. The monster can't discern color in Darkness, only Shades of Gray. Many Creatures that live Underground have this Special sense.",
   "conditional-visibility.effects.tremorsense.name": "Tremor Sense",
   "conditional-visibility.effects.tremorsense.name2": "Tremor Sense ({number})",
   "conditional-visibility.effects.tremorsense.description": "A monster with tremorsense can detect and pinpoint the origin of vibrations within a specific radius, provided that the monster and the source of the vibrations are in contact with the same ground or substance. Tremorsense can't be used to detect flying or incorporeal creatures. Many burrowing creatures, such as ankhegs and umber hulks, have this special sense.",
@@ -110,6 +99,13 @@
   "conditional-visibility.effects.indarkness.description": "This sense is used from the module 'Conditional Visibility'",
   "conditional-visibility.effects.hidden.name": "Hidden",
   "conditional-visibility.effects.hidden.description": "This sense is used from the module 'Conditional Visibility'",
+
+
+  "conditional-visibility.dialogs.title.hidden": "Roll stealth",
+  "conditional-visibility.dialogs.stealth.not.supported": "Conditional Visilbity does not support the hidden condition/stealth for {sysid}",
+  "conditional-visibility.dialogs.currentstealth": "Current Stealth",
+  "conditional-visibility.dialogs.stealthroll": "Stealh Roll",
+  "conditional-visibility.dialogs.stealthrolldescription": "This value will be compared with passive perception as long is the token is hiding.  Non-numeric entries will result in the initial value being taken",
 
   "conditional-visibility.dialogs.resetsettings.title": "Reset Module Settings",
   "conditional-visibility.dialogs.resetsettings.content": "Are you sure you want to reset all of the module settings to the current system's defaults? <strong>THIS CANNOT BE UNDONE!</strong>",

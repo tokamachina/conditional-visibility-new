@@ -35,7 +35,7 @@ const API = {
   },
 
   /**
-   * The attribute used to track the quantity of items in this system
+   * The attribute used to track the passive perception skill in this system
    *
    * @returns {String}
    */
@@ -44,12 +44,21 @@ const API = {
   },
 
   /**
-   * The attribute used to track the quantity of items in this system
+   * The attribute used to track the passive stealth skill in this system
    *
    * @returns {String}
    */
   get STEALTH_PASSIVE_SKILL() {
     return game.settings.get(CONSTANTS.MODULE_NAME, 'passiveStealthSkill');
+  },
+
+  /**
+   * The attribute used to track the active stealth skill in this system
+   *
+   * @returns {String}
+   */
+  get STEALTH_ACTIVE_SKILL() {
+    return game.settings.get(CONSTANTS.MODULE_NAME, 'activeStealthSkill');
   },
 
   /**
@@ -78,6 +87,20 @@ const API = {
     }
     await game.settings.set(CONSTANTS.MODULE_NAME, 'preconfiguredSystem', true);
     return game.settings.set(CONSTANTS.MODULE_NAME, 'passiveStealthSkill', inAttribute);
+  },
+
+  /**
+   * Sets the inAttribute used to track the passive perceptions in this system
+   *
+   * @param {String} inAttribute
+   * @returns {Promise}
+   */
+  async setActiveStealthSkill(inAttribute) {
+    if (typeof inAttribute !== 'string') {
+      throw error('setActiveStealthSkill | inAttribute must be of type string');
+    }
+    await game.settings.set(CONSTANTS.MODULE_NAME, 'preconfiguredSystem', true);
+    return game.settings.set(CONSTANTS.MODULE_NAME, 'activeStealthSkill', inAttribute);
   },
 
   /**
@@ -585,8 +608,8 @@ const API = {
 
     const sensesAndConditionDataList = <SenseData[]>await this.getAllSensesAndConditions();
 
-    const senseAlreadyExistsId = sensesAndConditionDataList.filter((a: SenseData) => (a.id = senseData.id));
-    const senseAlreadyExistsName = sensesAndConditionDataList.find((a: SenseData) => a.name == senseData.name);
+    const senseAlreadyExistsId = sensesAndConditionDataList.find((a: SenseData) => (a.id = senseData.id));
+    const senseAlreadyExistsName = sensesAndConditionDataList.find((a: SenseData) => (a.name == senseData.name));
 
     if (!unregister && senseAlreadyExistsId) {
       dialogWarning(`Cannot register the ${valueComment} with id '${senseData.id}' because already exists`);
@@ -613,6 +636,22 @@ const API = {
     }
     return sensesDataList;
   },
+
+  async rollStealth(token: Token): Promise<number> {
+    if (token && token.actor) {
+      const stealthActiveSetting = API.STEALTH_ACTIVE_SKILL;//game.settings.get(CONSTANTS.MODULE_NAME, 'passiveStealthSkill');
+      const stealthActive = <number>getProperty(token.actor,`data.${stealthActiveSetting}`);
+      if(stealthActiveSetting && stealthActive && !isNaN(stealthActive)){
+        const roll = new Roll('1d20 + (' + stealthActive + ')').roll();
+        return roll._total;
+      }
+      const roll = new Roll('1d20').roll();
+      return roll._total;
+    } else {
+      const roll = new Roll('1d20').roll();
+      return roll._total;
+    }
+  }
 };
 
 export default API;

@@ -53,15 +53,6 @@ export const registerSettings = function (): void {
 
   // =====================================================================
 
-  game.settings.register(CONSTANTS.MODULE_NAME, 'autoStealth', {
-    name: `${CONSTANTS.MODULE_NAME}.setting.autoStealth.name`,
-    hint: `${CONSTANTS.MODULE_NAME}.setting.autoStealth.hint`,
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
   game.settings.register(CONSTANTS.MODULE_NAME, 'useEagleEye', {
     name: `${CONSTANTS.MODULE_NAME}.setting.useEagleEye.name`,
     hint: `${CONSTANTS.MODULE_NAME}.setting.useEagleEye.hint`,
@@ -69,6 +60,28 @@ export const registerSettings = function (): void {
     config: true,
     default: false,
     type: Boolean,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_NAME, 'enableHud', {
+    name: `${CONSTANTS.MODULE_NAME}.setting.enableHud.name`,
+    hint: `${CONSTANTS.MODULE_NAME}.setting.enableHud.hint`,
+    scope: 'world',
+    config: true,
+    default: false,
+    type: Boolean,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_NAME, 'hudPos', {
+    name: `${CONSTANTS.MODULE_NAME}.setting.hudPos.name`,
+    hint: `${CONSTANTS.MODULE_NAME}.setting.hudPos.hint`,
+    scope: 'world',
+    config: true,
+    default: '.left',
+    type: String,
+    choices: {
+      '.right': 'Right',
+      '.left': 'Left',
+    },
   });
 
   // ========================================================================
@@ -108,6 +121,15 @@ export const registerSettings = function (): void {
     hint: `${CONSTANTS.MODULE_NAME}.setting.preconfiguredSystem.hint`,
     scope: 'world',
     config: false,
+    default: false,
+    type: Boolean,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_NAME, 'autoStealth', {
+    name: `${CONSTANTS.MODULE_NAME}.setting.autoStealth.name`,
+    hint: `${CONSTANTS.MODULE_NAME}.setting.autoStealth.hint`,
+    scope: 'world',
+    config: true,
     default: false,
     type: Boolean,
   });
@@ -194,12 +216,12 @@ function defaultSettings(apply = false) {
       default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.PERCEPTION_PASSIVE_SKILL : '',
       type: String,
     },
-    passiveStealthSkill: {
-      name: `${CONSTANTS.MODULE_NAME}.setting.passiveStealthSkill.name`,
-      hint: `${CONSTANTS.MODULE_NAME}.setting.passiveStealthSkill.hint`,
+    activeStealthSkill: {
+      name: `${CONSTANTS.MODULE_NAME}.setting.activeStealthSkill.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.activeStealthSkill.hint`,
       scope: 'world',
       config: true,
-      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.STEALTH_PASSIVE_SKILL : '',
+      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.STEALTH_ACTIVE_SKILL : '',
       type: String,
     },
   };

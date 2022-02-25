@@ -11,7 +11,7 @@ import {
   VisionCapabilities,
 } from '../conditional-visibility-models.js';
 import EmbeddedCollection from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs';
-import { ActorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
+import { ActorData, TokenData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import Effect from '../effects/effect.js';
 import StatusEffects from '../effects/status-effects.js';
 
@@ -201,6 +201,80 @@ function getElevationPlaceableObject(placeableObject: any): number {
 // Module specific function
 // =============================
 
+async function updateAtcvVisionLevel(tokenToSet:Token, ATCVeffect:ActiveEffect, statusSightId:string, statusSightPath:string, valueExplicit:number){
+  const ATCVeffects = [ATCVeffect];
+  // Organize non-disabled effects by their application priority
+  const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e: ActiveEffect) => {
+    if (e.data.disabled) {
+      return changes;
+    }
+    return changes.concat(
+      //@ts-ignore
+      (<EffectChangeData[]>e.data.changes).map((c: EffectChangeData) => {
+        const c2 = <EffectChangeData>duplicate(c);
+        // c2.effect = e;
+        c2.priority = <number>c2.priority ?? c2.mode * 10;
+        return c2;
+      }),
+    );
+  }, []);
+  changes.sort((a, b) => <number>a.priority - <number>b.priority);
+  // const changes = effect.data.changes;
+  // Apply all changes
+  for (const change of changes) {
+    if (!change.key.includes('ATCV')) {
+      continue;
+    }
+    const updateKey = change.key.slice(5);
+    const sensesData = await API.getAllSensesAndConditions();
+    if (updateKey === statusSightId) {
+      setProperty(tokenToSet.document, `data.flags.${CONSTANTS.MODULE_NAME}.${statusSightId}`, valueExplicit);
+      if (statusSightPath) {
+        setProperty(tokenToSet.document, <string>statusSightPath, valueExplicit);
+      }
+    }
+  }
+}
+
+function isTokenInside(token, wallsBlockTargeting) {
+  const grid = canvas.scene?.data.grid,
+		templatePos = { x: this.data.x, y: this.data.y };
+	// Check for center of  each square the token uses.
+	// e.g. for large tokens all 4 squares
+	const startX = token.width >= 1 ? 0.5 : token.width / 2;
+	const startY = token.height >= 1 ? 0.5 : token.height / 2;
+  // console.error(grid, templatePos, startX, startY, token.width, token.height, token)
+	for (let x = startX; x < token.width; x++) {
+		for (let y = startY; y < token.height; y++) {
+			const currGrid = {
+				x: token.x + x * <number>grid - templatePos.x,
+				y: token.y + y * <number>grid - templatePos.y,
+			};
+			let contains = this.shape?.contains(currGrid.x, currGrid.y);
+			if (contains && wallsBlockTargeting) {
+        const r = new Ray({x: currGrid.x + templatePos.x, y: currGrid.y + templatePos.y}, templatePos);
+        contains = !canvas.walls?.checkCollision(r);
+      }
+      if (contains) return true;
+		}
+	}
+	return false;
+}
+
+export function templateTokens(template) {
+  const wallsBlockTargeting = true;
+	const tokens = <TokenData[]>canvas.tokens?.placeables.map(t=>t.data)
+  const targets:string[] = [];
+  const tokenInside = isTokenInside.bind(template)
+  for (const tokenData of tokens) {
+    if (tokenInside(tokenData, wallsBlockTargeting)) {
+      targets.push(<string>tokenData._id);
+    }
+  }
+  //game.user?.updateTokenTargets(targets);
+  // TODO APPLY EFFECT
+}
+
 export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boolean | null {
   // if (!sourceToken) {
   //   sourceToken = <Token>getFirstPlayerTokenSelected();
@@ -209,6 +283,13 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   //   sourceToken = <Token>getFirstPlayerToken();
   // }
   if (!sourceToken || !targetToken) {
+    return true;
+  }
+
+  // If you are owner of the token you can see him
+  const isPlayerOwned = <boolean>targetToken.actor?.hasPlayerOwner;
+  // If I'm an owner of the token; remain visible
+  if(isPlayerOwned){
     return true;
   }
 
@@ -349,7 +430,7 @@ export async function prepareActiveEffectForConditionalVisibility(
   // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
 
   // REMOVE EVERY SENSES WITH THE SAME NAME
-
+  const keysSensesFirstTime:string[] = [];
   for (const [key, sense] of visionCapabilities.retrieveSenses()) {
     // use replace() method to match and remove all the non-alphanumeric characters
     const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
@@ -358,7 +439,11 @@ export async function prepareActiveEffectForConditionalVisibility(
         await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
       );
       if (activeEffectToRemove) {
-        await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
+        if(keysSensesFirstTime.includes(key)){
+          await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
+        }else{
+          keysSensesFirstTime.push(key);
+        }
       }
     }
   }
@@ -366,9 +451,9 @@ export async function prepareActiveEffectForConditionalVisibility(
   // ADD THE SENSES FINALLY
 
   for (const [key, sense] of visionCapabilities.retrieveSenses()) {
-    const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
-    if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
-      if (sense.visionLevelValue && sense.visionLevelValue != 0) {
+    if (sense.visionLevelValue && sense.visionLevelValue != 0) {
+      const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
+      if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
         await API.addEffectConditionalVisibilityOnToken(
           <string>sourceToken.id,
           <string>sense.statusSight?.id,
@@ -376,6 +461,9 @@ export async function prepareActiveEffectForConditionalVisibility(
           sense.visionDistanceValue,
           sense.visionLevelValue,
         );
+      }else{
+        const ae = <ActiveEffect>await API.findEffectByNameOnToken(<string>sourceToken.id,effectNameToCheckOnActor)
+        updateAtcvVisionLevel(sourceToken, ae, <string>sense.statusSight?.id, <string>sense.statusSight?.path, sense.visionLevelValue);
       }
     }
   }
@@ -384,6 +472,7 @@ export async function prepareActiveEffectForConditionalVisibility(
 
   // REMOVE EVERY CONDITIONS WITH THE SAME NAME
 
+  const keysConditionsFirstTime:string[] = [];
   for (const [key, condition] of visionCapabilities.retrieveConditions()) {
     // use replace() method to match and remove all the non-alphanumeric characters
     const effectNameToCheckOnActor = i18n(<string>condition.statusSight?.name);
@@ -392,7 +481,11 @@ export async function prepareActiveEffectForConditionalVisibility(
         await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
       );
       if (activeEffectToRemove) {
-        await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
+        if(keysConditionsFirstTime.includes(key)){
+          await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
+        }else{
+          keysConditionsFirstTime.push(key);
+        }
       }
     }
   }
@@ -400,9 +493,9 @@ export async function prepareActiveEffectForConditionalVisibility(
   // ADD THE CONDITIONS FINALLY
 
   for (const [key, condition] of visionCapabilities.retrieveConditions()) {
-    // use replace() method to match and remove all the non-alphanumeric characters
-    const effectNameToCheckOnActor = i18n(<string>condition.statusSight?.name);
     if (condition.visionLevelValue && condition.visionLevelValue != 0) {
+      // use replace() method to match and remove all the non-alphanumeric characters
+      const effectNameToCheckOnActor = i18n(<string>condition.statusSight?.name);
       if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
         await API.addEffectConditionalVisibilityOnToken(
           <string>sourceToken.id,
@@ -411,6 +504,9 @@ export async function prepareActiveEffectForConditionalVisibility(
           condition.visionDistanceValue,
           condition.visionLevelValue,
         );
+      }else{
+        const ae = <ActiveEffect>await API.findEffectByNameOnToken(<string>sourceToken.id,effectNameToCheckOnActor)
+        updateAtcvVisionLevel(sourceToken, ae, <string>condition.statusSight?.id, <string>condition.statusSight?.path, condition.visionLevelValue);
       }
     }
   }
@@ -573,7 +669,7 @@ export function retrieveAtcvSourcesFromActiveEffect(effectEntityChanges: EffectC
 export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effectSight: SenseData): number {
   const regex = /[^A-Za-z0-9]/g;
   //Look up for ATCV to manage vision level
-  // TODO for now every active effect can have only one ATCV key ate the time not sure if manage
+  // TODO for now every active effect can have only one ATCV key ate the time not sure if is manageable
   let atcvValue: any = 0;
   const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
   if (!effectNameToSet) {
@@ -615,6 +711,124 @@ export function retrieveAtcvVisionLevelDistanceFromActiveEffect(effectEntity: Ac
     distance = Math.max(brightSight, dimSight);
   }
   return distance;
+}
+
+
+/**
+ * Renders a dialog window pre-filled with the result of a system-dependent roll, which can be changed in an input field.  Subclasses can use this
+ * as is, see ConditionalVisibilitySystem5e for an example
+ * @param token the actor to whom this dialog refers
+ * @returns a Promise<number> containing the value of the result, or -1 if unintelligble
+ */
+async function stealthHud(token: Token): Promise<number> {
+  let initialValue;
+  try {
+    //@ts-ignore
+    initialValue = parseInt(<string>getProperty(token.document,`data.${API.STEALTH_PASSIVE_SKILL}`));
+  } catch (err) {
+    initialValue === undefined;
+  }
+  let result = initialValue;
+  if (initialValue === undefined || isNaN(parseInt(initialValue))) {
+    try {
+      // const roll = await API.rollStealth(token);
+      // result = roll.total;
+      result = await API.rollStealth(token);
+    } catch (err) {
+      warn('Error rolling stealth, check formula for system');
+      result = parseInt(<string>getProperty(token.document,`data.${API.STEALTH_PASSIVE_SKILL}`));
+    }
+  }
+  const content = await renderTemplate(`modules/${CONSTANTS.MODULE_NAME}/templates/stealth_hud.html`, {
+    initialValue: result,
+  });
+  return new Promise((resolve, reject) => {
+    const hud = new Dialog({
+      title: i18n(CONSTANTS.MODULE_NAME + 'dialogs.stealthhud'),
+      content: content,
+      buttons: {
+        one: {
+          icon: '<i class="fas fa-check"></i>',
+          label: 'OK',
+          callback: (html: JQuery<HTMLElement>) => {
+            //@ts-ignore
+            const val = parseInt(html.find('div.form-group').children()[1]?.value);
+            if (isNaN(val)) {
+              resolve(-1);
+            } else {
+              resolve(val);
+            }
+          },
+        },
+      },
+      close: (html: JQuery<HTMLElement>) => {
+        //@ts-ignore
+        const val = parseInt(html.find('div.form-group').children()[1]?.value);
+        if (isNaN(val)) {
+          resolve(-1);
+        } else {
+          resolve(val);
+        }
+      },
+      default: '',
+    });
+    hud.render(true);
+  });
+}
+
+export async function toggleStealth(event) {
+  const stealthedWithHiddenConditionOri = this.object.document.getFlag(
+    CONSTANTS.MODULE_NAME,
+    AtcvEffectConditionFlags.HIDDEN,
+  ) ?? 0;
+  let stealthedWithHiddenCondition = duplicate(stealthedWithHiddenConditionOri);
+  if(stealthedWithHiddenCondition == 0 && getProperty(this.object.document,`data.${API.STEALTH_PASSIVE_SKILL}`)){
+    stealthedWithHiddenCondition = getProperty(this.object.document,`data.${API.STEALTH_PASSIVE_SKILL}`);
+  }
+  const result = API.rollStealth(this.object);
+  const content = await renderTemplate(`modules/${CONSTANTS.MODULE_NAME}/templates/stealth_hud.html`, {
+    currentstealth: stealthedWithHiddenCondition,
+    stealthroll: result,
+  });
+  const hud = new Dialog({
+    title: i18n(CONSTANTS.MODULE_NAME + '.dialogs.title.hidden'),
+    content: content,
+    buttons: {
+      one: {
+        icon: '<i class="fas fa-check"></i>',
+        label: 'OK',
+        callback: async (html: JQuery<HTMLElement>) => {
+          //@ts-ignore
+          const valCurrentstealth = parseInt((html.find('div.form-group').children()[1]?.value));
+          //@ts-ignore
+          let valStealthRoll = parseInt(html.find('div.form-group').children()[2]?.value);
+          if (isNaN(valStealthRoll)) {
+            valStealthRoll = 0;
+          }
+          if(valStealthRoll == 0){
+              valStealthRoll = valCurrentstealth;
+          }
+          await this.object.document.setFlag(
+            CONSTANTS.MODULE_NAME,
+            AtcvEffectConditionFlags.HIDDEN,
+            valStealthRoll,
+          );
+          event.currentTarget.classList.toggle('active', (stealthedWithHiddenConditionOri && stealthedWithHiddenConditionOri != 0));
+        },
+      },
+    },
+    close: async (html: JQuery<HTMLElement>) => {
+      // const val = parseInt(html.find('div.form-group').children()[2]?.value);
+      // await this.object.document.setFlag(
+      //   CONSTANTS.MODULE_NAME,
+      //   AtcvEffectConditionFlags.HIDDEN,
+      //   false,
+      // );
+      event.currentTarget.classList.toggle('active', (stealthedWithHiddenConditionOri && stealthedWithHiddenConditionOri != 0));
+    },
+    default: 'close',
+  });
+  hud.render(true);
 }
 
 // ========================================================================================

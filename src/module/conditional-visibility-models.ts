@@ -44,15 +44,15 @@ export enum AtcvEffectSenseFlags {
   TREMOR_SENSE = 'tremorsense',
   TRUE_SIGHT = 'truesight',
   DEVILS_SIGHT = 'devilssight',
-  PASSIVE_STEALTH = '_ste',
-  PASSIVE_PERCEPTION = '_prc',
+  // PASSIVE_STEALTH = '_ste',
+  // PASSIVE_PERCEPTION = '_prc',
   // additional PF2E
   GREATER_DARKVISION = 'greaterdarkvision',
   LOW_LIGHT_VISION = 'lowlightvision',
   BLINDED = 'blinded',
 }
 
-// TODO PUT THESE IN LOCALIZATION FOR OTHER LANGUAGE
+
 export enum AtcvEffectConditionFlags {
   INVISIBLE = 'invisible',
   OBSCURED = 'obscured',
@@ -60,6 +60,10 @@ export enum AtcvEffectConditionFlags {
   HIDDEN = 'hidden',
   IN_MAGICAL_DARKNESS = 'inmagicaldarkness',
 }
+
+// export enum ConditionalVisibilityFlags {
+//   STEALTHED = 'stealthed'
+// }
 
 /**
  * This is system indipendent utility class
@@ -107,7 +111,7 @@ export class VisionCapabilities {
       // this.senses.set(StatusEffectSenseFlags.GREATER_DARKVISION, _greaterdarkvisionTmp);
       // this.senses.set(StatusEffectSenseFlags.LOW_LIGHT_VISION, _lowlightvisionTmp);
       // this.senses.set(StatusEffectSenseFlags.BLINDED, _blindedTmp);
-      // // // TODO
+
       // this.senses.set(StatusEffectSenseFlags.PASSIVE_STEALTH, _passivestealthTmp);
       // this.senses.set(StatusEffectSenseFlags.PASSIVE_PERCEPTION,  _passiveperceptionTmp);
 
@@ -120,7 +124,7 @@ export class VisionCapabilities {
       // this._greaterdarkvision = _greaterdarkvisionTmp; // < 0 ? 100000 : _greaterdarkvisionTmp;
       // this._lowlightvision = _lowlightvisionTmp; // < 0 ? 100000 : _lowlightvisionTmp;
       // this._blinded = _blindedTmp; // < 0 ? 100000 : _blindedTmp;
-      // // TODO
+
       // this._passivestealth = _passivestealthTmp; // < 0 ? 100000 : _passivestealthTmp;
       // this._passiveperception = _passiveperceptionTmp; //srcToken?.actor?.data?.data?.skills?.prc?.passive
 
@@ -143,7 +147,7 @@ export class VisionCapabilities {
   }
 
   // canSee(statusEffectSight: StatusEffectSightFlags) {
-  //   // TODO
+
   // }
 
   // canSeeInvisible() {

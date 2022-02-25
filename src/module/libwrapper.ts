@@ -1,6 +1,6 @@
 import API from './api';
 import CONSTANTS from './constants';
-import { debug, log, shouldIncludeVision } from './lib/lib';
+import { debug, log, shouldIncludeVision, templateTokens } from './lib/lib';
 import { canvas, game } from './settings';
 
 export function registerLibwrappers() {
@@ -18,6 +18,14 @@ export function registerLibwrappers() {
   //   'SightLayer.prototype.tokenVision',
   //   sightLayerPrototypeTokenVisionHandler,
   //   'WRAPPER',
+  // );
+
+  //@ts-ignore
+  // libWrapper.register(CONSTANTS.MODULE_NAME,
+  //   "Canvas.AbilityTemplate.prototype.refresh",
+  //   "game.dnd5e.canvas.AbilityTemplate.prototype.refresh",
+  //   templatePrototypeRefreshHandler,
+  //   "WRAPPER"
   // );
 
   // THIS IS https://github.com/trioderegion/eagle-eye/
@@ -48,6 +56,11 @@ export function registerLibwrappers() {
       );
     }
   }
+}
+
+export function templatePrototypeRefreshHandler(wrapped)  {
+  templateTokens(this)
+  return wrapped();
 }
 
 // export function sightLayerPrototypeTestVisibilityHandler(wrapped, point, { tolerance = 2, object = null } = {}) {

@@ -687,7 +687,9 @@ export default class EffectHandler {
   async addActiveEffectOnActor(uuid, activeEffectData: ActiveEffectData) {
     if (activeEffectData) {
       const actor = <Actor>await this._foundryHelpers.getActorByUuid(uuid);
-      activeEffectData.origin = `Actor.${actor.id}`;
+      if(!activeEffectData.origin){
+        activeEffectData.origin = `Actor.${actor.id}`;
+      }
       await actor.createEmbeddedDocuments('ActiveEffect', [<Record<string, any>>activeEffectData]);
       log(`Added effect ${activeEffectData.label} to ${actor.name} - ${actor.id}`);
     }
@@ -1000,7 +1002,8 @@ export default class EffectHandler {
     if (effect) {
       const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
       if (!origin) {
-        origin = `Actor.${token.actor ? token.actor?.id : token.id}`;
+        const sceneId = token?.scene && token.scene.id || canvas.scene?.id;
+        origin = `Scene.${sceneId}.Token.${token.id}`;
       }
       const activeEffectData = effect.convertToActiveEffectData({
         origin,
@@ -1108,7 +1111,10 @@ export default class EffectHandler {
   async addActiveEffectOnToken(uuid, activeEffectData: ActiveEffectData) {
     if (activeEffectData) {
       const token = <Token>await this._foundryHelpers.getTokenByUuid(uuid);
-      activeEffectData.origin = `Actor.${token.actor ? token.actor?.id : token.id}`;
+      if(!activeEffectData.origin){
+        const sceneId = token?.scene && token.scene.id || canvas.scene?.id;
+        activeEffectData.origin = `Scene.${sceneId}.Token.${token.id}`;
+      }
       await token.actor?.createEmbeddedDocuments('ActiveEffect', [<Record<string, any>>activeEffectData]);
       log(`Added effect ${activeEffectData.label} to ${token.name} - ${token.id}`);
     }

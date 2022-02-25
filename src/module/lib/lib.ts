@@ -11,7 +11,10 @@ import {
   VisionCapabilities,
 } from '../conditional-visibility-models.js';
 import EmbeddedCollection from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs';
-import { ActorData, TokenData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
+import {
+  ActorData,
+  TokenData,
+} from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import Effect from '../effects/effect.js';
 import StatusEffects from '../effects/status-effects.js';
 
@@ -201,7 +204,13 @@ function getElevationPlaceableObject(placeableObject: any): number {
 // Module specific function
 // =============================
 
-async function updateAtcvVisionLevel(tokenToSet:Token, ATCVeffect:ActiveEffect, statusSightId:string, statusSightPath:string, valueExplicit:number){
+async function updateAtcvVisionLevel(
+  tokenToSet: Token,
+  ATCVeffect: ActiveEffect,
+  statusSightId: string,
+  statusSightPath: string,
+  valueExplicit: number,
+) {
   const ATCVeffects = [ATCVeffect];
   // Organize non-disabled effects by their application priority
   const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e: ActiveEffect) => {
@@ -238,34 +247,34 @@ async function updateAtcvVisionLevel(tokenToSet:Token, ATCVeffect:ActiveEffect, 
 
 function isTokenInside(token, wallsBlockTargeting) {
   const grid = canvas.scene?.data.grid,
-		templatePos = { x: this.data.x, y: this.data.y };
-	// Check for center of  each square the token uses.
-	// e.g. for large tokens all 4 squares
-	const startX = token.width >= 1 ? 0.5 : token.width / 2;
-	const startY = token.height >= 1 ? 0.5 : token.height / 2;
+    templatePos = { x: this.data.x, y: this.data.y };
+  // Check for center of  each square the token uses.
+  // e.g. for large tokens all 4 squares
+  const startX = token.width >= 1 ? 0.5 : token.width / 2;
+  const startY = token.height >= 1 ? 0.5 : token.height / 2;
   // console.error(grid, templatePos, startX, startY, token.width, token.height, token)
-	for (let x = startX; x < token.width; x++) {
-		for (let y = startY; y < token.height; y++) {
-			const currGrid = {
-				x: token.x + x * <number>grid - templatePos.x,
-				y: token.y + y * <number>grid - templatePos.y,
-			};
-			let contains = this.shape?.contains(currGrid.x, currGrid.y);
-			if (contains && wallsBlockTargeting) {
-        const r = new Ray({x: currGrid.x + templatePos.x, y: currGrid.y + templatePos.y}, templatePos);
+  for (let x = startX; x < token.width; x++) {
+    for (let y = startY; y < token.height; y++) {
+      const currGrid = {
+        x: token.x + x * <number>grid - templatePos.x,
+        y: token.y + y * <number>grid - templatePos.y,
+      };
+      let contains = this.shape?.contains(currGrid.x, currGrid.y);
+      if (contains && wallsBlockTargeting) {
+        const r = new Ray({ x: currGrid.x + templatePos.x, y: currGrid.y + templatePos.y }, templatePos);
         contains = !canvas.walls?.checkCollision(r);
       }
       if (contains) return true;
-		}
-	}
-	return false;
+    }
+  }
+  return false;
 }
 
 export function templateTokens(template) {
   const wallsBlockTargeting = true;
-	const tokens = <TokenData[]>canvas.tokens?.placeables.map(t=>t.data)
-  const targets:string[] = [];
-  const tokenInside = isTokenInside.bind(template)
+  const tokens = <TokenData[]>canvas.tokens?.placeables.map((t) => t.data);
+  const targets: string[] = [];
+  const tokenInside = isTokenInside.bind(template);
   for (const tokenData of tokens) {
     if (tokenInside(tokenData, wallsBlockTargeting)) {
       targets.push(<string>tokenData._id);
@@ -289,7 +298,7 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
   // If you are owner of the token you can see him
   const isPlayerOwned = <boolean>targetToken.actor?.hasPlayerOwner;
   // If I'm an owner of the token; remain visible
-  if(isPlayerOwned){
+  if (isPlayerOwned) {
     return true;
   }
 
@@ -362,7 +371,7 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
           <number>targetVisionLevel.statusSight?.visionLevelMinIndex &&
         <number>sourceVisionLevel?.statusSight?.visionLevelMaxIndex >=
           <number>targetVisionLevel.statusSight?.visionLevelMaxIndex;
-      if(result){
+      if (result) {
         sourceVisionLevelsValid.push(sourceVisionLevel);
       }
       return result;
@@ -430,7 +439,7 @@ export async function prepareActiveEffectForConditionalVisibility(
   // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
 
   // REMOVE EVERY SENSES WITH THE SAME NAME
-  const keysSensesFirstTime:string[] = [];
+  const keysSensesFirstTime: string[] = [];
   for (const [key, sense] of visionCapabilities.retrieveSenses()) {
     // use replace() method to match and remove all the non-alphanumeric characters
     const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
@@ -439,9 +448,9 @@ export async function prepareActiveEffectForConditionalVisibility(
         await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
       );
       if (activeEffectToRemove) {
-        if(keysSensesFirstTime.includes(key)){
+        if (keysSensesFirstTime.includes(key)) {
           await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
-        }else{
+        } else {
           keysSensesFirstTime.push(key);
         }
       }
@@ -461,9 +470,15 @@ export async function prepareActiveEffectForConditionalVisibility(
           sense.visionDistanceValue,
           sense.visionLevelValue,
         );
-      }else{
-        const ae = <ActiveEffect>await API.findEffectByNameOnToken(<string>sourceToken.id,effectNameToCheckOnActor)
-        updateAtcvVisionLevel(sourceToken, ae, <string>sense.statusSight?.id, <string>sense.statusSight?.path, sense.visionLevelValue);
+      } else {
+        const ae = <ActiveEffect>await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor);
+        updateAtcvVisionLevel(
+          sourceToken,
+          ae,
+          <string>sense.statusSight?.id,
+          <string>sense.statusSight?.path,
+          sense.visionLevelValue,
+        );
       }
     }
   }
@@ -472,7 +487,7 @@ export async function prepareActiveEffectForConditionalVisibility(
 
   // REMOVE EVERY CONDITIONS WITH THE SAME NAME
 
-  const keysConditionsFirstTime:string[] = [];
+  const keysConditionsFirstTime: string[] = [];
   for (const [key, condition] of visionCapabilities.retrieveConditions()) {
     // use replace() method to match and remove all the non-alphanumeric characters
     const effectNameToCheckOnActor = i18n(<string>condition.statusSight?.name);
@@ -481,9 +496,9 @@ export async function prepareActiveEffectForConditionalVisibility(
         await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
       );
       if (activeEffectToRemove) {
-        if(keysConditionsFirstTime.includes(key)){
+        if (keysConditionsFirstTime.includes(key)) {
           await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
-        }else{
+        } else {
           keysConditionsFirstTime.push(key);
         }
       }
@@ -504,9 +519,15 @@ export async function prepareActiveEffectForConditionalVisibility(
           condition.visionDistanceValue,
           condition.visionLevelValue,
         );
-      }else{
-        const ae = <ActiveEffect>await API.findEffectByNameOnToken(<string>sourceToken.id,effectNameToCheckOnActor)
-        updateAtcvVisionLevel(sourceToken, ae, <string>condition.statusSight?.id, <string>condition.statusSight?.path, condition.visionLevelValue);
+      } else {
+        const ae = <ActiveEffect>await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor);
+        updateAtcvVisionLevel(
+          sourceToken,
+          ae,
+          <string>condition.statusSight?.id,
+          <string>condition.statusSight?.path,
+          condition.visionLevelValue,
+        );
       }
     }
   }
@@ -713,7 +734,6 @@ export function retrieveAtcvVisionLevelDistanceFromActiveEffect(effectEntity: Ac
   return distance;
 }
 
-
 /**
  * Renders a dialog window pre-filled with the result of a system-dependent roll, which can be changed in an input field.  Subclasses can use this
  * as is, see ConditionalVisibilitySystem5e for an example
@@ -724,7 +744,7 @@ async function stealthHud(token: Token): Promise<number> {
   let initialValue;
   try {
     //@ts-ignore
-    initialValue = parseInt(<string>getProperty(token.document,`data.${API.STEALTH_PASSIVE_SKILL}`));
+    initialValue = parseInt(<string>getProperty(token.document, `data.${API.STEALTH_PASSIVE_SKILL}`));
   } catch (err) {
     initialValue === undefined;
   }
@@ -736,7 +756,7 @@ async function stealthHud(token: Token): Promise<number> {
       result = await API.rollStealth(token);
     } catch (err) {
       warn('Error rolling stealth, check formula for system');
-      result = parseInt(<string>getProperty(token.document,`data.${API.STEALTH_PASSIVE_SKILL}`));
+      result = parseInt(<string>getProperty(token.document, `data.${API.STEALTH_PASSIVE_SKILL}`));
     }
   }
   const content = await renderTemplate(`modules/${CONSTANTS.MODULE_NAME}/templates/stealth_hud.html`, {
@@ -777,13 +797,11 @@ async function stealthHud(token: Token): Promise<number> {
 }
 
 export async function toggleStealth(event) {
-  const stealthedWithHiddenConditionOri = this.object.document.getFlag(
-    CONSTANTS.MODULE_NAME,
-    AtcvEffectConditionFlags.HIDDEN,
-  ) ?? 0;
+  const stealthedWithHiddenConditionOri =
+    this.object.document.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN) ?? 0;
   let stealthedWithHiddenCondition = duplicate(stealthedWithHiddenConditionOri);
-  if(stealthedWithHiddenCondition == 0 && getProperty(this.object.document,`data.${API.STEALTH_PASSIVE_SKILL}`)){
-    stealthedWithHiddenCondition = getProperty(this.object.document,`data.${API.STEALTH_PASSIVE_SKILL}`);
+  if (stealthedWithHiddenCondition == 0 && getProperty(this.object.document, `data.${API.STEALTH_PASSIVE_SKILL}`)) {
+    stealthedWithHiddenCondition = getProperty(this.object.document, `data.${API.STEALTH_PASSIVE_SKILL}`);
   }
   const result = API.rollStealth(this.object);
   const content = await renderTemplate(`modules/${CONSTANTS.MODULE_NAME}/templates/stealth_hud.html`, {
@@ -799,21 +817,20 @@ export async function toggleStealth(event) {
         label: 'OK',
         callback: async (html: JQuery<HTMLElement>) => {
           //@ts-ignore
-          const valCurrentstealth = parseInt((html.find('div.form-group').children()[1]?.value));
+          const valCurrentstealth = parseInt(html.find('div.form-group').children()[1]?.value);
           //@ts-ignore
           let valStealthRoll = parseInt(html.find('div.form-group').children()[2]?.value);
           if (isNaN(valStealthRoll)) {
             valStealthRoll = 0;
           }
-          if(valStealthRoll == 0){
-              valStealthRoll = valCurrentstealth;
+          if (valStealthRoll == 0) {
+            valStealthRoll = valCurrentstealth;
           }
-          await this.object.document.setFlag(
-            CONSTANTS.MODULE_NAME,
-            AtcvEffectConditionFlags.HIDDEN,
-            valStealthRoll,
+          await this.object.document.setFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN, valStealthRoll);
+          event.currentTarget.classList.toggle(
+            'active',
+            stealthedWithHiddenConditionOri && stealthedWithHiddenConditionOri != 0,
           );
-          event.currentTarget.classList.toggle('active', (stealthedWithHiddenConditionOri && stealthedWithHiddenConditionOri != 0));
         },
       },
     },
@@ -824,7 +841,10 @@ export async function toggleStealth(event) {
       //   AtcvEffectConditionFlags.HIDDEN,
       //   false,
       // );
-      event.currentTarget.classList.toggle('active', (stealthedWithHiddenConditionOri && stealthedWithHiddenConditionOri != 0));
+      event.currentTarget.classList.toggle(
+        'active',
+        stealthedWithHiddenConditionOri && stealthedWithHiddenConditionOri != 0,
+      );
     },
     default: 'close',
   });

@@ -9,7 +9,7 @@ import Effect from './effects/effect';
 import { ConditionalVisibilityEffectDefinitions } from './conditional-visibility-effect-definition';
 
 const API = {
-  effectInterface:EffectInterface,
+  effectInterface: EffectInterface,
 
   get CUB(): EnhancedConditions {
     //@ts-ignore
@@ -202,7 +202,13 @@ const API = {
       throw error('addEffectOnActorArr | inAttributes must be of type array');
     }
     const [effectName, uuid, origin, overlay, effect] = inAttributes;
-    const result = await (<EffectInterface>this.effectInterface)._effectHandler.addEffectOnActor(effectName, uuid, origin, overlay, effect);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.addEffectOnActor(
+      effectName,
+      uuid,
+      origin,
+      overlay,
+      effect,
+    );
     return result;
   },
 
@@ -220,7 +226,10 @@ const API = {
       throw error('removeEffectFromIdOnActor | inAttributes must be of type array');
     }
     const [effectId, uuid] = inAttributes;
-    const result = await (<EffectInterface>this.effectInterface)._effectHandler.removeEffectFromIdOnActor(effectId, uuid);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.removeEffectFromIdOnActor(
+      effectId,
+      uuid,
+    );
     return result;
   },
 
@@ -244,7 +253,10 @@ const API = {
       throw error('findEffectByNameOnActorArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    const result = await (<EffectInterface>this.effectInterface)._effectHandler.findEffectByNameOnActor(effectName, uuid);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.findEffectByNameOnActor(
+      effectName,
+      uuid,
+    );
     return result;
   },
 
@@ -253,7 +265,13 @@ const API = {
       throw error('addEffectOnTokenArr | inAttributes must be of type array');
     }
     const [effectName, uuid, origin, overlay, effect] = inAttributes;
-    const result = await (<EffectInterface>this.effectInterface)._effectHandler.addEffectOnToken(effectName, uuid, origin, overlay, effect);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.addEffectOnToken(
+      effectName,
+      uuid,
+      origin,
+      overlay,
+      effect,
+    );
     return result;
   },
 
@@ -271,7 +289,10 @@ const API = {
       throw error('removeEffectFromIdOnToken | inAttributes must be of type array');
     }
     const [effectId, uuid] = inAttributes;
-    const result = await (<EffectInterface>this.effectInterface)._effectHandler.removeEffectFromIdOnToken(effectId, uuid);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.removeEffectFromIdOnToken(
+      effectId,
+      uuid,
+    );
     return result;
   },
 
@@ -295,7 +316,10 @@ const API = {
       throw error('findEffectByNameOnTokenArr | inAttributes must be of type array');
     }
     const [effectName, uuid] = inAttributes;
-    const result = await (<EffectInterface>this.effectInterface)._effectHandler.findEffectByNameOnToken(effectName, uuid);
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.findEffectByNameOnToken(
+      effectName,
+      uuid,
+    );
     return result;
   },
 
@@ -502,7 +526,7 @@ const API = {
         senseData = a;
         break;
       }
-      if(senseDataId == a.id){
+      if (senseDataId == a.id) {
         effect = <Effect>effectsDefinition.find((e: Effect) => {
           return e.customId == a.id || i18n(e.name) == i18n(a.name);
         });
@@ -515,7 +539,7 @@ const API = {
       const isSense = API.SENSES.find((s: SenseData) => {
         return s.id == (<SenseData>senseData).id || i18n(s.name) == i18n((<SenseData>senseData).name);
       });
-      if(isSense){
+      if (isSense) {
         effect.isTemporary = false; // passive ae
       }
       effect.transfer = !disabled;
@@ -542,7 +566,7 @@ const API = {
     return sensesOrderByName;
   },
 
-  async registerSense(senseData: SenseData):Promise<void> {
+  async registerSense(senseData: SenseData): Promise<void> {
     const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'senses');
     const newSensesData = await this._registerSenseData(senseData, sensesData, 'sense', false);
     if (newSensesData && newSensesData.length > 0) {
@@ -550,7 +574,7 @@ const API = {
     }
   },
 
-  async registerCondition(senseData: SenseData):Promise<void> {
+  async registerCondition(senseData: SenseData): Promise<void> {
     const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
     const newSensesData = await this._registerSenseData(senseData, sensesData, 'condition', false);
     if (newSensesData && newSensesData.length > 0) {
@@ -558,7 +582,7 @@ const API = {
     }
   },
 
-  async unRegisterSense(senseDataIdOrName: string):Promise<void> {
+  async unRegisterSense(senseDataIdOrName: string): Promise<void> {
     const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'senses');
     const newSensesData = await this._unregisterSenseData(senseDataIdOrName, sensesData, 'sense', true);
     if (newSensesData && newSensesData.length > 0) {
@@ -566,7 +590,7 @@ const API = {
     }
   },
 
-  async unRegisterCondition(senseDataIdOrName: string):Promise<void> {
+  async unRegisterCondition(senseDataIdOrName: string): Promise<void> {
     const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
     const newSensesData = await this._unregisterSenseData(senseDataIdOrName, sensesData, 'condition', true);
     if (newSensesData && newSensesData.length > 0) {
@@ -574,11 +598,7 @@ const API = {
     }
   },
 
-  async _registerSenseData(
-    senseData: SenseData,
-    sensesDataList: SenseData[],
-    valueComment: string,
-  ) {
+  async _registerSenseData(senseData: SenseData, sensesDataList: SenseData[], valueComment: string) {
     if (!senseData.id) {
       dialogWarning(`Cannot register the ${valueComment} with id empty or null`);
       return;
@@ -589,7 +609,7 @@ const API = {
     }
     const sensesAndConditionDataList = <SenseData[]>await this.getAllSensesAndConditions();
     const senseAlreadyExistsId = sensesAndConditionDataList.find((a: SenseData) => (a.id = senseData.id));
-    const senseAlreadyExistsName = sensesAndConditionDataList.find((a: SenseData) => (a.name == senseData.name));
+    const senseAlreadyExistsName = sensesAndConditionDataList.find((a: SenseData) => a.name == senseData.name);
     if (senseAlreadyExistsId) {
       dialogWarning(`Cannot register the ${valueComment} with id '${senseData.id}' because already exists`);
       return;
@@ -602,32 +622,32 @@ const API = {
     return sensesDataList;
   },
 
-  async _unregisterSenseData(
-    senseDataIdOrName: string,
-    sensesDataList: SenseData[],
-    valueComment: string,
-  ) {
+  async _unregisterSenseData(senseDataIdOrName: string, sensesDataList: SenseData[], valueComment: string) {
     if (!senseDataIdOrName) {
       dialogWarning(`Cannot unregister the ${valueComment} with id empty or null`);
       return;
     }
     const sensesAndConditionDataList = <SenseData[]>await this.getAllSensesAndConditions();
-    const senseAlreadyExistsId = <SenseData>sensesAndConditionDataList.find((a: SenseData) => (a.id == senseDataIdOrName || a.name == senseDataIdOrName));
+    const senseAlreadyExistsId = <SenseData>(
+      sensesAndConditionDataList.find((a: SenseData) => a.id == senseDataIdOrName || a.name == senseDataIdOrName)
+    );
     if (!senseAlreadyExistsId) {
-      dialogWarning(`Cannot unregister the ${valueComment} with id '${senseDataIdOrName}' because is not exists exists`);
+      dialogWarning(
+        `Cannot unregister the ${valueComment} with id '${senseDataIdOrName}' because is not exists exists`,
+      );
       return;
     }
     sensesDataList = sensesDataList.filter(function (el) {
-      return (el.id != senseAlreadyExistsId.id);
+      return el.id != senseAlreadyExistsId.id;
     });
     return sensesDataList;
   },
 
   async rollStealth(token: Token): Promise<number> {
     if (token && token.actor) {
-      const stealthActiveSetting = API.STEALTH_ACTIVE_SKILL;//game.settings.get(CONSTANTS.MODULE_NAME, 'passiveStealthSkill');
-      const stealthActive = <number>getProperty(token.actor,`data.${stealthActiveSetting}`);
-      if(stealthActiveSetting && stealthActive && !isNaN(stealthActive)){
+      const stealthActiveSetting = API.STEALTH_ACTIVE_SKILL; //game.settings.get(CONSTANTS.MODULE_NAME, 'passiveStealthSkill');
+      const stealthActive = <number>getProperty(token.actor, `data.${stealthActiveSetting}`);
+      if (stealthActiveSetting && stealthActive && !isNaN(stealthActive)) {
         const roll = new Roll('1d20 + (' + stealthActive + ')').roll();
         return roll._total;
       }
@@ -637,7 +657,7 @@ const API = {
       const roll = new Roll('1d20').roll();
       return roll._total;
     }
-  }
+  },
 };
 
 export default API;

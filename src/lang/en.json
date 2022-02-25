@@ -100,7 +100,6 @@
   "conditional-visibility.effects.hidden.name": "Hidden",
   "conditional-visibility.effects.hidden.description": "This sense is used from the module 'Conditional Visibility'",
 
-
   "conditional-visibility.dialogs.title.hidden": "Roll stealth",
   "conditional-visibility.dialogs.stealth.not.supported": "Conditional Visilbity does not support the hidden condition/stealth for {sysid}",
   "conditional-visibility.dialogs.currentstealth": "Current Stealth",

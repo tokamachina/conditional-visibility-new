@@ -98,9 +98,9 @@ export const readyHooks = async (): Promise<void> => {
     module.updateActiveEffect(effect, options, false);
   });
 
-  Hooks.on("deleteActiveEffect", async (effect, options) => {
+  Hooks.on('deleteActiveEffect', async (effect, options) => {
     module.updateActiveEffect(effect, options, true);
-  })
+  });
 
   Hooks.on('renderTokenHUD', (app, html, data) => {
     module.renderTokenHUD(app, html, data);
@@ -166,7 +166,7 @@ const module = {
     //   }
     // }
   },
-  async updateActiveEffect(effect: ActiveEffect, options:EffectChangeData, isRemoved:boolean) {
+  async updateActiveEffect(effect: ActiveEffect, options: EffectChangeData, isRemoved: boolean) {
     if (!effect.data.changes?.find((effect) => effect.key.includes('ATCV'))) {
       return;
     }
@@ -226,13 +226,13 @@ const module = {
             // TODO TO CHECK IF WE NEED TO FILTER THE TOKENS AGAIN MAYBE WITH A ADDITIONAL ATCV active change data effect ?
             for (const tokenToSet of tokenArray) {
               //await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
-              if(isRemoved){
+              if (isRemoved) {
                 setProperty(tokenToSet.document, `data.flags.${CONSTANTS.MODULE_NAME}.${statusSight.id}`, 0);
               } else {
                 setProperty(tokenToSet.document, `data.flags.${CONSTANTS.MODULE_NAME}.${statusSight.id}`, change.value);
               }
               if (statusSight?.path) {
-                if(isRemoved){
+                if (isRemoved) {
                   setProperty(tokenToSet.document, <string>statusSight?.path, 0);
                 } else {
                   setProperty(tokenToSet.document, <string>statusSight?.path, change.value);
@@ -250,16 +250,16 @@ const module = {
     //@ts-ignore
     if (game.dfreds) {
       const effects = ConditionalVisibilityEffectDefinitions.all();
-      const activeEffectsData:any[] = [];
-      for(const effect of effects){
+      const activeEffectsData: any[] = [];
+      for (const effect of effects) {
         // I also added this for specifically checking for custom effects.
         // It will return undefined if it doesn't exist:
         //@ts-ignore
         const effectFounded = game.dfreds.effectInterface.findCustomEffectByName(effect.name);
-        if(!effectFounded){
+        if (!effectFounded) {
           const origin = undefined;
           const overlay = false;
-          activeEffectsData.push(effect.convertToActiveEffectData({origin,overlay}));
+          activeEffectsData.push(effect.convertToActiveEffectData({ origin, overlay }));
         }
       }
 
@@ -267,7 +267,7 @@ const module = {
       //canvas.tokens.controlled[0].actor.effects.get('some key').data.toObject()
       //@ts-ignore
       game.dfreds.effectInterface.createNewCustomEffectsWith({
-      // game.dfreds.effectInterface._customEffectsHandler.createNewCustomEffectsWith({
+        // game.dfreds.effectInterface._customEffectsHandler.createNewCustomEffectsWith({
         activeEffects: activeEffectsData,
       });
     }
@@ -283,10 +283,10 @@ const module = {
     const buttonPos = game.settings.get(CONSTANTS.MODULE_NAME, 'hudPos');
     const hiddenValue = app.object.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN);
     const borderButton = `<div class="control-icon toggleStealth ${
-      (hiddenValue && hiddenValue != 0) ? 'active' : ''
+      hiddenValue && hiddenValue != 0 ? 'active' : ''
     }" title="Toggle Stealth"> <i class="fas fa-eye"></i></div>`;
     const Pos = html.find(buttonPos);
     Pos.append(borderButton);
     html.find('.toggleStealth').click(toggleStealth.bind(app));
-  }
+  },
 };

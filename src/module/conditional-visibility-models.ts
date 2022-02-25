@@ -52,7 +52,6 @@ export enum AtcvEffectSenseFlags {
   BLINDED = 'blinded',
 }
 
-
 export enum AtcvEffectConditionFlags {
   INVISIBLE = 'invisible',
   OBSCURED = 'obscured',

@@ -65,10 +65,10 @@ If each condition is added to the CUB set, Conditional Visibility will again fun
 
 | image | effectId | image path | 
 | --- | --- | --- |
-| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/hidden.svg" alt="" style="height: 50px; width:50px; background:#454545;"/> | Hidden | modules/conditional-visibility-new/icons/newspaper.svg | 
-| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/invisible.svg" alt="" style="height: 50px; width:50px; background:#454545;"/> | Invisible | modules/conditional-visibility-new/icons/unknown.svg | 
-| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/obscured.svg" alt="" style="height: 50px; width:50px; background:#454545;"/> | Obscured | modules/conditional-visibility-new/icons/foggy.svg | 
-| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/indarkness.svg" alt="" style="height: 50px; width:50px; background:#454545;"/> | In Darkness | modules/conditional-visibility-new/icons/moon.svg | 
+| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/hidden.svg" alt="" style="height: 50px; width:50px; background:#454545;"></img> | Hidden | modules/conditional-visibility-new/icons/newspaper.svg | 
+| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/invisible.svg" alt="" style="height: 50px; width:50px; background:#454545;"></img> | Invisible | modules/conditional-visibility-new/icons/unknown.svg | 
+| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/obscured.svg" alt="" style="height: 50px; width:50px; background:#454545;"></img> | Obscured | modules/conditional-visibility-new/icons/foggy.svg | 
+| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/indarkness.svg" alt="" style="height: 50px; width:50px; background:#454545;"></img> | In Darkness | modules/conditional-visibility-new/icons/moon.svg | 
 
 ### Apply sense and condition from Token Config
 

@@ -538,12 +538,11 @@ const API = {
     const conditions = API.CONDITIONS;
     allSensesAndConditions = mergeByProperty(allSensesAndConditions, senses, 'id');
     allSensesAndConditions = mergeByProperty(allSensesAndConditions, conditions, 'id');
-
     const sensesOrderByName = <SenseData[]>allSensesAndConditions.sort((a, b) => a.name.localeCompare(b.name));
     return sensesOrderByName;
   },
 
-  async registerSense(senseData: SenseData) {
+  async registerSense(senseData: SenseData):Promise<void> {
     const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'senses');
     const newSensesData = await this._registerSenseData(senseData, sensesData, 'sense', false);
     if (newSensesData && newSensesData.length > 0) {
@@ -551,7 +550,7 @@ const API = {
     }
   },
 
-  async registerCondition(senseData: SenseData) {
+  async registerCondition(senseData: SenseData):Promise<void> {
     const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
     const newSensesData = await this._registerSenseData(senseData, sensesData, 'condition', false);
     if (newSensesData && newSensesData.length > 0) {
@@ -559,81 +558,68 @@ const API = {
     }
   },
 
-  async unRegisterSense(senseData: SenseData) {
+  async unRegisterSense(senseDataIdOrName: string):Promise<void> {
     const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'senses');
-    const newSensesData = await this._registerSenseData(senseData, sensesData, 'sense', true);
+    const newSensesData = await this._unregisterSenseData(senseDataIdOrName, sensesData, 'sense', true);
     if (newSensesData && newSensesData.length > 0) {
       await game.settings.set(CONSTANTS.MODULE_NAME, 'senses', newSensesData);
     }
   },
 
-  async unRegisterCondition(senseData: SenseData) {
+  async unRegisterCondition(senseDataIdOrName: string):Promise<void> {
     const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
-    const newSensesData = await this._registerSenseData(senseData, sensesData, 'condition', true);
+    const newSensesData = await this._unregisterSenseData(senseDataIdOrName, sensesData, 'condition', true);
     if (newSensesData && newSensesData.length > 0) {
       await game.settings.set(CONSTANTS.MODULE_NAME, 'conditions', newSensesData);
     }
   },
 
-  async _registerOrUnregisterSenseData(
+  async _registerSenseData(
     senseData: SenseData,
     sensesDataList: SenseData[],
     valueComment: string,
-    unregister: boolean,
   ) {
     if (!senseData.id) {
-      if (unregister) {
-        dialogWarning(`Cannot unregister the ${valueComment} with id empty or null`);
-      } else {
-        dialogWarning(`Cannot register the ${valueComment} with id empty or null`);
-      }
+      dialogWarning(`Cannot register the ${valueComment} with id empty or null`);
       return;
     }
     if (!senseData.name) {
-      if (unregister) {
-        dialogWarning(`Cannot unregister the ${valueComment} with name empty or null`);
-      } else {
-        dialogWarning(`Cannot register the ${valueComment} with name empty or null`);
-      }
+      dialogWarning(`Cannot register the ${valueComment} with name empty or null`);
       return;
     }
-    // if(!senseData.visionLevelMinIndex){
-    //   dialogWarning(`Cannot register the ${valueComment} with visionLevelMinIndex empty or null`);
-    //   return;
-    // }
-    // if(!senseData.visionLevelMaxIndex){
-    //   dialogWarning(`Cannot register the ${valueComment} with visionLevelMaxIndex empty or null`);
-    //   return;
-    // }
-
     const sensesAndConditionDataList = <SenseData[]>await this.getAllSensesAndConditions();
-
     const senseAlreadyExistsId = sensesAndConditionDataList.find((a: SenseData) => (a.id = senseData.id));
     const senseAlreadyExistsName = sensesAndConditionDataList.find((a: SenseData) => (a.name == senseData.name));
-
-    if (!unregister && senseAlreadyExistsId) {
+    if (senseAlreadyExistsId) {
       dialogWarning(`Cannot register the ${valueComment} with id '${senseData.id}' because already exists`);
       return;
     }
-    if (!unregister && senseAlreadyExistsName) {
+    if (senseAlreadyExistsName) {
       dialogWarning(`Cannot register the ${valueComment} with name '${senseData.name}' because already exists`);
       return;
     }
-    if (unregister && !senseAlreadyExistsId) {
-      dialogWarning(`Cannot unregister the ${valueComment} with id '${senseData.id}' because is not exists exists`);
+    sensesDataList.push(senseData);
+    return sensesDataList;
+  },
+
+  async _unregisterSenseData(
+    senseDataIdOrName: string,
+    sensesDataList: SenseData[],
+    valueComment: string,
+  ) {
+    if (!senseDataIdOrName) {
+      dialogWarning(`Cannot unregister the ${valueComment} with id empty or null`);
       return;
     }
-    if (unregister && !senseAlreadyExistsName) {
-      dialogWarning(`Cannot unregister the ${valueComment} with id '${senseData.name}' because is not exists`);
+    const sensesAndConditionDataList = <SenseData[]>await this.getAllSensesAndConditions();
+    const senseAlreadyExistsId = <SenseData>sensesAndConditionDataList.find((a: SenseData) => (a.id == senseDataIdOrName || a.name == senseDataIdOrName));
+    if (!senseAlreadyExistsId) {
+      dialogWarning(`Cannot unregister the ${valueComment} with id '${senseDataIdOrName}' because is not exists exists`);
       return;
     }
-    if (unregister) {
-      sensesDataList = sensesDataList.filter(function (el) {
-        return el.id != senseData.id;
-      });
-    } else {
-      sensesDataList.push(senseData);
-    }
+    sensesDataList = sensesDataList.filter(function (el) {
+      return (el.id != senseAlreadyExistsId.id);
+    });
     return sensesDataList;
   },
 

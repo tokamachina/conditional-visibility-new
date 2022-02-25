@@ -37,15 +37,11 @@ This module uses the [libWrapper](https://github.com/ruipin/fvtt-lib-wrapper) li
 ### socketlib
 
 This module uses the [socketlib](https://github.com/manuelVo/foundryvtt-socketlib) library for wrapping core methods. It is a hard dependency and it is recommended for the best experience and compatibility with other modules.
-
-### levels (optional but it should work)
-
-This module uses the [levels](https://github.com/theripper93/Levels) library. It is a optional but suggested dependency and it is recommended for the best experience and compatibility with other modules.
-
 ## Usage
 
 A usage documentation is reachable [here](./wiki/tutorial.md)
-### Conditions and sense combination by system default
+
+## Conditions and sense combination by system default
 
 #### [System Dnd5e](./wiki/table_dnd5e.md)
 #### [System Pathfinder 2e](./wiki/table_pf2e.md)
@@ -53,37 +49,15 @@ A usage documentation is reachable [here](./wiki/tutorial.md)
 
 ## Features
 
-### [Removed we manage everything with Active effects] Hidden (currently 5e only)
+### Module compatibility
 
-When the hidden condition is selected, a stealth roll is automatically made, which can be customized before closing. The token will only be seen by a token whose passive perception exceeds that stealth roll.
-#### [Removed we manage everything with Active effects] Auto-applied from Stealth Rolls
+- **Integration with [Shared vision](https://github.com/CDeenen/SharedVision/):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the levels module.
 
-Conditional Visibility contains an setting to auto-apply the hidden condition based on a stealth roll. Currently only 5e; again, contributions for other systems are welcomed.
+- **Integration with [Levels](https://github.com/theripper93/Levels):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the levels module.
 
-When this setting is true, then rolling stealth from that token's character sheet will apply the hidden condition based on the value of that roll.
+- **Integration with [DFreds Convenient Effects](https://github.com/DFreds/dfreds-convenient-effects):** documentation work in progress, but is basically all automatic so it should work for all senses and conditions are present on the graphic ui of this module.
 
-### Integration with [Shared vision](https://github.com/CDeenen/SharedVision/)
-
-The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the levels module.
-
-### Integration with [Levels](https://github.com/theripper93/Levels)
-
-The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the levels module.
-
-### Integration with [DFreds Convenient Effects](https://github.com/DFreds/dfreds-convenient-effects)
-
-documentation work in progress, but is basically all automatic so it should work all senses and conditions are present on the graphic ui of this module.
-
-### [On developing or maybe never...] Integration with [Combat utility belt](https://github.com/death-save/combat-utility-belt)
-
-## Api
-
-The API documentation is reachable here [API](./wiki/api.md)
-
-## Features
-
-## Note for Combat Utility Belt Users
-If you use Combat Utility Belt and check "Remove Default Status Effects," it will remove those Status Effects necessary for this module to function.  They can be re-added using Combat Utility Belt's Condition Lab:
+- **Integration with [Combat Utility Belt or CUB](https://github.com/death-save/combat-utility-belt):** If you use Combat Utility Belt and check "Remove Default Status Effects," it will remove those Status Effects necessary for this module to function.  They can be re-added using Combat Utility Belt's Condition Lab.
 
 ![Example: Adding Unknown](./wiki/images/95407444-06d6a880-08eb-11eb-9478-6401fc1d02f8.png)
 
@@ -95,6 +69,25 @@ If each condition is added to the CUB set, Conditional Visibility will again fun
 | <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/invisible.svg" alt="" style="height: 50px; width:50px; background: #454545;"/> | Invisible | modules/conditional-visibility-new/icons/unknown.svg | 
 | <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/obscured.svg" alt="" style="height: 50px; width:50px; background: #454545;"/> | Obscured | modules/conditional-visibility-new/icons/foggy.svg | 
 | <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/indarkness.svg" alt="" style="height: 50px; width:50px; background: #454545;"/> | In Darkness | modules/conditional-visibility-new/icons/moon.svg | 
+
+### Apply sense and condition from Token Config
+
+Every sense and condtion can be setted on the token config vision tab, remember the `0` value is the deactivate/default/nullable value, the `-1` is the infinite (the avoid any check because i won anyway) value. 
+Depends on the value you set the module will automatically create, updated and remove the active effect on the current token, you can anyway go to edit the active effect manually and change the value and these settings are updated either way.
+
+**NOTE:** Limitation do not use multiple active effects with the same key on the change values `ATCV.<sense or condtion id>`, checkout the [Active effect paragraph on the tutorial](./wiki/tutorial.md)
+
+### [Not reccomended we manage everything with Active effects] Auto-applied from Stealth Rolls and auto appplied hidden
+
+Conditional Visibility contains an setting to auto-apply the hidden condition based on a stealth roll. The reuslt can be differnete depends on the current game system ,contributions for other systems are welcomed.
+
+When this setting is true, then rolling stealth form the HUD config of that token's character sheet will apply the hidden condition based on the value of that roll.
+
+### [On developing or maybe never...] Integration with [Combat utility belt](https://github.com/death-save/combat-utility-belt)
+
+## Api
+
+The API documentation is reachable here [API](./wiki/api.md)
 
 ## [Changelog](./CHANGELOG.md)
 

@@ -44,6 +44,8 @@ There three type of these AE used and supported from this module:
 
 **NOTE:** by default all _senses_ are passive AE and all _conditions_ are _temporary_ AE
 
+
+
 ## Can i add my custom sense or condition on it ?
 
 You can add a custom sense or condition by using these code (it' the same of the module [DFreds Convenient Effects](https://github.com/DFreds/dfreds-convenient-effects))

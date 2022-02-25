@@ -21,7 +21,7 @@ The calculation between the sense of the source token and the conditions of the 
 
 | Image | Condition Level | effectId used on the module | Minimum  | Maximum | Check Elevation |
 |:------|:----------------|:---------------------------:|:--------:|:-------:|:---------------:|
-|<img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/hidden.svg" alt="" style="height: 50px; width:50px; background: #454545;"/> | Hidden | hidden | 0 | 1 | false |
-|<img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/invisible.svg" alt="" style="height: 50px; width:50px; background: #454545;"/> | Invisible | invisible | 0 | 4 | false |
-|<img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/obscured.svg" alt="" style="height: 50px; width:50px; background: #454545;"/> | Obscured | obscured | 0 | 6 | false |
-|<img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/indarkness.svg" alt="" style="height: 50px; width:50px; background: #454545;"/> | In darkness | indarkness | 0 | 6 | false |
+|<img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/hidden.svg" alt="" style="height: 50px; width:50px; background:#454545;"/> | Hidden | hidden | 0 | 1 | false |
+|<img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/invisible.svg" alt="" style="height: 50px; width:50px; background:#454545;"/> | Invisible | invisible | 0 | 4 | false |
+|<img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/obscured.svg" alt="" style="height: 50px; width:50px; background:#454545;"/> | Obscured | obscured | 0 | 6 | false |
+|<img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/indarkness.svg" alt="" style="height: 50px; width:50px; background:#454545;"/> | In darkness | indarkness | 0 | 6 | false |

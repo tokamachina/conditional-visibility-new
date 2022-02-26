@@ -216,6 +216,14 @@ function defaultSettings(apply = false) {
       default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.PERCEPTION_PASSIVE_SKILL : '',
       type: String,
     },
+    passiveStealthSkill: {
+      name: `${CONSTANTS.MODULE_NAME}.setting.passiveStealthSkill.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.passiveStealthSkill.hint`,
+      scope: 'world',
+      config: true,
+      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.STEALTH_PASSIVE_SKILL : '',
+      type: String,
+    },
     activeStealthSkill: {
       name: `${CONSTANTS.MODULE_NAME}.setting.activeStealthSkill.name`,
       hint: `${CONSTANTS.MODULE_NAME}.setting.activeStealthSkill.hint`,

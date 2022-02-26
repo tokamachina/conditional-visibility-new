@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import API from './api';
 import CONSTANTS from './constants';
 import Effect from './effects/effect';
@@ -145,6 +146,14 @@ export class VisionCapabilities {
     }
   }
 
+  // async initialize(){
+  //   // SENSES
+  //   await this.addSenses();
+
+  //   // CONDITIONS
+  //   await this.addConditions();
+  // }
+
   // canSee(statusEffectSight: StatusEffectSightFlags) {
 
   // }
@@ -166,7 +175,7 @@ export class VisionCapabilities {
   // }
   // rollStealth(): Roll {
   //   //@ts-ignore
-  //   const roll = new Roll('1d20 + (' + this.token.actor.data.data.skills.ste.total + ')').roll();
+  //   const roll = await new Roll('1d20 + (' + this.token.actor.data.data.skills.ste.total + ')').roll();
   //   return roll;
   // }
   hasSenses() {
@@ -226,17 +235,19 @@ export class VisionCapabilities {
         let conditionElevation = false;
         let conditionTargets: string[] = [];
         let conditionSources: string[] = [];
-        if (!visionLevelValue || visionLevelValue == 0) {
-          // try to serach on active effect
-          if (await API.hasEffectAppliedOnToken(this.token.id, i18n(statusSight.name), true)) {
-            const ae = <ActiveEffect>await API.findEffectByNameOnToken(this.token.id, i18n(statusSight.name));
-            conditionElevation = retrieveAtcvElevationFromActiveEffect(ae.data.changes);
-            conditionTargets = retrieveAtcvTargetsFromActiveEffect(ae.data.changes);
-            conditionSources = retrieveAtcvSourcesFromActiveEffect(ae.data.changes);
-            visionLevelValue = retrieveAtcvVisionLevelFromActiveEffect(ae, statusSight);
-            visionDistanceValue = retrieveAtcvVisionLevelDistanceFromActiveEffect(ae);
-          }
-        }
+        // if (!visionLevelValue || visionLevelValue == 0) {
+        // try to serach on active effect
+        // if (await API.hasEffectAppliedOnToken(this.token.id, i18n(statusSight.name), true)) {
+        // const ae = <ActiveEffect>await API.findEffectByNameOnToken(this.token.id, i18n(statusSight.name));
+        // if(ae){
+        //   conditionElevation = retrieveAtcvElevationFromActiveEffect(ae.data.changes);
+        //   conditionTargets = retrieveAtcvTargetsFromActiveEffect(ae.data.changes);
+        //   conditionSources = retrieveAtcvSourcesFromActiveEffect(ae.data.changes);
+        //   visionLevelValue = retrieveAtcvVisionLevelFromActiveEffect(ae, statusSight);
+        //   visionDistanceValue = retrieveAtcvVisionLevelDistanceFromActiveEffect(ae);
+        // }
+        // }
+        // }
 
         const statusEffect = <AtcvEffect>{
           visionElevation: conditionElevation ?? false,
@@ -280,17 +291,19 @@ export class VisionCapabilities {
         let conditionElevation = false;
         let conditionTargets: string[] = [];
         let conditionSources: string[] = [];
-        if (!visionLevelValue || visionLevelValue == 0) {
-          // try to serach on active effect
-          if (await API.hasEffectAppliedOnToken(this.token.id, i18n(statusSight.name), true)) {
-            const ae = <ActiveEffect>await API.findEffectByNameOnToken(this.token.id, i18n(statusSight.name));
-            conditionElevation = retrieveAtcvElevationFromActiveEffect(ae.data.changes);
-            conditionTargets = retrieveAtcvTargetsFromActiveEffect(ae.data.changes);
-            conditionSources = retrieveAtcvSourcesFromActiveEffect(ae.data.changes);
-            visionLevelValue = retrieveAtcvVisionLevelFromActiveEffect(ae, statusSight);
-            visionDistanceValue = retrieveAtcvVisionLevelDistanceFromActiveEffect(ae);
-          }
-        }
+        // if (!visionLevelValue || visionLevelValue == 0) {
+        // try to serach on active effect
+        // if (await API.hasEffectAppliedOnToken(this.token.id, i18n(statusSight.name), true)) {
+        // const ae = <ActiveEffect>await API.findEffectByNameOnToken(this.token.id, i18n(statusSight.name));
+        // if(ae){
+        //   conditionElevation = retrieveAtcvElevationFromActiveEffect(ae.data.changes);
+        //   conditionTargets = retrieveAtcvTargetsFromActiveEffect(ae.data.changes);
+        //   conditionSources = retrieveAtcvSourcesFromActiveEffect(ae.data.changes);
+        //   visionLevelValue = retrieveAtcvVisionLevelFromActiveEffect(ae, statusSight);
+        //   visionDistanceValue = retrieveAtcvVisionLevelDistanceFromActiveEffect(ae);
+        // }
+        // }
+        // }
 
         const statusEffect = <AtcvEffect>{
           visionElevation: conditionElevation ?? false,

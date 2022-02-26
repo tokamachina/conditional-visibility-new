@@ -19,10 +19,16 @@
   "conditional-visibility.setting.activeStealthSkill.name": "Active stealth skill",
   "conditional-visibility.setting.activeStealthSkill.hint": "[Not recommended now you can manage everything and better with AE] Make sense only with 'Auto hide on stealth rolls' setting set to true. Here you can configure what the attribute path is for each actor's passive stealth. For example, in D&D5e system, each actor's active stealth is stored in the item's \"actor.data.data.skills.ste.total\" attribute, so you'd put \"data.skills.ste.total\" in this setting.",
 
+  "conditional-visibility.setting.enableHud.name": "CV HUD element",
+  "conditional-visibility.setting.enableHud.hint": "Add Token HUD element to disable/enable hidden condition",
+
+  "conditional-visibility.setting.hudPos.name": "CV Control HUD Position",
+  "conditional-visibility.setting.hudPos.hint": "HUD position of the hidden button on the token",
+
   "conditional-visibility.token.config.senses.title": "Senses",
   "conditional-visibility.token.config.conditions.title": "Conditions",
-  "conditional-visibility.token.config.extraSenseInstructions": "Additional senses that may enhance vision, for unlimited range use -1",
-  "conditional-visibility.token.config.extraConditionInstructions": "Additional conditions that may enhance vision, for unlimited range use -1",
+  "conditional-visibility.token.config.extraSenseInstructions": "Additional senses that may enhance vision, for unlimited range use <= -1",
+  "conditional-visibility.token.config.extraConditionInstructions": "Additional conditions that may enhance vision, for unlimited range use <= -1",
 
   "conditional-visibility.invisible": "Invisible",
   "conditional-visibility.obscured": "Obscured",
@@ -103,7 +109,7 @@
   "conditional-visibility.dialogs.title.hidden": "Roll stealth",
   "conditional-visibility.dialogs.stealth.not.supported": "Conditional Visilbity does not support the hidden condition/stealth for {sysid}",
   "conditional-visibility.dialogs.currentstealth": "Current Stealth",
-  "conditional-visibility.dialogs.stealthroll": "Stealh Roll",
+  "conditional-visibility.dialogs.stealthroll": "Stealh Roll, for unlimited range use <= -1",
   "conditional-visibility.dialogs.stealthrolldescription": "This value will be compared with passive perception as long is the token is hiding.  Non-numeric entries will result in the initial value being taken",
 
   "conditional-visibility.dialogs.resetsettings.title": "Reset Module Settings",

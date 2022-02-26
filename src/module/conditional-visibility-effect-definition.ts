@@ -78,38 +78,53 @@ export class ConditionalVisibilityEffectDefinitions {
     return effects;
   }
 
-  static effect(name: string, distance = 0, visionLevel = 0): Effect | undefined {
-    const effect = <Effect>ConditionalVisibilityEffectDefinitions.all(distance).find((effect: Effect) => {
-      return effect.name.toLowerCase() === name.toLowerCase();
+  static async effect(nameOrCustomId: string, distance = 0, visionLevel = 0): Promise<Effect | undefined> {
+    const effect = <Effect>ConditionalVisibilityEffectDefinitions.all(distance, visionLevel).find((effect: Effect) => {
+      return (
+        effect.name.toLowerCase() === nameOrCustomId.toLowerCase() ||
+        effect.customId.toLowerCase() === nameOrCustomId.toLowerCase()
+      );
     });
-    if (effect?.customId == AtcvEffectSenseFlags.BLINDED) {
-      return ConditionalVisibilityEffectDefinitions.blinded(distance, visionLevel);
+    if (!effect) {
+      warn(`Not founded effect with name ${nameOrCustomId}`, true);
+      return undefined;
     }
-    if (effect?.customId == AtcvEffectSenseFlags.BLIND_SIGHT) {
-      return ConditionalVisibilityEffectDefinitions.blindsight(distance, visionLevel);
+    const senses = await API.getAllSensesAndConditions();
+    let effectFounded: Effect | undefined = undefined;
+    for (const senseData of senses) {
+      if (effect?.customId == senseData.id || i18n(effect.name) == i18n(senseData.name)) {
+        effectFounded = effect;
+        break;
+      }
     }
-    if (effect?.customId == AtcvEffectSenseFlags.DARKVISION) {
-      return ConditionalVisibilityEffectDefinitions.darkvision(distance, visionLevel);
-    }
-    if (effect?.customId == AtcvEffectSenseFlags.DEVILS_SIGHT) {
-      return ConditionalVisibilityEffectDefinitions.devilssight(distance, visionLevel);
-    }
-    if (effect?.customId == AtcvEffectSenseFlags.GREATER_DARKVISION) {
-      return ConditionalVisibilityEffectDefinitions.darkvision(distance, visionLevel);
-    }
-    if (effect?.customId == AtcvEffectSenseFlags.LOW_LIGHT_VISION) {
-      return ConditionalVisibilityEffectDefinitions.lowlightvision(distance, visionLevel);
-    }
-    if (effect?.customId == AtcvEffectSenseFlags.SEE_INVISIBLE) {
-      return ConditionalVisibilityEffectDefinitions.seeinvisible(distance, visionLevel);
-    }
-    if (effect?.customId == AtcvEffectSenseFlags.TREMOR_SENSE) {
-      return ConditionalVisibilityEffectDefinitions.tremorsense(distance, visionLevel);
-    }
-    if (effect?.customId == AtcvEffectSenseFlags.TRUE_SIGHT) {
-      return ConditionalVisibilityEffectDefinitions.truesight(distance, visionLevel);
-    }
-    return undefined;
+    return effectFounded;
+    // if (effect?.customId == AtcvEffectSenseFlags.BLINDED) {
+    //   return ConditionalVisibilityEffectDefinitions.blinded(distance, visionLevel);
+    // }
+    // if (effect?.customId == AtcvEffectSenseFlags.BLIND_SIGHT) {
+    //   return ConditionalVisibilityEffectDefinitions.blindsight(distance, visionLevel);
+    // }
+    // if (effect?.customId == AtcvEffectSenseFlags.DARKVISION) {
+    //   return ConditionalVisibilityEffectDefinitions.darkvision(distance, visionLevel);
+    // }
+    // if (effect?.customId == AtcvEffectSenseFlags.DEVILS_SIGHT) {
+    //   return ConditionalVisibilityEffectDefinitions.devilssight(distance, visionLevel);
+    // }
+    // if (effect?.customId == AtcvEffectSenseFlags.GREATER_DARKVISION) {
+    //   return ConditionalVisibilityEffectDefinitions.darkvision(distance, visionLevel);
+    // }
+    // if (effect?.customId == AtcvEffectSenseFlags.LOW_LIGHT_VISION) {
+    //   return ConditionalVisibilityEffectDefinitions.lowlightvision(distance, visionLevel);
+    // }
+    // if (effect?.customId == AtcvEffectSenseFlags.SEE_INVISIBLE) {
+    //   return ConditionalVisibilityEffectDefinitions.seeinvisible(distance, visionLevel);
+    // }
+    // if (effect?.customId == AtcvEffectSenseFlags.TREMOR_SENSE) {
+    //   return ConditionalVisibilityEffectDefinitions.tremorsense(distance, visionLevel);
+    // }
+    // if (effect?.customId == AtcvEffectSenseFlags.TRUE_SIGHT) {
+    //   return ConditionalVisibilityEffectDefinitions.truesight(distance, visionLevel);
+    // }
   }
 
   // ===========================================

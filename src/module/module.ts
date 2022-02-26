@@ -8,6 +8,7 @@ import {
   debug,
   getConditionsFromToken,
   getSensesFromToken,
+  i18n,
   prepareActiveEffectForConditionalVisibility,
   toggleStealth,
 } from './lib/lib';
@@ -16,7 +17,7 @@ import EffectInterface from './effects/effect-interface';
 import { registerHotkeys } from './hotkeys';
 import { canvas, game } from './settings';
 import { checkSystem } from './settings';
-import { AtcvEffectConditionFlags, AtcvEffectSenseFlags, VisionCapabilities } from './conditional-visibility-models';
+import { AtcvEffectConditionFlags, AtcvEffectSenseFlags, SenseData, VisionCapabilities } from './conditional-visibility-models';
 import {
   EffectChangeData,
   EffectChangeDataSource,
@@ -86,9 +87,6 @@ export const readyHooks = async (): Promise<void> => {
   Hooks.on('renderTokenConfig', (tokenConfig, html, data) => {
     module.onRenderTokenConfig(tokenConfig, html, data);
   });
-  Hooks.on('renderTokenHUD', (app, html, token) => {
-    module.onRenderTokenHUD(app, html, token);
-  });
 
   Hooks.on('updateToken', (document: TokenDocument, change, options, userId) => {
     module.updateToken(document, change, options, userId);
@@ -139,7 +137,7 @@ const module = {
   onRenderTokenHUD(app, html, token) {
     // DO NOTHING FOR NOW
   },
-  updateToken(document: TokenDocument, change, options, userId) {
+  async updateToken(document: TokenDocument, change, options, userId) {
     const token = <Token>document.object;
     if (change.flags && change.flags[CONSTANTS.MODULE_NAME]) {
       const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(<Token>document.object);
@@ -147,6 +145,16 @@ const module = {
         // const sourceVisionLevels = getSensesFromToken(<Token>document.object);
         prepareActiveEffectForConditionalVisibility(token, sourceVisionCapabilities);
         // const sourceVisionLevels = getSensesFromToken(<Token>document.object);
+      } else {
+        for (const senseData of await API.getAllSensesAndConditions()) {
+          const effectNameToCheckOnActor = i18n(<string>senseData?.name);
+          if (await API.hasEffectAppliedOnToken(<string>token.id, effectNameToCheckOnActor, true)) {
+            const activeEffectToRemove = <ActiveEffect>(
+              await API.findEffectByNameOnToken(<string>token.id, effectNameToCheckOnActor)
+            );
+            await API.removeEffectFromIdOnToken(<string>token.id, <string>activeEffectToRemove.id);
+          }
+        }
       }
     }
     // If Using Stealth Mode for Player Tokens
@@ -178,25 +186,27 @@ const module = {
     if (effect.data.disabled) {
       ATCVeffects.push(effect);
     }
+
+    const entity = <Actor>effect.parent;
+    if (entity.documentName !== 'Actor') {
+      return;
+    }
+    let link = getProperty(entity, 'data.token.actorLink');
+    if (link === undefined) {
+      link = true;
+    }
+    let tokenArray: Token[] = [];
+    if (!link) {
+      //@ts-ignore
+      tokenArray = [entity.token?.object];
+    } else {
+      tokenArray = entity.getActiveTokens();
+    }
+    if (tokenArray === []) {
+      return;
+    }
+
     if (ATCVeffects.length > 0) {
-      const entity = <Actor>effect.parent;
-      if (entity.documentName !== 'Actor') {
-        return;
-      }
-      let link = getProperty(entity, 'data.token.actorLink');
-      if (link === undefined) {
-        link = true;
-      }
-      let tokenArray: Token[] = [];
-      if (!link) {
-        //@ts-ignore
-        tokenArray = [entity.token?.object];
-      } else {
-        tokenArray = entity.getActiveTokens();
-      }
-      if (tokenArray === []) {
-        return;
-      }
       // Organize non-disabled effects by their application priority
       const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e: ActiveEffect) => {
         if (e.data.disabled) {
@@ -225,21 +235,35 @@ const module = {
           if (updateKey === statusSight.id) {
             // TODO TO CHECK IF WE NEED TO FILTER THE TOKENS AGAIN MAYBE WITH A ADDITIONAL ATCV active change data effect ?
             for (const tokenToSet of tokenArray) {
-              //await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
-              if (isRemoved) {
-                setProperty(tokenToSet.document, `data.flags.${CONSTANTS.MODULE_NAME}.${statusSight.id}`, 0);
-              } else {
-                setProperty(tokenToSet.document, `data.flags.${CONSTANTS.MODULE_NAME}.${statusSight.id}`, change.value);
-              }
-              if (statusSight?.path) {
+              if (change.value != tokenToSet?.document.getFlag(CONSTANTS.MODULE_NAME, updateKey)) {
                 if (isRemoved) {
-                  setProperty(tokenToSet.document, <string>statusSight?.path, 0);
+                  await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, 0);
+                  // setProperty(tokenToSet.document, `data.flags.${CONSTANTS.MODULE_NAME}.${statusSight.id}`, 0);
                 } else {
-                  setProperty(tokenToSet.document, <string>statusSight?.path, change.value);
+                  await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
+                  // setProperty(tokenToSet.document, `data.flags.${CONSTANTS.MODULE_NAME}.${statusSight.id}`, change.value);
+                }
+                if (statusSight?.path) {
+                  if (isRemoved) {
+                    setProperty(tokenToSet.document, <string>statusSight?.path, 0);
+                  } else {
+                    setProperty(tokenToSet.document, <string>statusSight?.path, change.value);
+                  }
                 }
               }
             }
             break;
+          }
+        }
+      }
+    }else{
+      if(isRemoved){
+        for(const tok of tokenArray){
+          const sense = (await API.getAllSensesAndConditions()).find((s:SenseData) =>{
+            return i18n(s.name) == i18n(<string>effect.name);
+          });
+          if(sense?.id){
+            await tok?.document.setFlag(CONSTANTS.MODULE_NAME, sense?.id, 0);
           }
         }
       }
@@ -273,20 +297,26 @@ const module = {
     }
   },
   async renderTokenHUD(...args) {
-    const [app, html, data] = args;
-    if (!game.user?.isGM) {
-      return;
+    if (game.settings.get(CONSTANTS.MODULE_NAME, 'autoStealth')) {
+      const [app, html, data] = args;
+      if (!game.user?.isGM) {
+        return;
+      }
+      if (!game.settings.get(CONSTANTS.MODULE_NAME, 'enableHud')) {
+        return;
+      }
+      const buttonPos = game.settings.get(CONSTANTS.MODULE_NAME, 'hudPos');
+      const hiddenValue = app.object.document.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN);
+      const borderButton = `<div class="control-icon toggleStealth ${
+        hiddenValue && hiddenValue != 0 ? 'active' : ''
+      }" ${
+        hiddenValue && hiddenValue != 0
+          ? `style="background: blue; opacity:0.85;"`
+          : `style="background: blueviolet; opacity:0.85;"`
+      } title="Toggle Stealth"> <i class="fas fa-eye"></i></div>`;
+      const Pos = html.find(buttonPos);
+      Pos.append(borderButton);
+      html.find('.toggleStealth').click(toggleStealth.bind(app));
     }
-    if (!game.settings.get(CONSTANTS.MODULE_NAME, 'enableHud')) {
-      return;
-    }
-    const buttonPos = game.settings.get(CONSTANTS.MODULE_NAME, 'hudPos');
-    const hiddenValue = app.object.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN);
-    const borderButton = `<div class="control-icon toggleStealth ${
-      hiddenValue && hiddenValue != 0 ? 'active' : ''
-    }" title="Toggle Stealth"> <i class="fas fa-eye"></i></div>`;
-    const Pos = html.find(buttonPos);
-    Pos.append(borderButton);
-    html.find('.toggleStealth').click(toggleStealth.bind(app));
   },
 };

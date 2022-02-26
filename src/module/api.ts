@@ -644,19 +644,25 @@ const API = {
   },
 
   async rollStealth(token: Token): Promise<number> {
+    let total = 0;
     if (token && token.actor) {
       const stealthActiveSetting = API.STEALTH_ACTIVE_SKILL; //game.settings.get(CONSTANTS.MODULE_NAME, 'passiveStealthSkill');
       const stealthActive = <number>getProperty(token.actor, `data.${stealthActiveSetting}`);
       if (stealthActiveSetting && stealthActive && !isNaN(stealthActive)) {
-        const roll = new Roll('1d20 + (' + stealthActive + ')').roll();
-        return roll._total;
+        const roll = await new Roll('1d20 + (' + stealthActive + ')').roll();
+        total = roll._total;
       }
-      const roll = new Roll('1d20').roll();
-      return roll._total;
+      const roll = await new Roll('1d20').roll();
+      total = roll._total;
     } else {
-      const roll = new Roll('1d20').roll();
-      return roll._total;
+      const roll = await new Roll('1d20').roll();
+      total = roll._total;
     }
+    // This is atrick only for cv module
+    if (total < 0) {
+      total = 0;
+    }
+    return total;
   },
 };
 

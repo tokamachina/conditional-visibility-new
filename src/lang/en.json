@@ -33,8 +33,8 @@
 
   "conditional-visibility.token.config.senses.title": "Senses",
   "conditional-visibility.token.config.conditions.title": "Conditions",
-  "conditional-visibility.token.config.extraSenseInstructions": "Additional senses that may enhance vision, for unlimited range use <= -1",
-  "conditional-visibility.token.config.extraConditionInstructions": "Additional conditions that may enhance vision, for unlimited range use <= -1",
+  "conditional-visibility.token.config.extraSenseInstructions": "Additional senses that may enhance vision, for unlimited range use <= -1, for disable/remove use 0",
+  "conditional-visibility.token.config.extraConditionInstructions": "Additional conditions that may enhance vision, for unlimited range use <= -1, for disable/remove use 0",
 
   "conditional-visibility.invisible": "Invisible",
   "conditional-visibility.obscured": "Obscured",
@@ -115,7 +115,7 @@
   "conditional-visibility.dialogs.title.hidden": "Roll stealth",
   "conditional-visibility.dialogs.stealth.not.supported": "Conditional Visibility does not support the hidden condition/stealth for {sysid}",
   "conditional-visibility.dialogs.currentstealth": "Current Stealth",
-  "conditional-visibility.dialogs.stealthroll": "Stealh Roll, for unlimited range use <= -1",
+  "conditional-visibility.dialogs.stealthroll": "Stealh Roll, for unlimited range use <= -1, for disable/remove use 0",
   "conditional-visibility.dialogs.stealthrolldescription": "This value will be compared with passive perception (if present on the system) as long is the token is hiding.  Non-numeric entries will result in the initial value being taken",
 
   "conditional-visibility.dialogs.resetsettings.title": "Reset Module Settings",

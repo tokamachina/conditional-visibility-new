@@ -106,6 +106,8 @@ Conditional Visibility contains an setting to auto-apply the hidden condition ba
 
 When this setting is true, then rolling stealth form the HUD config of that token's character sheet will apply the hidden condition based on the value of that roll.
 
+![feature_hud](./wiki/video/feature_token_hud_1_cut.gif)
+
 **NOTE:** if the system no have the property set on the module setting or the system no support a stealth enviroment it's just roll classic 1d20, you can still manually insert the desired value
 
 ### [On developing or maybe never...] Integration with [Combat utility belt](https://github.com/death-save/combat-utility-belt)

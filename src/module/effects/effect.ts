@@ -34,7 +34,6 @@ export default class Effect {
   isTemporary: boolean;
   isSuppressed: boolean;
   dae: {};
-  isPassive: boolean;
   // END ADDED FROM 4535992
 
   constructor({
@@ -51,7 +50,6 @@ export default class Effect {
     isDisabled = false,
     isTemporary = false,
     isSuppressed = false,
-    isPassive = false,
     flags = {},
     changes = <any[]>[],
     atlChanges = <any[]>[],
@@ -84,7 +82,6 @@ export default class Effect {
     this.isDisabled = isDisabled;
     this.isTemporary = isTemporary;
     this.isSuppressed = isSuppressed;
-    this.isPassive = isPassive;
   }
 
   /**
@@ -96,6 +93,7 @@ export default class Effect {
    * @returns {object} The active effect data object for this effect
    */
   convertToActiveEffectData({ origin = '', overlay = false } = {}): Record<string, unknown> {
+    const isPassive = !this.isTemporary;
     return {
       id: this._id,
       name: this.name,
@@ -106,22 +104,19 @@ export default class Effect {
       duration: this._getDurationData(),
       flags: foundry.utils.mergeObject(this.flags, {
         core: {
-          statusId: this._id,
+          statusId: isPassive ? undefined : this._id,
           overlay: overlay ? overlay : this.overlay ? this.overlay : false, // MOD 4535992
         },
         isConvenient: true,
         convenientDescription: this.description,
         dae: this._isEmptyObject(this.dae)
-          ? this.isPassive
+          ? isPassive
             ? { stackable: false, specialDuration: [], transfer: true }
             : {}
           : this.dae,
-        // dae: {
-        //   transfer: false
-        // }
       }),
       origin: origin ? origin : this.origin ? this.origin : '', // MOD 4535992
-      transfer: this.transfer ?? false,
+      transfer: isPassive ? false : this.transfer,
       //changes: this.changes, // MOD 4535992
       changes: this._handleIntegrations(),
       // 4535992 these are not under data
@@ -145,17 +140,34 @@ export default class Effect {
   }
 
   _getDurationData() {
+    const isPassive = !this.isTemporary;
     if (game.combat) {
-      return {
-        startRound: game.combat.round,
-        rounds: this._getCombatRounds(),
-        turns: this.turns,
-      };
+      if(isPassive){
+        return {
+          startTime: game.time.worldTime,
+          startRound: 0,
+          startTurn: 0
+        }
+      }else{
+        return {
+          startRound: game.combat.round,
+          rounds: this._getCombatRounds(),
+          turns: this.turns,
+        };
+      }
     } else {
-      return {
-        startTime: game.time.worldTime,
-        seconds: this._getSeconds(),
-      };
+      if(isPassive){
+        return {
+          startTime: game.time.worldTime,
+          startRound: 0,
+          startTurn: 0
+        }
+      }else{
+        return {
+          startTime: game.time.worldTime,
+          seconds: this._getSeconds(),
+        };
+      }
     }
   }
 
@@ -237,7 +249,7 @@ export class Constants {
 }
 
 export class EffectSupport {
-  static buildDefault(senseData: SenseData): Effect {
+  static buildDefault(senseData: SenseData, isPassive:boolean): Effect {
     return new Effect({
       customId: senseData.id,
       name: senseData.name,
@@ -251,7 +263,7 @@ export class EffectSupport {
         {},
         {
           core: {
-            statusId: senseData.id,
+            statusId: isPassive ? undefined : senseData.id,
             overlay: false,
           },
           isConvenient: true,
@@ -269,7 +281,7 @@ export class EffectSupport {
         },
       ],
       isDisabled: false,
-      isTemporary: true,
+      isTemporary: !isPassive,
       isSuppressed: false,
     });
   }
@@ -370,12 +382,11 @@ export class EffectSupport {
       isDisabled,
       isTemporary,
       isSuppressed,
-      isPassive,
     });
   }
 
   static convertActiveEffectDataPropertiesToActiveEffect(
-    p: PropertiesToSource<ActiveEffectDataProperties>,
+    p: PropertiesToSource<ActiveEffectDataProperties>, isPassive:boolean
   ): ActiveEffect {
     //@ts-ignore
     return ActiveEffect.create({
@@ -391,18 +402,16 @@ export class EffectSupport {
       ),
       flags: foundry.utils.mergeObject(p.flags, {
         core: {
-          statusId: p._id,
+          statusId: isPassive ? undefined : p._id,
           //@ts-ignore
           overlay: p.overlay ? p.overlay : false, // MOD 4535992
         },
         isConvenient: true,
         //@ts-ignore
         convenientDescription: p.description ? p.description : '',
-        //@ts-ignore
-        dae: EffectSupport._isEmptyObject(p.dae) ? {} : p.dae,
-        // dae: {
-        //   transfer: false
-        // }
+        dae: this._isEmptyObject(p.flags.dae)
+          ? { stackable: false, specialDuration: [], transfer: true }
+          : p.flags.dae,
       }),
       origin: origin ? origin : p.origin ? p.origin : '', // MOD 4535992
       transfer: p.transfer ?? false,

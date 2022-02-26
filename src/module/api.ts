@@ -552,39 +552,30 @@ const API = {
       }
     }
 
+    const isSense = API.SENSES.find((sense: SenseData) => {
+      return sense.id == (<SenseData>senseData).id || i18n(sense.name) == i18n((<SenseData>senseData).name);
+    });
+
     if (!effect) {
       const senseOrCondition = <SenseData>sensesAndConditionOrderByName.find((sense: SenseData) => {
         return sense.id == (<SenseData>senseData).id || i18n(sense.name) == i18n((<SenseData>senseData).name);
       });
-      const isSense = API.SENSES.find((sense: SenseData) => {
-        return sense.id == (<SenseData>senseData).id || i18n(sense.name) == i18n((<SenseData>senseData).name);
-      });
       if (senseOrCondition) {
-        effect = EffectSupport.buildDefault(senseOrCondition);
+        effect = EffectSupport.buildDefault(senseOrCondition, !!isSense);
       }
     }
     // Add some feature if is a sense or a condition
     if (effect) {
-      const isSense = API.SENSES.find((sense: SenseData) => {
-        return sense.id == (<SenseData>senseData).id || i18n(sense.name) == i18n((<SenseData>senseData).name);
-      });
       if (isSense) {
         effect.isTemporary = false; // passive ae
+        // effect.dae = { stackable: false, specialDuration: [], transfer: true }
+        effect.transfer = false;
       }
       effect.transfer = !disabled;
     }
 
     if (!effect) {
-      // //@ts-ignore
-      // if(game.dfreds){
-      //   //@ts-ignore
-      //   const effectFounded = <Effect>game.dfreds.effectInterface.findCustomEffectByName(effect.name);
-      //   if (!effectFounded) {
       warn(`No effect found with reference '${senseDataId}'`, true);
-      //   }else{
-      //     effect = effectFounded;
-      //   }
-      // }
     } else {
       if (token && effect) {
         const nameToUse = senseData?.name ? senseData?.name : effect?.name;

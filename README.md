@@ -71,7 +71,7 @@ These modules are suggested for a better user experience with this one :
 
 ### Module compatibility
 
-- **Integration with [Shared vision](https://github.com/CDeenen/SharedVision/):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the levels module.
+- **Integration with [Shared vision](https://github.com/CDeenen/SharedVision/):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the Shared vision module.
 
 - **Integration with [Levels](https://github.com/theripper93/Levels):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the levels module.
 
@@ -81,7 +81,7 @@ All the sense and condition are automatically imported, you can disavle this on 
 
 ![df](./wiki/images/feature_dfred_conv_effects_1.png)
 
-- **Integration with [Combat Utility Belt or CUB](https://github.com/death-save/combat-utility-belt):** If you use Combat Utility Belt and check "Remove Default Status Effects," it will remove those Status Effects necessary for this module to function.  They can be re-added using Combat Utility Belt's Condition Lab.
+- **Integration with [Combat Utility Belt or CUB](https://github.com/death-save/combat-utility-belt):** If you use Combat Utility Belt you can use the new active effect management for sync with this module.
 
 ![Example: Adding Unknown](./wiki/images/95407444-06d6a880-08eb-11eb-9478-6401fc1d02f8.png)
 

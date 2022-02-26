@@ -23,10 +23,12 @@ return result;
 The calculation for the vision checks is in three points (these check are enabled for all system):
 
 1) Check if source token has the vision enabled, if disabled is like the module is not active for that token.
-2) Check if the source token has at least a active effect marked with key `ATCV.<sense or condition id>` 
-3) Check if the source token has the active effect `blinded` active, if is true, you cannot see anything.
-4) Check if the source token has at least a index value between the index of some active effect of the conditions, this will check the elevation too if the active effect key `ATCV.conditionElevation` is set to true, check out the [TABLES](./tables.md) for details, you can skip this check by using the AE key `ATCV.conditionTargets` explained below.
-5) Check if the vision level value of the sense is a number > = of the vision level value of the condition, if the sense is set to `-1` this check is automatically skipped. If the condition and the sesne are both set with value `-1` the condition won.
+2) Check if the target is owned from the player
+3) Check for the module settings 'Disable for non hostile npc'
+4) Check if the source token has at least a active effect marked with key `ATCV.<sense or condition id>` 
+5) Check if the source token has the active effect `blinded` active, if is true, you cannot see anything.
+6) Check if the source token has at least a index value between the index of some active effect of the conditions, this will check the elevation too if the active effect key `ATCV.conditionElevation` is set to true, check out the [TABLES](./tables.md) for details, you can skip this check by using the AE key `ATCV.conditionTargets` explained below.
+7) Check if the vision level value of the sense is a number > = of the vision level value of the condition, if the sense is set to `-1` this check is automatically skipped. If the condition and the sesne are both set with value `-1` the condition won.
 
 ## What active effect data changes are used from this module ?
 
@@ -43,8 +45,6 @@ There three type of these AE used and supported from this module:
 
 
 **NOTE:** by default all _senses_ are passive AE and all _conditions_ are _temporary_ AE
-
-
 
 ## Can i add my custom sense or condition on it ?
 
@@ -64,3 +64,5 @@ ConditionalVisibility.API.registerSense({
     effectCustomId:string;  // [OPTIONAL] if you use the module 'DFreds Convenient Effects', you can associate a custom active effect by using the customId string of the DFred effect
 });
 ```
+
+checkout more details on the [API](./api.md) documentation.

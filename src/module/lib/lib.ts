@@ -297,23 +297,41 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
     return true;
   }
 
+  // ===============================================
+  // 0 - Checkout the ownership of the target and the disposition of the target
+  // friendly, neutral, hostile
+  // =================================================
+
   // If you are owner of the token you can see him
   const isPlayerOwned = <boolean>targetToken.actor?.hasPlayerOwner;
   // If I'm an owner of the token; remain visible
-  if (isPlayerOwned) {
+  if (!game.user?.isGM && (isPlayerOwned || targetToken.owner)) {
     return true;
   }
 
-  // let canYouSeeMe = true;
+  const disPath = CONST.TOKEN_DISPOSITIONS;
+  const d = targetToken.data.disposition;
+  if(game.settings.get(CONSTANTS.MODULE_NAME,'disableForNonHostileNpc'))
+  if (d === disPath.FRIENDLY || d === disPath.NEUTRAL){
+    return true;
+  }
 
   // ========================================
   // 1 - Preparation of the active effect
   // =========================================
 
   const sourceVisionLevels = getSensesFromToken(sourceToken) ?? [];
+  const targetVisionLevels = getConditionsFromToken(targetToken) ?? [];
+
   if (!sourceVisionLevels || sourceVisionLevels.length == 0) {
-    return true; // default vaue
+    // If at least a condition is present on target it should be false
+    if (targetVisionLevels && targetVisionLevels.length > 0) {
+      return false;
+    } else {
+      return true; // default vaue
+    }
   }
+
   for (const sourceStatusEffect of sourceVisionLevels) {
     if (sourceStatusEffect.statusSight?.id == AtcvEffectSenseFlags.BLINDED) {
       // Someone is blind
@@ -321,7 +339,6 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
     }
   }
 
-  const targetVisionLevels = getConditionsFromToken(targetToken);
   if (!targetVisionLevels || targetVisionLevels.length == 0) {
     return true;
   }

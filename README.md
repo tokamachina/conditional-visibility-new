@@ -37,9 +37,24 @@ This module uses the [libWrapper](https://github.com/ruipin/fvtt-lib-wrapper) li
 ### socketlib
 
 This module uses the [socketlib](https://github.com/manuelVo/foundryvtt-socketlib) library for wrapping core methods. It is a hard dependency and it is recommended for the best experience and compatibility with other modules.
+
+### ATE (old ATL)
+
+This module uses the ATE library for wrapping methods. It is a hard dependency and it is recommended for the best experience and compatibility with other modules.
+
 ## Usage
 
 A usage documentation is reachable [here](./wiki/tutorial.md)
+
+These modules are suggested for a better user experience with this one :
+
+- [Status Icon Tweaks](https://github.com/jessev14/status-icon-tweaks)
+- [Temporary Effects as Token Statuses](https://github.com/ElfFriend-DnD/foundryvtt-temp-effects-as-statuses)
+- [DFreds Convenient Effects](https://github.com/DFreds/dfreds-convenient-effects)
+- [Combat Utility Belt or CUB](https://github.com/death-save/combat-utility-belt)
+- [Times up](https://gitlab.com/tposney/times-up)
+- [Dae](https://gitlab.com/tposney/dae)
+- [Sense Walls Multisystem](https://github.com/p4535992/fvtt-sense-walls-multisystem/) (working)
 
 ## Conditions and sense combination by system default
 
@@ -65,10 +80,10 @@ If each condition is added to the CUB set, Conditional Visibility will again fun
 
 | image | effectId | image path | 
 | --- | --- | --- |
-| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/hidden.svg" alt="" style="height: 50px; width:50px; background:#454545;"></img> | Hidden | modules/conditional-visibility-new/icons/newspaper.svg | 
-| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/invisible.svg" alt="" style="height: 50px; width:50px; background:#454545;"></img> | Invisible | modules/conditional-visibility-new/icons/unknown.svg | 
-| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/obscured.svg" alt="" style="height: 50px; width:50px; background:#454545;"></img> | Obscured | modules/conditional-visibility-new/icons/foggy.svg | 
-| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/indarkness.svg" alt="" style="height: 50px; width:50px; background:#454545;"></img> | In Darkness | modules/conditional-visibility-new/icons/moon.svg | 
+| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/hidden.jpg" alt="" style="height: 50px; width:50px;"></img> | Hidden | modules/conditional-visibility-new/icons/newspaper.jpg | 
+| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/invisible.jpg" alt="" style="height: 50px; width:50px;"></img> | Invisible | modules/conditional-visibility-new/icons/unknown.jpg | 
+| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/obscured.jpg" alt="" style="height: 50px; width:50px;"></img> | Obscured | modules/conditional-visibility-new/icons/foggy.jpg | 
+| <img src="https://raw.githubusercontent.com/p4535992/conditional-visibility-new/main/src/icons/indarkness.jpg" alt="" style="height: 50px; width:50px;"></img> | In Darkness | modules/conditional-visibility-new/icons/moon.jpg | 
 
 ### Apply sense and condition from Token Config
 

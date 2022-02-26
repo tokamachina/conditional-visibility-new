@@ -84,6 +84,15 @@ export const registerSettings = function (): void {
     },
   });
 
+  game.settings.register(CONSTANTS.MODULE_NAME, 'disableForNonHostileNpc', {
+    name: `${CONSTANTS.MODULE_NAME}.setting.disableForNonHostileNpc.name`,
+    hint: `${CONSTANTS.MODULE_NAME}.setting.disableForNonHostileNpc.hint`,
+    scope: 'world',
+    config: true,
+    default: false,
+    type: Boolean,
+  });
+  
   // ========================================================================
 
   game.settings.register(CONSTANTS.MODULE_NAME, 'debug', {

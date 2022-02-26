@@ -25,6 +25,9 @@
   "conditional-visibility.setting.hudPos.name": "CV Control HUD Position",
   "conditional-visibility.setting.hudPos.hint": "HUD position of the hidden button on the token",
 
+  "conditional-visibility.setting.disableForNonHostileNpc.name": "Disable for non hostile npc",
+  "conditional-visibility.setting.disableForNonHostileNpc.hint": "This will avoid the sight check for all the token with disposition FRIENDLY or NEUTRAL",
+
   "conditional-visibility.token.config.senses.title": "Senses",
   "conditional-visibility.token.config.conditions.title": "Conditions",
   "conditional-visibility.token.config.extraSenseInstructions": "Additional senses that may enhance vision, for unlimited range use <= -1",

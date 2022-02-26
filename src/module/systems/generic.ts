@@ -12,7 +12,7 @@ export default {
       id: AtcvEffectConditionFlags.HIDDEN,
       name: `${CONSTANTS.MODULE_NAME}.${AtcvEffectConditionFlags.HIDDEN}`,
       path: ``, //`data.skills.ste.passive`,
-      img: `modules/${CONSTANTS.MODULE_NAME}/icons/newspaper.svg`,
+      img: `modules/${CONSTANTS.MODULE_NAME}/icons/newspaper.jpg`,
       visionLevelMinIndex: 0,
       visionLevelMaxIndex: 1,
       conditionElevation: false,

@@ -17,7 +17,12 @@ import EffectInterface from './effects/effect-interface';
 import { registerHotkeys } from './hotkeys';
 import { canvas, game } from './settings';
 import { checkSystem } from './settings';
-import { AtcvEffectConditionFlags, AtcvEffectSenseFlags, SenseData, VisionCapabilities } from './conditional-visibility-models';
+import {
+  AtcvEffectConditionFlags,
+  AtcvEffectSenseFlags,
+  SenseData,
+  VisionCapabilities,
+} from './conditional-visibility-models';
 import {
   EffectChangeData,
   EffectChangeDataSource,
@@ -256,13 +261,13 @@ const module = {
           }
         }
       }
-    }else{
-      if(isRemoved){
-        for(const tok of tokenArray){
-          const sense = (await API.getAllSensesAndConditions()).find((s:SenseData) =>{
+    } else {
+      if (isRemoved) {
+        for (const tok of tokenArray) {
+          const sense = (await API.getAllSensesAndConditions()).find((s: SenseData) => {
             return i18n(s.name) == i18n(<string>effect.name);
           });
-          if(sense?.id){
+          if (sense?.id) {
             await tok?.document.setFlag(CONSTANTS.MODULE_NAME, sense?.id, 0);
           }
         }

@@ -46,16 +46,7 @@
   "scripts": [],
   "esmodules": ["conditional-visibility.js"],
   "styles": ["styles/conditional-visibility.css"],
-  "packs": [
-    {
-      "name": "Conditional Visibility",
-      "label": "Conditional Visibility",
-      "path": "./packs/visibility-scripts.db",
-      "module": "world",
-      "entity": "Macro",
-      "lang": []
-    }
-  ],
+  "packs": [],
 
   "minimumCoreVersion": "0.8.9",
   "compatibleCoreVersion": "9",

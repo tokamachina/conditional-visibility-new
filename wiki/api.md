@@ -169,10 +169,10 @@ A method to register a customize sense to add to the world
 **Example**:
 ```
 ConditionalVisibility.API.registerSense({
-  id: 'bloodsight'
-  name: 'Bloodsight'
-  path: ''
-  img: 'img/to/path.jpg'
+  id: 'bloodsight',
+  name: 'Bloodsight',
+  path: '',
+  img: 'systems/dnd5e/icons/spells/haste-fire-3.jpg',
   visionLevelMinIndex: 0,
   visionLevelMaxIndex: 5,
   conditionElevation: true,
@@ -184,10 +184,10 @@ ConditionalVisibility.API.registerSense({
 
 ```
 game.conditional-visibility.API.registerSense({
-  id: 'bloodsight'
-  name: 'Bloodsight'
-  path: ''
-  img: 'img/to/path.jpg'
+  id: 'bloodsight',
+  name: 'Bloodsight',
+  path: '',
+  img: 'systems/dnd5e/icons/spells/haste-fire-3.jpg',
   visionLevelMinIndex: 0,
   visionLevelMaxIndex: 5,
   conditionElevation: true,
@@ -197,10 +197,9 @@ game.conditional-visibility.API.registerSense({
 })
 ```
 
-
 ### ConditionalVisibility.API.registerCondition(senseData: SenseData) ⇒ <code>Promise.&lt;void&gt;</code>
 
-A method to register a customize condition to add to the world
+A method to register a customize condition to add to the world. **Remember for make this work you need to add the active effect with the same name with the custom handler from [Dfred convenient effects](https://github.com/DFreds/dfreds-convenient-effects/) is a forced thing i know, but that a module alreay have all the import/export and ui stuff... if no active effect is founded a deafult one is build with minimal data**
 
 **Returns**: <code>Promise.&lt;void&gt;</code> - A empty promise
 
@@ -210,10 +209,10 @@ A method to register a customize condition to add to the world
 
 ```
 ConditionalVisibility.API.registerCondition({
-  id: 'bloodsight'
-  name: 'Bloodsight'
-  path: ''
-  img: 'img/to/path.jpg'
+  id: 'bloodsight',
+  name: 'Bloodsight',
+  path: '',
+  img: 'systems/dnd5e/icons/spells/haste-fire-3.jpg',
   visionLevelMinIndex: 0,
   visionLevelMaxIndex: 5,
   conditionElevation: true,
@@ -225,10 +224,10 @@ ConditionalVisibility.API.registerCondition({
 
 ```
 game.conditional-visibility.API.registerCondition({
-  id: 'bloodsight'
-  name: 'Bloodsight'
-  path: ''
-  img: 'img/to/path.jpg'
+  id: 'bloodsight',
+  name: 'Bloodsight',
+  path: '',
+  img: 'systems/dnd5e/icons/spells/haste-fire-3.jpg',
   visionLevelMinIndex: 0,
   visionLevelMaxIndex: 5,
   conditionElevation: true,
@@ -240,7 +239,7 @@ game.conditional-visibility.API.registerCondition({
 
 ### ConditionalVisibility.API.unRegisterSense(senseDataIdOrName: string) ⇒ <code>Promise.&lt;void&gt;</code>
 
-A method to un-register a customize sense from the world
+A method to un-register a customize sense from the world.
 
 **Returns**: <code>Promise.&lt;void&gt;</code> - A empty promise
 

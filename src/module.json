@@ -46,9 +46,17 @@
   "scripts": ["module/lib/dd.min.js"],
   "esmodules": ["conditional-visibility.js"],
   "styles": ["styles/conditional-visibility.css", "styles/dd.css"],
-  "packs": [],
-
-  "minimumCoreVersion": "0.8.9",
+  "packs": [
+    {
+      "name": "Conditional Visibility",
+      "label": "Conditional Visibility",
+      "path": "./packs/visibility-scripts.db",
+      "module": "world",
+      "entity": "Macro",
+      "lang": []
+    }
+  ],
+  "minimumCoreVersion": "9",
   "compatibleCoreVersion": "9",
   "manifestPlusVersion": "1.2.0",
   "url": "https://github.com/p4535992/conditional-visibility",

@@ -3,6 +3,7 @@ import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-type
 import { EffectDurationData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectDurationData';
 import { PropertiesToSource } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
 import { isEmptyObject } from 'jquery';
+import { SenseData } from '../conditional-visibility-models';
 import { game } from '../settings';
 
 /**
@@ -33,6 +34,7 @@ export default class Effect {
   isTemporary: boolean;
   isSuppressed: boolean;
   dae: {};
+  isPassive: boolean;
   // END ADDED FROM 4535992
 
   constructor({
@@ -49,6 +51,7 @@ export default class Effect {
     isDisabled = false,
     isTemporary = false,
     isSuppressed = false,
+    isPassive = false,
     flags = {},
     changes = <any[]>[],
     atlChanges = <any[]>[],
@@ -81,6 +84,7 @@ export default class Effect {
     this.isDisabled = isDisabled;
     this.isTemporary = isTemporary;
     this.isSuppressed = isSuppressed;
+    this.isPassive = isPassive;
   }
 
   /**
@@ -107,7 +111,11 @@ export default class Effect {
         },
         isConvenient: true,
         convenientDescription: this.description,
-        dae: this._isEmptyObject(this.dae) ? {} : this.dae,
+        dae: this._isEmptyObject(this.dae)
+          ? this.isPassive
+            ? { stackable: false, specialDuration: [], transfer: true }
+            : {}
+          : this.dae,
         // dae: {
         //   transfer: false
         // }
@@ -229,6 +237,43 @@ export class Constants {
 }
 
 export class EffectSupport {
+  static buildDefault(senseData: SenseData): Effect {
+    return new Effect({
+      customId: senseData.id,
+      name: senseData.name,
+      description: ``,
+      icon: senseData.img,
+      tint: undefined,
+      seconds: 0,
+      rounds: 0,
+      turns: 0,
+      flags: foundry.utils.mergeObject(
+        {},
+        {
+          core: {
+            statusId: senseData.id,
+            overlay: false,
+          },
+          isConvenient: true,
+        },
+      ),
+      changes: [],
+      atlChanges: [],
+      tokenMagicChanges: [],
+      atcvChanges: [
+        {
+          key: 'ATCV.' + senseData.id,
+          mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+          value: `0`,
+          priority: 5,
+        },
+      ],
+      isDisabled: false,
+      isTemporary: true,
+      isSuppressed: false,
+    });
+  }
+
   static _handleIntegrations(changes: any[]): EffectChangeData[] {
     let arrChanges: EffectChangeData[] = [];
     // if (this.atlChanges.length > 0) {
@@ -325,6 +370,7 @@ export class EffectSupport {
       isDisabled,
       isTemporary,
       isSuppressed,
+      isPassive,
     });
   }
 

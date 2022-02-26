@@ -54,6 +54,13 @@ export function notify(message) {
   return message;
 }
 
+export function info(info, notify = false) {
+  info = `${CONSTANTS.MODULE_NAME} | ${info}`;
+  if (notify) ui.notifications?.info(info);
+  console.log(info.replace('<br>', '\n'));
+  return info;
+}
+
 export function warn(warning, notify = false) {
   warning = `${CONSTANTS.MODULE_NAME} | ${warning}`;
   if (notify) ui.notifications?.warn(warning);
@@ -830,7 +837,7 @@ export async function toggleStealth(event) {
 
   // Senses
   // const optionsSenses: string[] = [];
-  const sensesOrderByName = <SenseData[]>API.SENSES;//.sort((a, b) => a.name.localeCompare(b.name));
+  const sensesOrderByName = <SenseData[]>API.SENSES; //.sort((a, b) => a.name.localeCompare(b.name));
   // sensesOrderByName.forEach((a: SenseData) => {
   //   if (a.id == AtcvEffectSenseFlags.NONE) {
   //     optionsSenses.push(`<option selected="selected" data-image="${a.img}" value="">${i18n(a.name)}</option>`);
@@ -840,7 +847,7 @@ export async function toggleStealth(event) {
   // });
   // Conditions
   // const optionsConditions: string[] = [];
-  const conditionsOrderByName = <SenseData[]>API.CONDITIONS;//.sort((a, b) => a.name.localeCompare(b.name));
+  const conditionsOrderByName = <SenseData[]>API.CONDITIONS; //.sort((a, b) => a.name.localeCompare(b.name));
   // conditionsOrderByName.forEach((a: SenseData) => {
   //   if (a.id == AtcvEffectConditionFlags.HIDDEN) {
   //     optionsConditions.push(`<option selected="selected" data-image="${a.img}" value="">${i18n(a.name)}</option>`);
@@ -872,7 +879,7 @@ export async function toggleStealth(event) {
             valStealthRoll = 0;
           }
           //@ts-ignore
-          const senseId =  String(html.find('div.form-group').children()[6]?.value);
+          const senseId = String(html.find('div.form-group').children()[6]?.value);
           //@ts-ignore
           const conditionId = String(html.find('div.form-group').children()[10]?.value);
 
@@ -881,27 +888,19 @@ export async function toggleStealth(event) {
             selectedTokens = [this.object];
           }
           for (const selectedToken of selectedTokens) {
-            if(senseId != AtcvEffectSenseFlags.NONE && senseId != AtcvEffectSenseFlags.NORMAL){
+            if (senseId != AtcvEffectSenseFlags.NONE && senseId != AtcvEffectSenseFlags.NORMAL) {
               if (valStealthRoll == 0) {
                 const effect = await ConditionalVisibilityEffectDefinitions.effect(senseId);
                 await API.removeEffectOnToken(selectedToken.id, i18n(<string>effect?.name));
               }
-              await selectedToken.document.setFlag(
-                CONSTANTS.MODULE_NAME,
-                senseId,
-                valStealthRoll,
-              );
+              await selectedToken.document.setFlag(CONSTANTS.MODULE_NAME, senseId, valStealthRoll);
             }
-            if(conditionId != AtcvEffectConditionFlags.NONE){
+            if (conditionId != AtcvEffectConditionFlags.NONE) {
               if (valStealthRoll == 0) {
                 const effect = await ConditionalVisibilityEffectDefinitions.effect(conditionId);
                 await API.removeEffectOnToken(selectedToken.id, i18n(<string>effect?.name));
               }
-              await selectedToken.document.setFlag(
-                CONSTANTS.MODULE_NAME,
-                conditionId,
-                valStealthRoll,
-              );
+              await selectedToken.document.setFlag(CONSTANTS.MODULE_NAME, conditionId, valStealthRoll);
             }
           }
           event.currentTarget.classList.toggle('active', valStealthRoll && valStealthRoll != 0);

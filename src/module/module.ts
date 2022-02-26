@@ -287,7 +287,7 @@ const module = {
           // I also added this for specifically checking for custom effects.
           // It will return undefined if it doesn't exist:
           //@ts-ignore
-          const effectFounded = game.dfreds.effectInterface.findCustomEffectByName(effect.name);
+          const effectFounded = <Effect>game.dfreds.effectInterface.findCustomEffectByName(effect.name);
           if (!effectFounded) {
             const origin = undefined;
             const overlay = false;

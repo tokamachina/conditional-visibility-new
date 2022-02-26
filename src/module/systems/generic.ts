@@ -1,3 +1,4 @@
+import { ConditionalVisibilityEffectDefinitions } from '../conditional-visibility-effect-definition';
 import { AtcvEffectConditionFlags, SenseData } from '../conditional-visibility-models';
 import CONSTANTS from '../constants';
 

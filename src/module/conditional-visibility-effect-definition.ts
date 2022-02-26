@@ -75,6 +75,17 @@ export class ConditionalVisibilityEffectDefinitions {
       effects.push(indarkness);
     }
 
+    // for (const effectExternal of API.EFFECTS) {
+    //   const effectFounded = <Effect>effects.find((effect: Effect) => {
+    //     return (
+    //       effect.name.toLowerCase() === effectExternal.name.toLowerCase() ||
+    //       effect.customId.toLowerCase() === effectExternal.customId.toLowerCase()
+    //     );
+    //   });
+    //   if (!effectFounded && effectExternal) {
+    //     effects.push(effectExternal);
+    //   }
+    // }
     return effects;
   }
 
@@ -98,33 +109,6 @@ export class ConditionalVisibilityEffectDefinitions {
       }
     }
     return effectFounded;
-    // if (effect?.customId == AtcvEffectSenseFlags.BLINDED) {
-    //   return ConditionalVisibilityEffectDefinitions.blinded(distance, visionLevel);
-    // }
-    // if (effect?.customId == AtcvEffectSenseFlags.BLIND_SIGHT) {
-    //   return ConditionalVisibilityEffectDefinitions.blindsight(distance, visionLevel);
-    // }
-    // if (effect?.customId == AtcvEffectSenseFlags.DARKVISION) {
-    //   return ConditionalVisibilityEffectDefinitions.darkvision(distance, visionLevel);
-    // }
-    // if (effect?.customId == AtcvEffectSenseFlags.DEVILS_SIGHT) {
-    //   return ConditionalVisibilityEffectDefinitions.devilssight(distance, visionLevel);
-    // }
-    // if (effect?.customId == AtcvEffectSenseFlags.GREATER_DARKVISION) {
-    //   return ConditionalVisibilityEffectDefinitions.darkvision(distance, visionLevel);
-    // }
-    // if (effect?.customId == AtcvEffectSenseFlags.LOW_LIGHT_VISION) {
-    //   return ConditionalVisibilityEffectDefinitions.lowlightvision(distance, visionLevel);
-    // }
-    // if (effect?.customId == AtcvEffectSenseFlags.SEE_INVISIBLE) {
-    //   return ConditionalVisibilityEffectDefinitions.seeinvisible(distance, visionLevel);
-    // }
-    // if (effect?.customId == AtcvEffectSenseFlags.TREMOR_SENSE) {
-    //   return ConditionalVisibilityEffectDefinitions.tremorsense(distance, visionLevel);
-    // }
-    // if (effect?.customId == AtcvEffectSenseFlags.TRUE_SIGHT) {
-    //   return ConditionalVisibilityEffectDefinitions.truesight(distance, visionLevel);
-    // }
   }
 
   // ===========================================

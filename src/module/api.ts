@@ -1,11 +1,11 @@
 import CONSTANTS from './constants';
-import { dialogWarning, error, i18n, mergeByProperty, warn } from './lib/lib';
+import { dialogWarning, error, i18n, info, mergeByProperty, warn } from './lib/lib';
 import EffectInterface from './effects/effect-interface';
 import { SenseData } from './conditional-visibility-models';
 import HOOKS from './hooks';
 import { EnhancedConditions } from './cub/enhanced-conditions';
 import { canvas, game } from './settings';
-import Effect from './effects/effect';
+import Effect, { EffectSupport } from './effects/effect';
 import { ConditionalVisibilityEffectDefinitions } from './conditional-visibility-effect-definition';
 
 const API = {
@@ -32,6 +32,15 @@ const API = {
    */
   get CONDITIONS(): SenseData[] {
     return <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
+  },
+
+  /**
+   * The attributes used to track dynamic attributes in this system
+   *
+   * @returns {array}
+   */
+  get EFFECTS(): Effect[] {
+    return <Effect[]>game.settings.get(CONSTANTS.MODULE_NAME, 'effects');
   },
 
   /**
@@ -518,20 +527,19 @@ const API = {
       visionLevel = 0;
     }
 
-    const sensesOrderByName = <SenseData[]>await this.getAllSensesAndConditions();
+    const sensesAndConditionOrderByName = <SenseData[]>await this.getAllSensesAndConditions();
     const effectsDefinition = <Effect[]>ConditionalVisibilityEffectDefinitions.all(distance, visionLevel);
 
     let effect: Effect | undefined = undefined;
     let senseData: SenseData | undefined = undefined;
 
-    for (const sense of sensesOrderByName) {
+    for (const sense of sensesAndConditionOrderByName) {
       // Check for dfred convenient effect and retrieve the effect with the specific name
       // https://github.com/DFreds/dfreds-convenient-effects/issues/110
       //@ts-ignore
       if (sense.effectCustomId && game.dfreds) {
         //@ts-ignore
         effect = <Effect>await game.dfreds.effectInterface.findCustomEffectByName(sense.name);
-        effect.transfer = !disabled;
         senseData = sense;
         break;
       }
@@ -544,6 +552,18 @@ const API = {
       }
     }
 
+    if (!effect) {
+      const senseOrCondition = <SenseData>sensesAndConditionOrderByName.find((sense: SenseData) => {
+        return sense.id == (<SenseData>senseData).id || i18n(sense.name) == i18n((<SenseData>senseData).name);
+      });
+      const isSense = API.SENSES.find((sense: SenseData) => {
+        return sense.id == (<SenseData>senseData).id || i18n(sense.name) == i18n((<SenseData>senseData).name);
+      });
+      if (senseOrCondition) {
+        effect = EffectSupport.buildDefault(senseOrCondition);
+      }
+    }
+    // Add some feature if is a sense or a condition
     if (effect) {
       const isSense = API.SENSES.find((sense: SenseData) => {
         return sense.id == (<SenseData>senseData).id || i18n(sense.name) == i18n((<SenseData>senseData).name);
@@ -555,7 +575,16 @@ const API = {
     }
 
     if (!effect) {
+      // //@ts-ignore
+      // if(game.dfreds){
+      //   //@ts-ignore
+      //   const effectFounded = <Effect>game.dfreds.effectInterface.findCustomEffectByName(effect.name);
+      //   if (!effectFounded) {
       warn(`No effect found with reference '${senseDataId}'`, true);
+      //   }else{
+      //     effect = effectFounded;
+      //   }
+      // }
     } else {
       if (token && effect) {
         const nameToUse = senseData?.name ? senseData?.name : effect?.name;
@@ -577,63 +606,75 @@ const API = {
 
   async registerSense(senseData: SenseData): Promise<void> {
     const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'senses');
-    const newSensesData = await this._registerSenseData(senseData, sensesData, 'sense', false);
-    if (newSensesData && newSensesData.length > 0) {
-      await game.settings.set(CONSTANTS.MODULE_NAME, 'senses', newSensesData);
+    const newSenseData = await this._registerSenseData(senseData, sensesData, 'sense', false);
+    if (newSenseData && newSenseData.length > 0) {
+      await game.settings.set(CONSTANTS.MODULE_NAME, 'senses', newSenseData);
+      info(`Register sense '${senseData.id}' with name ${senseData.name}`, true);
     }
   },
 
   async registerCondition(senseData: SenseData): Promise<void> {
-    const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
-    const newSensesData = await this._registerSenseData(senseData, sensesData, 'condition', false);
-    if (newSensesData && newSensesData.length > 0) {
-      await game.settings.set(CONSTANTS.MODULE_NAME, 'conditions', newSensesData);
+    const conditionsData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
+    const newConditionData = await this._registerSenseData(senseData, conditionsData, 'condition', false);
+    if (newConditionData && newConditionData.length > 0) {
+      await game.settings.set(CONSTANTS.MODULE_NAME, 'conditions', newConditionData);
+      info(`Register condition '${senseData.id}' with name ${senseData.name}`, true);
     }
   },
 
   async unRegisterSense(senseDataIdOrName: string): Promise<void> {
     const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'senses');
-    const newSensesData = await this._unregisterSenseData(senseDataIdOrName, sensesData, 'sense', true);
-    if (newSensesData && newSensesData.length > 0) {
-      await game.settings.set(CONSTANTS.MODULE_NAME, 'senses', newSensesData);
+    const newSenseData = await this._unregisterSenseData(senseDataIdOrName, sensesData, 'sense', true);
+    if (newSenseData && newSenseData.length > 0) {
+      await game.settings.set(CONSTANTS.MODULE_NAME, 'senses', newSenseData);
+      info(`Untegister sense '${senseDataIdOrName}'`, true);
     }
   },
 
   async unRegisterCondition(senseDataIdOrName: string): Promise<void> {
-    const sensesData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
-    const newSensesData = await this._unregisterSenseData(senseDataIdOrName, sensesData, 'condition', true);
-    if (newSensesData && newSensesData.length > 0) {
-      await game.settings.set(CONSTANTS.MODULE_NAME, 'conditions', newSensesData);
+    const conditionsData = <SenseData[]>game.settings.get(CONSTANTS.MODULE_NAME, 'conditions');
+    const newConditionsData = await this._unregisterSenseData(senseDataIdOrName, conditionsData, 'condition', true);
+    if (newConditionsData && newConditionsData.length > 0) {
+      await game.settings.set(CONSTANTS.MODULE_NAME, 'conditions', newConditionsData);
+      info(`Untegister condition '${senseDataIdOrName}`, true);
     }
   },
 
-  async _registerSenseData(senseData: SenseData, sensesDataList: SenseData[], valueComment: string) {
+  async _registerSenseData(
+    senseData: SenseData,
+    sensesDataList: SenseData[],
+    valueComment: string,
+  ): Promise<SenseData[] | undefined> {
     if (!senseData.id) {
-      dialogWarning(`Cannot register the ${valueComment} with id empty or null`);
+      warn(`Cannot register the ${valueComment} with id empty or null`, true);
       return;
     }
     if (!senseData.name) {
-      dialogWarning(`Cannot register the ${valueComment} with name empty or null`);
+      warn(`Cannot register the ${valueComment} with name empty or null`, true);
       return;
     }
     const sensesAndConditionDataList = <SenseData[]>await this.getAllSensesAndConditions();
-    const senseAlreadyExistsId = sensesAndConditionDataList.find((a: SenseData) => (a.id = senseData.id));
+    const senseAlreadyExistsId = sensesAndConditionDataList.find((a: SenseData) => a.id == senseData.id);
     const senseAlreadyExistsName = sensesAndConditionDataList.find((a: SenseData) => a.name == senseData.name);
     if (senseAlreadyExistsId) {
-      dialogWarning(`Cannot register the ${valueComment} with id '${senseData.id}' because already exists`);
+      warn(`Cannot register the ${valueComment} with id '${senseData.id}' because already exists`, true);
       return;
     }
     if (senseAlreadyExistsName) {
-      dialogWarning(`Cannot register the ${valueComment} with name '${senseData.name}' because already exists`);
+      warn(`Cannot register the ${valueComment} with name '${senseData.name}' because already exists`, true);
       return;
     }
     sensesDataList.push(senseData);
     return sensesDataList;
   },
 
-  async _unregisterSenseData(senseDataIdOrName: string, sensesDataList: SenseData[], valueComment: string) {
+  async _unregisterSenseData(
+    senseDataIdOrName: string,
+    sensesDataList: SenseData[],
+    valueComment: string,
+  ): Promise<SenseData[] | undefined> {
     if (!senseDataIdOrName) {
-      dialogWarning(`Cannot unregister the ${valueComment} with id empty or null`);
+      warn(`Cannot unregister the ${valueComment} with id empty or null`, true);
       return;
     }
     const sensesAndConditionDataList = <SenseData[]>await this.getAllSensesAndConditions();
@@ -641,9 +682,7 @@ const API = {
       sensesAndConditionDataList.find((a: SenseData) => a.id == senseDataIdOrName || a.name == senseDataIdOrName)
     );
     if (!senseAlreadyExistsId) {
-      dialogWarning(
-        `Cannot unregister the ${valueComment} with id '${senseDataIdOrName}' because is not exists exists`,
-      );
+      warn(`Cannot unregister the ${valueComment} with id '${senseDataIdOrName}' because is not exists exists`, true);
       return;
     }
     sensesDataList = sensesDataList.filter(function (el) {

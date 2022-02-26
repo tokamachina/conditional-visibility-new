@@ -44,7 +44,8 @@ This module uses the ATE library for wrapping methods. It is a hard dependency a
 
 ## Known Issue\Limitation
 
-- HELP WANTED This is just a "fast to make" module maybe someone a little more expert than me with form application and hud layer can do a better form for a better user experience
+- HELP WANTED This is just a "fast to make" module maybe someone a little more expert than me with form application and hud layer can do a better form for a better user experience.
+- This module used many feature of the [Dfred convenient effects](https://github.com/DFreds/dfreds-convenient-effects/) module, but is not multisystem (yet) i invite you to support Dfred for is marvelous work and beg him to make that module multisystem.
 
 ## Usage
 
@@ -98,6 +99,8 @@ If each condition is added to the CUB set, Conditional Visibility will again fun
 Every sense and condtion can be setted on the token config vision tab, remember the `0` value is the deactivate/default/nullable value, the value `<=-1`  (a negative number) is the infinite, for tell to the module to avoid any check because i won anyway. 
 Depends on the value you set the module will automatically create, updated and remove the active effect on the current token, you can anyway go to edit the active effect manually and change the value and these settings are updated either way.
 
+![token_config](./wiki/video/feature_token_config_1_cut.gif)
+
 **NOTE:** Limitation do not use multiple active effects with the same key on the change values `ATCV.<sense or condtion id>`, checkout the [Active effect paragraph on the tutorial](./wiki/tutorial.md)
 
 ### Auto-applied from Stealth Rolls and auto appplied hidden
@@ -145,3 +148,5 @@ Thanks to anyone who helps me with this code! I appreciate the user community's 
 Very special ty to [Szefo09](https://github.com/szefo09) for make a full operational patch for Dnd5e with FoundryVtt 0.8.6 and 9
 
 Very special ty to [Teshynil](https://github.com/Teshynil) for make many and many test with bug fix
+
+Very special ty to [Haxxer](https://github.com/fantasycalendar) for inspired the design pattern for the multisystem integration with the module [Item Piles](https://github.com/fantasycalendar/FoundryVTT-ItemPiles)

@@ -44,7 +44,7 @@ Work in progress...
 
 ~~### ConditionalVisibility.setCondition(tokenNameOrId: string, effectId: string, distance: number) ⇒ <code>Promise.&lt;void&gt;</code>~~
 
-**NOTE: This is deprecated use instead `ConditionalVisibility.API.setCondition(tokenNameOrId: string, effectId: string, distance: number) ⇒ <code>Promise<void></code>` **
+**NOTE: This is deprecated use instead `ConditionalVisibility.API.setCondition(tokenNameOrId: string, effectId: string, distance: number) ⇒ <code>Promise<void></code>`**
 
 Add a active effect for work with the module, the `effectId` parameter must be present on the [table](./tables.md) associated to the system.
 

@@ -139,9 +139,6 @@ const module = {
       visionTab.append(extraSenses);
     });
   },
-  onRenderTokenHUD(app, html, token) {
-    // DO NOTHING FOR NOW
-  },
   async updateToken(document: TokenDocument, change, options, userId) {
     const token = <Token>document.object;
     if (change.flags && change.flags[CONSTANTS.MODULE_NAME]) {

@@ -142,13 +142,13 @@ export default class Effect {
   _getDurationData() {
     const isPassive = !this.isTemporary;
     if (game.combat) {
-      if(isPassive){
+      if (isPassive) {
         return {
           startTime: game.time.worldTime,
           startRound: 0,
-          startTurn: 0
-        }
-      }else{
+          startTurn: 0,
+        };
+      } else {
         return {
           startRound: game.combat.round,
           rounds: this._getCombatRounds(),
@@ -156,13 +156,13 @@ export default class Effect {
         };
       }
     } else {
-      if(isPassive){
+      if (isPassive) {
         return {
           startTime: game.time.worldTime,
           startRound: 0,
-          startTurn: 0
-        }
-      }else{
+          startTurn: 0,
+        };
+      } else {
         return {
           startTime: game.time.worldTime,
           seconds: this._getSeconds(),
@@ -249,7 +249,7 @@ export class Constants {
 }
 
 export class EffectSupport {
-  static buildDefault(senseData: SenseData, isPassive:boolean): Effect {
+  static buildDefault(senseData: SenseData, isPassive: boolean): Effect {
     return new Effect({
       customId: senseData.id,
       name: senseData.name,
@@ -386,7 +386,8 @@ export class EffectSupport {
   }
 
   static convertActiveEffectDataPropertiesToActiveEffect(
-    p: PropertiesToSource<ActiveEffectDataProperties>, isPassive:boolean
+    p: PropertiesToSource<ActiveEffectDataProperties>,
+    isPassive: boolean,
   ): ActiveEffect {
     //@ts-ignore
     return ActiveEffect.create({
@@ -409,9 +410,7 @@ export class EffectSupport {
         isConvenient: true,
         //@ts-ignore
         convenientDescription: p.description ? p.description : '',
-        dae: this._isEmptyObject(p.flags.dae)
-          ? { stackable: false, specialDuration: [], transfer: true }
-          : p.flags.dae,
+        dae: this._isEmptyObject(p.flags.dae) ? { stackable: false, specialDuration: [], transfer: true } : p.flags.dae,
       }),
       origin: origin ? origin : p.origin ? p.origin : '', // MOD 4535992
       transfer: p.transfer ?? false,

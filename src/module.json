@@ -43,9 +43,9 @@
       "path": "lang/ko.json"
     }
   ],
-  "scripts": [],
+  "scripts": ["module/lib/dd.min.js"],
   "esmodules": ["conditional-visibility.js"],
-  "styles": ["styles/conditional-visibility.css"],
+  "styles": ["styles/conditional-visibility.css", "styles/dd.css"],
   "packs": [],
 
   "minimumCoreVersion": "0.8.9",

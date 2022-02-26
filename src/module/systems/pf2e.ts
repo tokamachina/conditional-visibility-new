@@ -7,6 +7,7 @@ export default {
   PERCEPTION_PASSIVE_SKILL: `data.skills.prc.passive`,
   STEALTH_PASSIVE_SKILL: `data.skills.ste.passive`,
   STEALTH_ACTIVE_SKILL: `data.skills.ste.total`,
+  NPC_TYPE: `npc`,
   SENSES: <SenseData[]>[
     {
       id: AtcvEffectSenseFlags.NONE,

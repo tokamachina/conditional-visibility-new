@@ -35,6 +35,15 @@ const API = {
   },
 
   /**
+   * The attributes used to track dynamic attributes in this system
+   *
+   * @returns {array}
+   */
+  get NPC_TYPE(): string {
+    return <string>game.settings.get(CONSTANTS.MODULE_NAME, 'npcType');
+  },
+
+  /**
    * The attribute used to track the passive perception skill in this system
    *
    * @returns {String}
@@ -515,29 +524,29 @@ const API = {
     let effect: Effect | undefined = undefined;
     let senseData: SenseData | undefined = undefined;
 
-    for (const a of sensesOrderByName) {
+    for (const sense of sensesOrderByName) {
       // Check for dfred convenient effect and retrieve the effect with the specific name
       // https://github.com/DFreds/dfreds-convenient-effects/issues/110
       //@ts-ignore
-      if (a.effectCustomId && game.dfreds) {
+      if (sense.effectCustomId && game.dfreds) {
         //@ts-ignore
-        effect = <Effect>await game.dfreds.effectInterface.findCustomEffectByName(a.name);
+        effect = <Effect>await game.dfreds.effectInterface.findCustomEffectByName(sense.name);
         effect.transfer = !disabled;
-        senseData = a;
+        senseData = sense;
         break;
       }
-      if (senseDataId == a.id) {
-        effect = <Effect>effectsDefinition.find((e: Effect) => {
-          return e.customId == a.id || i18n(e.name) == i18n(a.name);
+      if (senseDataId == sense.id) {
+        effect = <Effect>effectsDefinition.find((effect: Effect) => {
+          return effect.customId == sense.id || i18n(effect.name) == i18n(sense.name);
         });
-        senseData = a;
+        senseData = sense;
         break;
       }
     }
 
     if (effect) {
-      const isSense = API.SENSES.find((s: SenseData) => {
-        return s.id == (<SenseData>senseData).id || i18n(s.name) == i18n((<SenseData>senseData).name);
+      const isSense = API.SENSES.find((sense: SenseData) => {
+        return sense.id == (<SenseData>senseData).id || i18n(sense.name) == i18n((<SenseData>senseData).name);
       });
       if (isSense) {
         effect.isTemporary = false; // passive ae

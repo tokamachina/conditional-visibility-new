@@ -179,20 +179,20 @@ const module = {
     //   }
     // }
   },
-  async updateActiveEffect(effect: ActiveEffect, options: EffectChangeData, isRemoved: boolean) {
-    if (!effect.data.changes?.find((effect) => effect.key.includes('ATCV'))) {
+  async updateActiveEffect(activeEffect: ActiveEffect, options: EffectChangeData, isRemoved: boolean) {
+    if (!activeEffect.data.changes?.find((effect) => effect.key.includes('ATCV'))) {
       return;
     }
-    const actor = <Actor>effect.parent;
+    const actor = <Actor>activeEffect.parent;
     const totalEffects = <ActiveEffect[]>actor?.effects.contents.filter((i) => !i.data.disabled);
     const ATCVeffects = totalEffects.filter(
       (entity) => !!entity.data.changes.find((effect) => effect.key.includes('ATCV')),
     );
-    if (effect.data.disabled) {
-      ATCVeffects.push(effect);
+    if (activeEffect.data.disabled) {
+      ATCVeffects.push(activeEffect);
     }
 
-    const entity = <Actor>effect.parent;
+    const entity = <Actor>activeEffect.parent;
     if (entity.documentName !== 'Actor') {
       return;
     }
@@ -264,8 +264,10 @@ const module = {
     } else {
       if (isRemoved) {
         for (const tok of tokenArray) {
-          const sense = (await API.getAllSensesAndConditions()).find((s: SenseData) => {
-            return i18n(s.name) == i18n(<string>effect.name);
+          const sense = (await API.getAllSensesAndConditions()).find((sense: SenseData) => {
+            return (
+              i18n(sense.name) == i18n(<string>activeEffect.name) || i18n(sense.name) == i18n(activeEffect.data.label)
+            );
           });
           if (sense?.id) {
             await tok?.document.setFlag(CONSTANTS.MODULE_NAME, sense?.id, 0);
@@ -275,30 +277,31 @@ const module = {
     }
   },
   async dfredsConvenientEffectsReady(...args) {
-    // https://github.com/DFreds/dfreds-convenient-effects/issues/110
-    //@ts-ignore
-    if (game.dfreds) {
-      const effects = ConditionalVisibilityEffectDefinitions.all();
-      const activeEffectsData: any[] = [];
-      for (const effect of effects) {
-        // I also added this for specifically checking for custom effects.
-        // It will return undefined if it doesn't exist:
-        //@ts-ignore
-        const effectFounded = game.dfreds.effectInterface.findCustomEffectByName(effect.name);
-        if (!effectFounded) {
-          const origin = undefined;
-          const overlay = false;
-          activeEffectsData.push(effect.convertToActiveEffectData({ origin, overlay }));
-        }
-      }
-
-      //The data that is passed in are standard ActiveEffectData... i.e. from
-      //canvas.tokens.controlled[0].actor.effects.get('some key').data.toObject()
+    if (!game.settings.get(CONSTANTS.MODULE_NAME, 'disableDCEAutomaticImport')) {
+      // https://github.com/DFreds/dfreds-convenient-effects/issues/110
       //@ts-ignore
-      game.dfreds.effectInterface.createNewCustomEffectsWith({
-        // game.dfreds.effectInterface._customEffectsHandler.createNewCustomEffectsWith({
-        activeEffects: activeEffectsData,
-      });
+      if (game.dfreds) {
+        const effects = ConditionalVisibilityEffectDefinitions.all();
+        const activeEffectsData: any[] = [];
+        for (const effect of effects) {
+          // I also added this for specifically checking for custom effects.
+          // It will return undefined if it doesn't exist:
+          //@ts-ignore
+          const effectFounded = game.dfreds.effectInterface.findCustomEffectByName(effect.name);
+          if (!effectFounded) {
+            const origin = undefined;
+            const overlay = false;
+            activeEffectsData.push(effect.convertToActiveEffectData({ origin, overlay }));
+          }
+        }
+
+        //The data that is passed in are standard ActiveEffectData... i.e. from
+        //canvas.tokens.controlled[0].actor.effects.get('some key').data.toObject()
+        //@ts-ignore
+        game.dfreds.effectInterface.createNewCustomEffectsWith({
+          activeEffects: activeEffectsData,
+        });
+      }
     }
   },
   async renderTokenHUD(...args) {

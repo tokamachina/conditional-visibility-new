@@ -6,6 +6,7 @@ export default {
   PERCEPTION_PASSIVE_SKILL: `data.skills.prc.passive`,
   STEALTH_PASSIVE_SKILL: `data.skills.ste.passive`,
   STEALTH_ACTIVE_SKILL: `data.skills.ste.total`,
+  NPC_TYPE: `npc`,
   /**
    * The set of possible sensory perception types which an Actor may have.
    * @enum {string}
@@ -111,6 +112,16 @@ export default {
     },
   ],
   CONDITIONS: <SenseData[]>[
+    {
+      id: AtcvEffectConditionFlags.NONE,
+      name: `${CONSTANTS.MODULE_NAME}.${AtcvEffectConditionFlags.NONE}`,
+      path: ``,
+      img: `modules/${CONSTANTS.MODULE_NAME}/icons/ae/light_01.jpg`,
+      //effect: undefined,
+      visionLevelMinIndex: -2,
+      visionLevelMaxIndex: -1,
+      conditionElevation: false,
+    },
     {
       id: AtcvEffectConditionFlags.HIDDEN,
       name: `${CONSTANTS.MODULE_NAME}.${AtcvEffectConditionFlags.HIDDEN}`,

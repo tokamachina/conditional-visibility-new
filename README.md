@@ -42,6 +42,10 @@ This module uses the [socketlib](https://github.com/manuelVo/foundryvtt-socketli
 
 This module uses the ATE library for wrapping methods. It is a hard dependency and it is recommended for the best experience and compatibility with other modules.
 
+## Known Issue\Limitation
+
+- HELP WANTED This is just a "fast to make" module maybe someone a little more expert than me with form application and hud layer can do a better form for a better user experience
+
 ## Usage
 
 A usage documentation is reachable [here](./wiki/tutorial.md)
@@ -72,6 +76,10 @@ These modules are suggested for a better user experience with this one :
 
 - **Integration with [DFreds Convenient Effects](https://github.com/DFreds/dfreds-convenient-effects):** documentation work in progress, but is basically all automatic so it should work for all senses and conditions are present on the graphic ui of this module.
 
+All the sense and condition are automatically imported, you can disavle this on the module settings if you want.
+
+![df](./wiki/images/feature_dfred_conv_effects_1.png)
+
 - **Integration with [Combat Utility Belt or CUB](https://github.com/death-save/combat-utility-belt):** If you use Combat Utility Belt and check "Remove Default Status Effects," it will remove those Status Effects necessary for this module to function.  They can be re-added using Combat Utility Belt's Condition Lab.
 
 ![Example: Adding Unknown](./wiki/images/95407444-06d6a880-08eb-11eb-9478-6401fc1d02f8.png)
@@ -87,18 +95,22 @@ If each condition is added to the CUB set, Conditional Visibility will again fun
 
 ### Apply sense and condition from Token Config
 
-Every sense and condtion can be setted on the token config vision tab, remember the `0` value is the deactivate/default/nullable value, the `-1` is the infinite (the avoid any check because i won anyway) value. 
+Every sense and condtion can be setted on the token config vision tab, remember the `0` value is the deactivate/default/nullable value, the value `<=-1`  (a negative number) is the infinite, for tell to the module to avoid any check because i won anyway. 
 Depends on the value you set the module will automatically create, updated and remove the active effect on the current token, you can anyway go to edit the active effect manually and change the value and these settings are updated either way.
 
 **NOTE:** Limitation do not use multiple active effects with the same key on the change values `ATCV.<sense or condtion id>`, checkout the [Active effect paragraph on the tutorial](./wiki/tutorial.md)
 
-### [Not reccomended we manage everything with Active effects] Auto-applied from Stealth Rolls and auto appplied hidden
+### Auto-applied from Stealth Rolls and auto appplied hidden
 
 Conditional Visibility contains an setting to auto-apply the hidden condition based on a stealth roll. The reuslt can be differnete depends on the current game system ,contributions for other systems are welcomed.
 
 When this setting is true, then rolling stealth form the HUD config of that token's character sheet will apply the hidden condition based on the value of that roll.
 
+**NOTE:** if the system no have the property set on the module setting or the system no support a stealth enviroment it's just roll classic 1d20, you can still manually insert the desired value
+
 ### [On developing or maybe never...] Integration with [Combat utility belt](https://github.com/death-save/combat-utility-belt)
+
+CUB already manage the connection with active effect and a management with the [DFreds Convenient Effects](https://github.com/DFreds/dfreds-convenient-effects) add a third module is just redundancy, but if anyone has some suggestion just open a issue or better a PR.
 
 ## Api
 
@@ -112,16 +124,17 @@ Any issues, bugs, or feature requests are always welcome to be reported directly
 
 ## License
 
+- Some icons are retrieve from : * unknown.svg, newspaper.svg, and foggy.svg icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>, from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+- Some icons are retrieve from :  * moon.svg icon made by <a href="https://www.flaticon.com/authors/iconixar" title="iconixar">iconixar</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+- [Image dropdown](https://github.com/marghoobsuleman/ms-Dropdown) with [MIT](https://github.com/marghoobsuleman/ms-Dropdown/blob/master/MIT-LICENSE.txt)
+- Some icons are retrieve from the [Dnd5e system](https://gitlab.com/foundrynet/dnd5e) with [MIT](https://gitlab.com/foundrynet/dnd5e/-/blob/master/LICENSE.txt)
+- Some icons are retrieve from the [Pf2 system](https://gitlab.com/hooking/foundry-vtt---pathfinder-2e/) with [GPLv2](https://gitlab.com/hooking/foundry-vtt---pathfinder-2e/-/blob/master/LICENSE)
+
 This package is under an [MIT license](LICENSE) and the [Foundry Virtual Tabletop Limited License Agreement for module development](https://foundryvtt.com/article/license/).
 
 ## Acknowledgements
 
 Bootstrapped with League of Extraordinary FoundryVTT Developers  [foundry-vtt-types](https://github.com/League-of-Foundry-Developers/foundry-vtt-types).
-
-**Icons by**
-
-* unknown.svg, newspaper.svg, and foggy.svg icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>, from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
-* moon.svg icon made by <a href="https://www.flaticon.com/authors/iconixar" title="iconixar">iconixar</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
 
 ## Credit
 

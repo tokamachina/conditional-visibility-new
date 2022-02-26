@@ -309,13 +309,39 @@ export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boo
     return true;
   }
 
-  const disPath = CONST.TOKEN_DISPOSITIONS;
-  const d = targetToken.data.disposition;
-  if(game.settings.get(CONSTANTS.MODULE_NAME,'disableForNonHostileNpc'))
-  if (d === disPath.FRIENDLY || d === disPath.NEUTRAL){
+  let targetActorDisposition;
+  if (targetToken && targetToken.data?.disposition) {
+    targetActorDisposition = targetToken.data.disposition;
+  } else {
+    // no token to use so make a guess
+    targetActorDisposition =
+      targetToken.actor?.type === API.NPC_TYPE ? CONST.TOKEN_DISPOSITIONS.HOSTILE : CONST.TOKEN_DISPOSITIONS.FRIENDLY;
+  }
+  let sourceActorDisposition;
+  if (sourceToken && sourceToken.data?.disposition) {
+    sourceActorDisposition = sourceToken.data.disposition;
+  } else {
+    // no token to use so make a guess
+    sourceActorDisposition =
+      sourceToken.actor?.type === API.NPC_TYPE ? CONST.TOKEN_DISPOSITIONS.HOSTILE : CONST.TOKEN_DISPOSITIONS.FRIENDLY;
+  }
+
+  // If both are hostile return true
+  if (
+    sourceActorDisposition == CONST.TOKEN_DISPOSITIONS.HOSTILE &&
+    targetActorDisposition == CONST.TOKEN_DISPOSITIONS.HOSTILE
+  ) {
     return true;
   }
 
+  if (game.settings.get(CONSTANTS.MODULE_NAME, 'disableForNonHostileNpc')) {
+    if (
+      targetActorDisposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY ||
+      targetActorDisposition === CONST.TOKEN_DISPOSITIONS.NEUTRAL
+    ) {
+      return true;
+    }
+  }
   // ========================================
   // 1 - Preparation of the active effect
   // =========================================
@@ -794,68 +820,6 @@ export function retrieveAtcvVisionLevelDistanceFromActiveEffect(effectEntity: Ac
   return distance;
 }
 
-// /**
-//  * Renders a dialog window pre-filled with the result of a system-dependent roll, which can be changed in an input field.  Subclasses can use this
-//  * as is, see ConditionalVisibilitySystem5e for an example
-//  * @param token the actor to whom this dialog refers
-//  * @returns a Promise<number> containing the value of the result, or -1 if unintelligble
-//  */
-// async function stealthHud(token: Token): Promise<number> {
-//   let initialValue;
-//   try {
-//     //@ts-ignore
-//     initialValue = parseInt(<string>getProperty(token.document, `data.${API.STEALTH_PASSIVE_SKILL}`));
-//   } catch (err) {
-//     initialValue === undefined;
-//   }
-//   let result = initialValue;
-//   if (initialValue === undefined || isNaN(parseInt(initialValue))) {
-//     try {
-//       // const roll = await API.rollStealth(token);
-//       // result = roll.total;
-//       result = await API.rollStealth(token);
-//     } catch (err) {
-//       warn('Error rolling stealth, check formula for system');
-//       result = parseInt(<string>getProperty(token.document, `data.${API.STEALTH_PASSIVE_SKILL}`));
-//     }
-//   }
-//   const content = await renderTemplate(`modules/${CONSTANTS.MODULE_NAME}/templates/stealth_hud.html`, {
-//     initialValue: result,
-//   });
-//   return new Promise((resolve, reject) => {
-//     const hud = new Dialog({
-//       title: i18n(CONSTANTS.MODULE_NAME + 'dialogs.stealthhud'),
-//       content: content,
-//       buttons: {
-//         one: {
-//           icon: '<i class="fas fa-check"></i>',
-//           label: 'OK',
-//           callback: (html: JQuery<HTMLElement>) => {
-//             //@ts-ignore
-//             const val = parseInt(html.find('div.form-group').children()[1]?.value);
-//             if (isNaN(val)) {
-//               resolve(-1);
-//             } else {
-//               resolve(val);
-//             }
-//           },
-//         },
-//       },
-//       close: (html: JQuery<HTMLElement>) => {
-//         //@ts-ignore
-//         const val = parseInt(html.find('div.form-group').children()[1]?.value);
-//         if (isNaN(val)) {
-//           resolve(-1);
-//         } else {
-//           resolve(val);
-//         }
-//       },
-//       default: '',
-//     });
-//     hud.render(true);
-//   });
-// }
-
 export async function toggleStealth(event) {
   const stealthedWithHiddenConditionOri =
     this.object.document.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN) ?? 0;
@@ -863,10 +827,34 @@ export async function toggleStealth(event) {
   if (stealthedWithHiddenCondition == 0 && getProperty(this.object.document, `data.${API.STEALTH_PASSIVE_SKILL}`)) {
     stealthedWithHiddenCondition = getProperty(this.object.document, `data.${API.STEALTH_PASSIVE_SKILL}`);
   }
+
+  // Senses
+  // const optionsSenses: string[] = [];
+  const sensesOrderByName = <SenseData[]>API.SENSES;//.sort((a, b) => a.name.localeCompare(b.name));
+  // sensesOrderByName.forEach((a: SenseData) => {
+  //   if (a.id == AtcvEffectSenseFlags.NONE) {
+  //     optionsSenses.push(`<option selected="selected" data-image="${a.img}" value="">${i18n(a.name)}</option>`);
+  //   } else {
+  //     optionsSenses.push(`<option data-image="${a.img}" value="${a.id}">${i18n(a.name)}</option>`);
+  //   }
+  // });
+  // Conditions
+  // const optionsConditions: string[] = [];
+  const conditionsOrderByName = <SenseData[]>API.CONDITIONS;//.sort((a, b) => a.name.localeCompare(b.name));
+  // conditionsOrderByName.forEach((a: SenseData) => {
+  //   if (a.id == AtcvEffectConditionFlags.HIDDEN) {
+  //     optionsConditions.push(`<option selected="selected" data-image="${a.img}" value="">${i18n(a.name)}</option>`);
+  //   } else {
+  //     optionsConditions.push(`<option data-image="${a.img}" value="${a.id}">${i18n(a.name)}</option>`);
+  //   }
+  // });
+
   const result = await API.rollStealth(this.object);
   const content = await renderTemplate(`modules/${CONSTANTS.MODULE_NAME}/templates/stealth_hud.html`, {
     currentstealth: stealthedWithHiddenCondition,
     stealthroll: result,
+    senses: sensesOrderByName,
+    conditions: conditionsOrderByName,
   });
   const hud = new Dialog({
     title: i18n(CONSTANTS.MODULE_NAME + '.dialogs.title.hidden'),
@@ -883,25 +871,44 @@ export async function toggleStealth(event) {
           if (isNaN(valStealthRoll)) {
             valStealthRoll = 0;
           }
-          // if (valStealthRoll == 0 && !isNaN(valCurrentstealth)) {
-          //   valStealthRoll = valCurrentstealth;
-          // }
-          if (valStealthRoll == 0) {
-            const effect = await ConditionalVisibilityEffectDefinitions.effect(AtcvEffectConditionFlags.HIDDEN);
-            await API.removeEffectOnToken(this.object.id, i18n(<string>effect?.name));
+          //@ts-ignore
+          const senseId =  String(html.find('div.form-group').children()[6]?.value);
+          //@ts-ignore
+          const conditionId = String(html.find('div.form-group').children()[10]?.value);
+
+          let selectedTokens = <Token[]>canvas.tokens?.controlled;
+          if (!selectedTokens || selectedTokens.length == 0) {
+            selectedTokens = [this.object];
           }
-          await this.object.document.setFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN, valStealthRoll);
+          for (const selectedToken of selectedTokens) {
+            if(senseId != AtcvEffectSenseFlags.NONE && senseId != AtcvEffectSenseFlags.NORMAL){
+              if (valStealthRoll == 0) {
+                const effect = await ConditionalVisibilityEffectDefinitions.effect(senseId);
+                await API.removeEffectOnToken(selectedToken.id, i18n(<string>effect?.name));
+              }
+              await selectedToken.document.setFlag(
+                CONSTANTS.MODULE_NAME,
+                senseId,
+                valStealthRoll,
+              );
+            }
+            if(conditionId != AtcvEffectConditionFlags.NONE){
+              if (valStealthRoll == 0) {
+                const effect = await ConditionalVisibilityEffectDefinitions.effect(conditionId);
+                await API.removeEffectOnToken(selectedToken.id, i18n(<string>effect?.name));
+              }
+              await selectedToken.document.setFlag(
+                CONSTANTS.MODULE_NAME,
+                conditionId,
+                valStealthRoll,
+              );
+            }
+          }
           event.currentTarget.classList.toggle('active', valStealthRoll && valStealthRoll != 0);
         },
       },
     },
     close: async (html: JQuery<HTMLElement>) => {
-      // const val = parseInt(html.find('div.form-group').children()[2]?.value);
-      // await this.object.document.setFlag(
-      //   CONSTANTS.MODULE_NAME,
-      //   AtcvEffectConditionFlags.HIDDEN,
-      //   false,
-      // );
       event.currentTarget.classList.toggle(
         'active',
         stealthedWithHiddenConditionOri && stealthedWithHiddenConditionOri != 0,

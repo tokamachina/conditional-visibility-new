@@ -54,6 +54,7 @@ export enum AtcvEffectSenseFlags {
 }
 
 export enum AtcvEffectConditionFlags {
+  NONE = 'none',
   INVISIBLE = 'invisible',
   OBSCURED = 'obscured',
   IN_DARKNESS = 'indarkness',

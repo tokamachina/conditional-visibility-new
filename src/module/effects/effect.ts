@@ -96,7 +96,7 @@ export default class Effect {
       id: this._id,
       name: this.name,
       label: this.name,
-      description: this.description,
+      description: this.description, // 4535992 this not make sense, but it doesn't hurt either
       icon: this.icon,
       tint: this.tint,
       duration: this._getDurationData(),

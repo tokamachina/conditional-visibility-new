@@ -92,7 +92,16 @@ export const registerSettings = function (): void {
     default: false,
     type: Boolean,
   });
-  
+
+  game.settings.register(CONSTANTS.MODULE_NAME, 'disableDCEAutomaticImport', {
+    name: `${CONSTANTS.MODULE_NAME}.setting.disableDCEAutomaticImport.name`,
+    hint: `${CONSTANTS.MODULE_NAME}.setting.disableDCEAutomaticImport.hint`,
+    scope: 'world',
+    config: true,
+    default: false,
+    type: Boolean,
+  });
+
   // ========================================================================
 
   game.settings.register(CONSTANTS.MODULE_NAME, 'debug', {
@@ -216,6 +225,14 @@ function defaultSettings(apply = false) {
       config: false,
       default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.CONDITIONS : [],
       type: Array,
+    },
+    npcType: {
+      name: `${CONSTANTS.MODULE_NAME}.setting.npcType.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.npcType.hint`,
+      scope: 'world',
+      config: true,
+      default: apply && SYSTEMS.DATA ? SYSTEMS.DATA.NPC_TYPE : '',
+      type: String,
     },
     passivePerceptionSkill: {
       name: `${CONSTANTS.MODULE_NAME}.setting.passivePerceptionSkill.name`,

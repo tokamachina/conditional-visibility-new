@@ -4,21 +4,35 @@ import { debug, log, shouldIncludeVision, templateTokens } from './lib/lib';
 import { canvas, game } from './settings';
 
 export function registerLibwrappers() {
-  //@ts-ignore
-  libWrapper.register(
-    CONSTANTS.MODULE_NAME,
-    'SightLayer.prototype.testVisibility',
-    sightLayerPrototypeTestVisibilityHandler,
-    'WRAPPER',
-  );
+  if (!game.modules.get('levels')?.active) {
+    //@ts-ignore
+    libWrapper.register(
+      CONSTANTS.MODULE_NAME,
+      'SightLayer.prototype.testVisibility',
+      sightLayerPrototypeTestVisibilityHandler,
+      'WRAPPER',
+    );
 
-  // //@ts-ignore
-  // libWrapper.register(
-  //   CONSTANTS.MODULE_NAME,
-  //   'SightLayer.prototype.tokenVision',
-  //   sightLayerPrototypeTokenVisionHandler,
-  //   'WRAPPER',
-  // );
+    //@ts-ignore
+    libWrapper.register(
+      CONSTANTS.MODULE_NAME,
+      'SightLayer.prototype.tokenVision',
+      sightLayerPrototypeTokenVisionHandler,
+      'MIXED',
+    );
+  } else {
+    //@ts-ignore
+    libWrapper.ignore_conflicts(CONSTANTS.MODULE_NAME, ['perfect-vision'], 'Levels.prototype.overrideVisibilityTest');
+    //@ts-ignore
+    libWrapper.register(
+      CONSTANTS.MODULE_NAME,
+      'Levels.prototype.overrideVisibilityTest',
+      overrideVisibilityTestHandler,
+      'MIXED',
+    );
+  }
+
+  // This can be useful to apply active effect on template ?
 
   //@ts-ignore
   // libWrapper.register(CONSTANTS.MODULE_NAME,
@@ -61,6 +75,49 @@ export function registerLibwrappers() {
 export function templatePrototypeRefreshHandler(wrapped) {
   templateTokens(this);
   return wrapped();
+}
+
+export function sightLayerPrototypeTokenVisionHandler(wrapped, ...args) {
+  // const sightLayer = <SightLayer>this;
+  // if (game.user?.isGM) {
+  // 	return true;
+  // }
+  // return wrapped(args);
+  // if(!sightLayer.tokenVision){
+  //   return wrapped(args);
+  // } else {
+  //   return true;
+  // }
+  const gm = game.user?.isGM;
+  if(gm){
+    return true;
+  }
+  let ownedTokens = <Token[]>canvas.tokens?.placeables.filter((token) => token.isOwner && (!token.data.hidden || gm));
+  if (ownedTokens.length === 0 || !canvas.tokens?.controlled[0]) {
+    ownedTokens = <Token[]>(
+      canvas.tokens?.placeables.filter((token) => (token.observer || token.isOwner) && (!token.data.hidden || gm))
+    );
+  }
+  for (const token of <Token[]>canvas.tokens?.placeables) {
+    if (ownedTokens.includes(token)) {
+      continue;
+    }
+    let tokenVisible = canvas.scene?.data.tokenVision ? false : gm || !token.data.hidden;
+    for (const ownedToken of ownedTokens) {
+      if (shouldIncludeVision(ownedToken, token)) {
+        tokenVisible = true;
+      }else{
+        tokenVisible = false;
+      }
+    }
+    token.visible = tokenVisible;
+  }
+}
+
+export function overrideVisibilityTestHandler(wrapped, ...args) {
+  const [sourceToken, targetToken] = args;
+  const isCVVisible = shouldIncludeVision(sourceToken, targetToken);
+  return isCVVisible ? wrapped(...args) : false;
 }
 
 // export function sightLayerPrototypeTestVisibilityHandler(wrapped, point, { tolerance = 2, object = null } = {}) {

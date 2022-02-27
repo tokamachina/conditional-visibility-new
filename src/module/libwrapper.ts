@@ -5,7 +5,9 @@ import { canvas, game } from './settings';
 
 export function registerLibwrappers() {
   if (!game.modules.get('levels')?.active) {
+    // ================
     // WITH NO LEVELS
+    // ================
 
     //@ts-ignore
     libWrapper.register(
@@ -19,11 +21,13 @@ export function registerLibwrappers() {
     libWrapper.register(
       CONSTANTS.MODULE_NAME,
       'SightLayer.prototype.tokenVision',
-      sightLayerPrototypeTokenVisionHandler,
-      'WRAPPER',
+      sightLayerPrototypeTokenVisionHandlerNoLevels,
+      'MIXED',
     );
   } else {
+    // ================
     // WITH LEVELS EVERYTHING GO NUTS ???
+    // ================
 
     // CAN'T USE THIS LEVELS IS DOING A OVERRIDE
     // //@ts-ignore
@@ -34,32 +38,32 @@ export function registerLibwrappers() {
     //   'WRAPPER',
     // );
 
-    //@ts-ignore
-    libWrapper.register(
-      CONSTANTS.MODULE_NAME,
-      'SightLayer.prototype.tokenVision',
-      sightLayerPrototypeTokenVisionHandler,
-      'WRAPPER',
-    );
+    // //@ts-ignore
+    // libWrapper.register(
+    //   CONSTANTS.MODULE_NAME,
+    //   'SightLayer.prototype.tokenVision',
+    //   sightLayerPrototypeTokenVisionHandlerWithLevels,
+    //   'WRAPPER',
+    // );
 
     //@ts-ignore
     libWrapper.ignore_conflicts(CONSTANTS.MODULE_NAME, ['perfect-vision'], 'Levels.prototype.overrideVisibilityTest');
 
-    //@ts-ignore
-    libWrapper.register(
-      CONSTANTS.MODULE_NAME,
-      'Levels.prototype.overrideVisibilityTest',
-      overrideVisibilityTestHandler,
-      'WRAPPER',
-    );
-
     // //@ts-ignore
     // libWrapper.register(
     //   CONSTANTS.MODULE_NAME,
-    //   'Levels.prototype.advancedLosTestInLos',
+    //   'Levels.prototype.overrideVisibilityTest',
     //   overrideVisibilityTestHandler,
     //   'MIXED',
     // );
+
+    //@ts-ignore
+    libWrapper.register(
+      CONSTANTS.MODULE_NAME,
+      'Levels.prototype.advancedLosTestInLos',
+      overrideVisibilityTestHandler,
+      'WRAPPER',
+    );
   }
 
   // This can be useful to apply active effect on template ?
@@ -93,15 +97,15 @@ export function registerLibwrappers() {
       'WRAPPER',
     );
 
-    if (game.modules.get('levels')?.active) {
-      //@ts-ignore
-      libWrapper.register(
-        CONSTANTS.MODULE_NAME,
-        'Levels.prototype.advancedLosTestInLos',
-        updateVisionSourceHandler,
-        'MIXED',
-      );
-    }
+    // if (game.modules.get('levels')?.active) {
+    //   //@ts-ignore
+    //   libWrapper.register(
+    //     CONSTANTS.MODULE_NAME,
+    //     'Levels.prototype.advancedLosTestInLos',
+    //     updateVisionSourceHandler,
+    //     'MIXED',
+    //   );
+    // }
   }
 }
 
@@ -110,7 +114,43 @@ export function templatePrototypeRefreshHandler(wrapped) {
   return wrapped();
 }
 
-export function sightLayerPrototypeTokenVisionHandler(wrapped, ...args) {
+export function sightLayerPrototypeTokenVisionHandlerNoLevels(wrapped, ...args) {
+  // const sightLayer = <SightLayer>this;
+  // if (game.user?.isGM) {
+  // 	return true;
+  // }
+  // return wrapped(args);
+  // if(!sightLayer.tokenVision){
+  //   return wrapped(args);
+  // } else {
+  //   return true;
+  // }
+  const gm = game.user?.isGM;
+  if (gm) {
+      return true;
+  }
+  let ownedTokens = <Token[]>canvas.tokens?.placeables.filter((token) => token.isOwner && (!token.data.hidden || gm));
+  if (ownedTokens.length === 0 || !canvas.tokens?.controlled[0]) {
+      ownedTokens = <Token[]>(canvas.tokens?.placeables.filter((token) => (token.observer || token.isOwner) && (!token.data.hidden || gm)));
+  }
+  for (const token of <Token[]>canvas.tokens?.placeables) {
+      if (ownedTokens.includes(token)) {
+          continue;
+      }
+      let tokenVisible = canvas.scene?.data.tokenVision ? false : gm || !token.data.hidden;
+      for (const ownedToken of ownedTokens) {
+          if (shouldIncludeVision(ownedToken, token)) {
+              tokenVisible = true;
+          }
+          else {
+              tokenVisible = false;
+          }
+      }
+      token.visible = tokenVisible;
+  }
+}
+
+export function sightLayerPrototypeTokenVisionHandlerWithLevels(wrapped, ...args) {
   // const sightLayer = <SightLayer>this;
   // if (game.user?.isGM) {
   // 	return true;

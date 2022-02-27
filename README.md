@@ -1,4 +1,4 @@
-# Conditional Visibility
+# Conditional Visibility (Reborn 2022)
 
 ![Latest Release Download Count](https://img.shields.io/github/downloads/p4535992/conditional-visibility-new/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge) 
 
@@ -17,6 +17,8 @@ And when that Drow casts Darkness, players should need Devil's Sight to see any 
 
 Conditional Visibility allows you to set conditions on tokens that will display them only to players whose senses meet the conditions necessary to see
 the token.
+
+## NOTE: If you are a javascript developer and not a typescript developer, you can just use the javascript files under the dist folder
 
 ## Installation
 

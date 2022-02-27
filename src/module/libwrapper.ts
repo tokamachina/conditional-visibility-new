@@ -27,13 +27,14 @@ export function registerLibwrappers() {
 
     // WITH LEVELS EVERYTHING GO NUTS ???
 
-    //@ts-ignore
-    libWrapper.register(
-      CONSTANTS.MODULE_NAME,
-      'SightLayer.prototype.testVisibility',
-      sightLayerPrototypeTestVisibilityHandler,
-      'WRAPPER',
-    );
+    // CAN'T USE THIS LEVELS IS DOING A OVERRIDE
+    // //@ts-ignore
+    // libWrapper.register(
+    //   CONSTANTS.MODULE_NAME,
+    //   'SightLayer.prototype.testVisibility',
+    //   sightLayerPrototypeTestVisibilityHandler,
+    //   'WRAPPER',
+    // );
 
     //@ts-ignore
     libWrapper.ignore_conflicts(CONSTANTS.MODULE_NAME, ['perfect-vision'], 'Levels.prototype.overrideVisibilityTest');

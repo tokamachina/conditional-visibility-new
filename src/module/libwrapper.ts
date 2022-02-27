@@ -5,6 +5,9 @@ import { canvas, game } from './settings';
 
 export function registerLibwrappers() {
   if (!game.modules.get('levels')?.active) {
+
+    // WITH NO LEVELS
+
     //@ts-ignore
     libWrapper.register(
       CONSTANTS.MODULE_NAME,
@@ -21,8 +24,20 @@ export function registerLibwrappers() {
       'MIXED',
     );
   } else {
+
+    // WITH LEVELS EVERYTHING GO NUTS ???
+
+    //@ts-ignore
+    libWrapper.register(
+      CONSTANTS.MODULE_NAME,
+      'SightLayer.prototype.testVisibility',
+      sightLayerPrototypeTestVisibilityHandler,
+      'WRAPPER',
+    );
+
     //@ts-ignore
     libWrapper.ignore_conflicts(CONSTANTS.MODULE_NAME, ['perfect-vision'], 'Levels.prototype.overrideVisibilityTest');
+
     //@ts-ignore
     libWrapper.register(
       CONSTANTS.MODULE_NAME,
@@ -30,6 +45,14 @@ export function registerLibwrappers() {
       overrideVisibilityTestHandler,
       'MIXED',
     );
+
+    // //@ts-ignore
+    // libWrapper.register(
+    //   CONSTANTS.MODULE_NAME,
+    //   'Levels.prototype.advancedLosTestInLos',
+    //   overrideVisibilityTestHandler,
+    //   'MIXED',
+    // );
   }
 
   // This can be useful to apply active effect on template ?
@@ -42,7 +65,10 @@ export function registerLibwrappers() {
   //   "WRAPPER"
   // );
 
+  // ===================================================
+  // EXPERIMENTAL FEATURE
   // THIS IS https://github.com/trioderegion/eagle-eye/
+  // ===================================================
 
   if (game.settings.get(CONSTANTS.MODULE_NAME, 'useEagleEye')) {
     //@ts-ignore

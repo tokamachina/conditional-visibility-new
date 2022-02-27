@@ -48,6 +48,7 @@ This module uses the ATE library for wrapping methods. It is a hard dependency a
 
 - HELP WANTED This is just a "fast to make" module maybe someone a little more expert than me with form application and hud layer can do a better form for a better user experience.
 - This module used many feature of the [Dfred convenient effects](https://github.com/DFreds/dfreds-convenient-effects/) module, but is not multisystem (yet) i invite you to support Dfred for is marvelous work and beg him to make that module multisystem.
+- This module doesn't work (yet) with [Levels](https://github.com/theripper93/Levels)
 
 ## Usage
 
@@ -75,7 +76,7 @@ These modules are suggested for a better user experience with this one :
 
 - **Integration with [Shared vision](https://github.com/CDeenen/SharedVision/):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the Shared vision module.
 
-- **Integration with [Levels](https://github.com/theripper93/Levels):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the levels module.
+- **[WORKING ON PROGRESS] Integration with [Levels](https://github.com/theripper93/Levels):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the levels module.
 
 - **Integration with [DFreds Convenient Effects](https://github.com/DFreds/dfreds-convenient-effects):** documentation work in progress, but is basically all automatic so it should work for all senses and conditions are present on the graphic ui of this module.
 

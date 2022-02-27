@@ -62,6 +62,15 @@ export const registerSettings = function (): void {
     type: Boolean,
   });
 
+  game.settings.register(CONSTANTS.MODULE_NAME, 'enableSightCheckForGM', {
+    name: `${CONSTANTS.MODULE_NAME}.setting.enableSightCheckForGM.name`,
+    hint: `${CONSTANTS.MODULE_NAME}.setting.enableSightCheckForGM.hint`,
+    scope: 'world',
+    config: true,
+    default: true,
+    type: Boolean,
+  });
+
   game.settings.register(CONSTANTS.MODULE_NAME, 'enableHud', {
     name: `${CONSTANTS.MODULE_NAME}.setting.enableHud.name`,
     hint: `${CONSTANTS.MODULE_NAME}.setting.enableHud.hint`,

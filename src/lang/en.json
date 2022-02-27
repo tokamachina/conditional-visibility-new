@@ -21,6 +21,8 @@
 
   "conditional-visibility.setting.npcType.name": "NPC actor type",
   "conditional-visibility.setting.npcType.hint": "Here you can configure what the type of NPC actor of your system for the sight check. For example, in D&D5e system, the type is on the property \"actor.type\" an is value is 'npc', so you'd put \"npc\" in this setting.",
+  "conditional-visibility.setting.enableSightCheckForGM.name": "Enable Sight Check for GM",
+  "conditional-visibility.setting.enableSightCheckForGM.hint": "Can be useful for debugging",
 
   "conditional-visibility.setting.enableHud.name": "CV HUD element",
   "conditional-visibility.setting.enableHud.hint": "Add Token HUD element to disable/enable hidden condition",

@@ -5,7 +5,6 @@ import { canvas, game } from './settings';
 
 export function registerLibwrappers() {
   if (!game.modules.get('levels')?.active) {
-
     // WITH NO LEVELS
 
     //@ts-ignore
@@ -21,10 +20,9 @@ export function registerLibwrappers() {
       CONSTANTS.MODULE_NAME,
       'SightLayer.prototype.tokenVision',
       sightLayerPrototypeTokenVisionHandler,
-      'MIXED',
+      'WRAPPER',
     );
   } else {
-
     // WITH LEVELS EVERYTHING GO NUTS ???
 
     // CAN'T USE THIS LEVELS IS DOING A OVERRIDE
@@ -37,6 +35,14 @@ export function registerLibwrappers() {
     // );
 
     //@ts-ignore
+    libWrapper.register(
+      CONSTANTS.MODULE_NAME,
+      'SightLayer.prototype.tokenVision',
+      sightLayerPrototypeTokenVisionHandler,
+      'WRAPPER',
+    );
+
+    //@ts-ignore
     libWrapper.ignore_conflicts(CONSTANTS.MODULE_NAME, ['perfect-vision'], 'Levels.prototype.overrideVisibilityTest');
 
     //@ts-ignore
@@ -44,7 +50,7 @@ export function registerLibwrappers() {
       CONSTANTS.MODULE_NAME,
       'Levels.prototype.overrideVisibilityTest',
       overrideVisibilityTestHandler,
-      'MIXED',
+      'WRAPPER',
     );
 
     // //@ts-ignore
@@ -115,30 +121,55 @@ export function sightLayerPrototypeTokenVisionHandler(wrapped, ...args) {
   // } else {
   //   return true;
   // }
-  const gm = game.user?.isGM;
-  if(gm){
-    return true;
-  }
-  let ownedTokens = <Token[]>canvas.tokens?.placeables.filter((token) => token.isOwner && (!token.data.hidden || gm));
-  if (ownedTokens.length === 0 || !canvas.tokens?.controlled[0]) {
-    ownedTokens = <Token[]>(
-      canvas.tokens?.placeables.filter((token) => (token.observer || token.isOwner) && (!token.data.hidden || gm))
-    );
-  }
-  for (const token of <Token[]>canvas.tokens?.placeables) {
-    if (ownedTokens.includes(token)) {
-      continue;
+
+  if (!game.settings.get(CONSTANTS.MODULE_NAME, 'enableSightCheckForGM')) {
+    const gm = game.user?.isGM;
+    if (gm) {
+      return wrapped(...args);
     }
-    let tokenVisible = canvas.scene?.data.tokenVision ? false : gm || !token.data.hidden;
-    for (const ownedToken of ownedTokens) {
-      if (shouldIncludeVision(ownedToken, token)) {
-        tokenVisible = true;
-      }else{
-        tokenVisible = false;
+    let ownedTokens = <Token[]>canvas.tokens?.placeables.filter((token) => token.isOwner && (!token.data.hidden || gm));
+    if (ownedTokens.length === 0 || !canvas.tokens?.controlled[0]) {
+      ownedTokens = <Token[]>(
+        canvas.tokens?.placeables.filter((token) => (token.observer || token.isOwner) && (!token.data.hidden || gm))
+      );
+    }
+    for (const token of <Token[]>canvas.tokens?.placeables) {
+      if (ownedTokens.includes(token)) {
+        continue;
       }
+      let tokenVisible = canvas.scene?.data.tokenVision ? false : gm || !token.data.hidden;
+      for (const ownedToken of ownedTokens) {
+        if (shouldIncludeVision(ownedToken, token)) {
+          tokenVisible = true;
+        } else {
+          tokenVisible = false;
+        }
+      }
+      token.visible = tokenVisible;
     }
-    token.visible = tokenVisible;
+  } else {
+    let ownedTokens = <Token[]>canvas.tokens?.placeables.filter((token) => token.isOwner && !token.data.hidden);
+    if (ownedTokens.length === 0 || !canvas.tokens?.controlled[0]) {
+      ownedTokens = <Token[]>(
+        canvas.tokens?.placeables.filter((token) => (token.observer || token.isOwner) && !token.data.hidden)
+      );
+    }
+    for (const token of <Token[]>canvas.tokens?.placeables) {
+      if (!game.user?.isGM && ownedTokens.includes(token)) {
+        continue;
+      }
+      let tokenVisible = canvas.scene?.data.tokenVision ? false : !token.data.hidden;
+      for (const ownedToken of ownedTokens) {
+        if (shouldIncludeVision(ownedToken, token)) {
+          tokenVisible = true;
+        } else {
+          tokenVisible = false;
+        }
+      }
+      token.visible = tokenVisible;
+    }
   }
+  return wrapped(...args);
 }
 
 export function overrideVisibilityTestHandler(wrapped, ...args) {

@@ -561,7 +561,15 @@ const API = {
         return sense.id == (<SenseData>senseData).id || i18n(sense.name) == i18n((<SenseData>senseData).name);
       });
       if (senseOrCondition) {
-        effect = EffectSupport.buildDefault(senseOrCondition, !!isSense);
+        const atcvChanges =  [
+          {
+            key: 'ATCV.' + senseOrCondition.id,
+            mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+            value: String(visionLevel),
+            priority: 5,
+          },
+        ]
+        effect = EffectSupport.buildDefault(senseOrCondition, !!isSense, [], [], [], atcvChanges);
       }
     }
     // Add some feature if is a sense or a condition

@@ -1,9 +1,27 @@
+import { TokenData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import API from './api';
 import CONSTANTS from './constants';
 import { debug, log, shouldIncludeVision, templateTokens } from './lib/lib';
 import { canvas, game } from './settings';
 
 export function registerLibwrappers() {
+
+
+  //@ts-ignore
+  libWrapper.register(CONSTANTS.MODULE_NAME,
+    'Token.prototype.refresh',
+    tokenPrototypeRefreshHandler,
+    'MIXED'
+  );
+
+  // //@ts-ignore
+  // libWrapper.register(CONSTANTS.MODULE_NAME,
+  //   'Token.prototype.draw',
+  //   tokenPrototypeDrawHandler,
+  //   'MIXED'
+  // );
+
+
   if (!game.modules.get('levels')?.active) {
     // ================
     // WITH NO LEVELS
@@ -272,6 +290,19 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
 
   return is_visible;
 }
+
+export const tokenPrototypeRefreshHandler = function (wrapped, ...args) {
+  const tokenData:TokenData = this as TokenData;
+  tokenData.img = TokenData.DEFAULT_ICON;
+  // tokenData.overlayEffect = TokenData.DEFAULT_ICON;
+  return wrapped(...args);
+};
+
+// export const tokenPrototypeDrawHandler = function (wrapped, ...args) {
+//   const token = this as Token;
+//   TODO
+//   return wrapped(...args);
+// };
 
 // ============= Eagle Eye  ==============================
 

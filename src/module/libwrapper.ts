@@ -1,26 +1,14 @@
-import { TokenData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import API from './api';
 import CONSTANTS from './constants';
 import { debug, log, shouldIncludeVision, templateTokens } from './lib/lib';
 import { canvas, game } from './settings';
 
 export function registerLibwrappers() {
-
+  //@ts-ignore
+  // libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.refresh', tokenPrototypeRefreshHandler, 'MIXED');
 
   //@ts-ignore
-  libWrapper.register(CONSTANTS.MODULE_NAME,
-    'Token.prototype.refresh',
-    tokenPrototypeRefreshHandler,
-    'MIXED'
-  );
-
-  // //@ts-ignore
-  // libWrapper.register(CONSTANTS.MODULE_NAME,
-  //   'Token.prototype.draw',
-  //   tokenPrototypeDrawHandler,
-  //   'MIXED'
-  // );
-
+  // libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.draw', tokenPrototypeDrawHandler, 'MIXED');
 
   if (!game.modules.get('levels')?.active) {
     // ================
@@ -145,26 +133,27 @@ export function sightLayerPrototypeTokenVisionHandlerNoLevels(wrapped, ...args) 
   // }
   const gm = game.user?.isGM;
   if (gm) {
-      return true;
+    return true;
   }
   let ownedTokens = <Token[]>canvas.tokens?.placeables.filter((token) => token.isOwner && (!token.data.hidden || gm));
   if (ownedTokens.length === 0 || !canvas.tokens?.controlled[0]) {
-      ownedTokens = <Token[]>(canvas.tokens?.placeables.filter((token) => (token.observer || token.isOwner) && (!token.data.hidden || gm)));
+    ownedTokens = <Token[]>(
+      canvas.tokens?.placeables.filter((token) => (token.observer || token.isOwner) && (!token.data.hidden || gm))
+    );
   }
   for (const token of <Token[]>canvas.tokens?.placeables) {
-      if (ownedTokens.includes(token)) {
-          continue;
+    if (ownedTokens.includes(token)) {
+      continue;
+    }
+    let tokenVisible = canvas.scene?.data.tokenVision ? false : gm || !token.data.hidden;
+    for (const ownedToken of ownedTokens) {
+      if (shouldIncludeVision(ownedToken, token)) {
+        tokenVisible = true;
+      } else {
+        tokenVisible = false;
       }
-      let tokenVisible = canvas.scene?.data.tokenVision ? false : gm || !token.data.hidden;
-      for (const ownedToken of ownedTokens) {
-          if (shouldIncludeVision(ownedToken, token)) {
-              tokenVisible = true;
-          }
-          else {
-              tokenVisible = false;
-          }
-      }
-      token.visible = tokenVisible;
+    }
+    token.visible = tokenVisible;
   }
 }
 
@@ -292,17 +281,16 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
 }
 
 export const tokenPrototypeRefreshHandler = function (wrapped, ...args) {
-  const tokenData:TokenData = this as TokenData;
-  tokenData.img = TokenData.DEFAULT_ICON;
-  // tokenData.overlayEffect = TokenData.DEFAULT_ICON;
+  const tokenData: Token = this as Token;
+  tokenData.data.img = '';
   return wrapped(...args);
 };
 
-// export const tokenPrototypeDrawHandler = function (wrapped, ...args) {
-//   const token = this as Token;
-//   TODO
-//   return wrapped(...args);
-// };
+export const tokenPrototypeDrawHandler = function (wrapped, ...args) {
+  const tokenData: Token = this as Token;
+  tokenData.data.img = '';
+  return wrapped(...args);
+};
 
 // ============= Eagle Eye  ==============================
 

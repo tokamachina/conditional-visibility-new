@@ -19,6 +19,7 @@ export interface AtcvEffect {
   visionDistanceValue: number | undefined;
   visionTargets: string[];
   visionSources: string[];
+  visionTargetImage:string;
 }
 
 export interface SenseData {
@@ -32,6 +33,7 @@ export interface SenseData {
   conditionTargets: string[]; // [OPTIONAL] force to apply the check only for these sources (you can set this but is used only from sense)
   conditionSources: string[]; // [OPTIONAL] force to apply the check only for these sources (you can set this but is used only from condition)
   effectCustomId: string; // [OPTIONAL] if you use the module 'DFreds Convenient Effects', you can associate a custom active effect by using the customId string of the DFred effect
+  conditionTargetImage: string; // [OPTIONAL] string path to the image applied on target token and used from the source token (the one you click on) for replace only for that player with a special sight
 }
 
 export enum AtcvEffectSenseFlags {
@@ -236,6 +238,7 @@ export class VisionCapabilities {
         let conditionElevation = false;
         let conditionTargets: string[] = [];
         let conditionSources: string[] = [];
+        let conditionTargetImage = '';
         // if (!visionLevelValue || visionLevelValue == 0) {
         // try to serach on active effect
         // if (await API.hasEffectAppliedOnToken(this.token.id, i18n(statusSight.name), true)) {
@@ -256,6 +259,7 @@ export class VisionCapabilities {
           visionSources: conditionSources ?? [],
           visionLevelValue: visionLevelValue ?? 0,
           visionDistanceValue: visionDistanceValue ?? 0,
+          visionTargetImage: conditionTargetImage,
           statusSight: statusSight,
         };
         this.senses.set(statusSight.id, statusEffect);

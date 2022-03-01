@@ -37,17 +37,23 @@ The calculation for the vision checks is in three points (these check are enable
 
 Every active effect data of this is module use any chnages with the prefix `ATCV` acronim for _Active Token Conditional Visibility_ .
 
+**NOTE:** by default all _senses_ are passive AE and all _conditions_ are _temporary_ AE
+**NOTE:** for now every active effect can have only one `ATCV.<sense or condition id>`,`ATCV.conditionElevation`,`ATCV.conditionTargets`,`ATCV.conditionSources` key at the time, if multiple are setted we get only the first for the checking
+
 There three type of these AE used and supported from this module:
 
 | Key Syntax                      | Type    | Description                         | Examples Active Effect Data [Key = value] |
 | :------------------------------:|:-------:|:-----------------------------------:|:--------:|
 | `ATCV.<sense or condition id>`  | number  | Identify the "vision level" of the sense/condition | `ATCV.invisible = 12`, `ATCV.darkvision = 13` |
 | `ATCV.conditionElevation`       | boolean | if true will force to check the elevation between tokens source and target, VERY USEFUL IF YOU USE LEVELS | `ATCV.conditionElevation = true` |
-| `ATCV.conditionTargets`         | list of string | This is used for explicitly tell to the checker what AE can be see from this AE based on the custom id used from this module, check out the [TABLES](./tables.md) for details, **this is basically a override of the point 4. checker based on the indexes given to the sense  |  `ATCV.conditionTargets=hidden,invisible` |
-| `ATCV.conditionSources`         | list of string | This is used for explicitly tell to the checker what AE can be see from this AE based on the custom id used from this module, check out the [TABLES](./tables.md) for details, **this is basically a override of the point 4. checker based on the indexes given to the condition  |  `ATCV.conditionSources=darkvision,tremorsense` |
+| `ATCV.conditionTargets`         | list of string | This is used for explicitly tell to the checker what AE can be see from this AE based on the custom id used from this module, check out the [TABLES](./tables.md) for details, **this is basically a override of the point 6. checker based on the indexes given to the sense  |  `ATCV.conditionTargets=hidden,invisible` |
+| `ATCV.conditionSources`         | list of string | This is used for explicitly tell to the checker what AE can be see from this AE based on the custom id used from this module, check out the [TABLES](./tables.md) for details, **this is basically a override of the point 6. checker based on the indexes given to the condition  |  `ATCV.conditionSources=darkvision,tremorsense` |
 
+[WORKING IN PROGRESS]
 
-**NOTE:** by default all _senses_ are passive AE and all _conditions_ are _temporary_ AE
+| Key Syntax                      | Type    | Description                         | Examples Active Effect Data [Key = value] |
+| :------------------------------:|:-------:|:-----------------------------------:|:--------:|
+| `ATCV.conditionTargetImage`     | string  | string path to the image applied on target token and used from the source token (the one you click on) for replace only for that player with a special sight
 
 ## Can i add my custom sense or condition on it ?
 

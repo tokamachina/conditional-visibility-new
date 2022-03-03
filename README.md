@@ -48,7 +48,7 @@ This module uses the [ATE](https://github.com/kandashi/Active-Token-Lighting) li
 
 - HELP WANTED This is just a "fast to make" module maybe someone a little more expert than me with form application and hud layer can do a better form for a better user experience.
 - This module used many feature of the [Dfred convenient effects](https://github.com/DFreds/dfreds-convenient-effects/) module, but is not multisystem (yet) i invite you to support Dfred for is marvelous work and beg him to make that module multisystem.
-- This module doesn't work (yet) with [Levels](https://github.com/theripper93/Levels)
+- If the scene is with "Token vision" set to false (unchecked box) , after selected a token and click on the cnavas with the option "Release on left click" enable the hidden token are visible for a small instat this is a incompatibility with the [Levels](https://github.com/theripper93/Levels) module i cannot solve.
 
 ## Usage
 
@@ -74,13 +74,13 @@ These modules are suggested for a better user experience with this one :
 
 ### Module compatibility
 
-- **Integration with [Shared vision](https://github.com/CDeenen/SharedVision/):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the Shared vision module.
+- **Integration with [Shared vision](https://github.com/CDeenen/SharedVision/):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with this module.
 
-- **Integration with [Perfect Vision](https://github.com/dev7355608/perfect-vision):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the Shared vision module.
+- **Integration with [Perfect Vision](https://github.com/dev7355608/perfect-vision):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with this module.
 
 ![img](./wiki/video/feature_integration_pv.gif)
 
-- **[WORKING ON PROGRESS] Integration with [Levels](https://github.com/theripper93/Levels):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict with the levels module.
+- **[Small incompatibility] Integration with [Levels](https://github.com/theripper93/Levels):** The module just wrap on `wrapper` mode this two method `SightLayer.prototype.testVisibility` and `SightLayer.prototype.tokenVision` so it should be no conflict this module.
 
 - **Integration with [DFreds Convenient Effects](https://github.com/DFreds/dfreds-convenient-effects):** documentation work in progress, but is basically all automatic so it should work for all senses and conditions are present on the graphic ui of this module.
 

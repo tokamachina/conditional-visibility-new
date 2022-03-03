@@ -9,28 +9,29 @@ export function registerLibwrappers() {
   // libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.refresh', tokenPrototypeRefreshHandler, 'MIXED');
 
   //@ts-ignore
-  libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.draw', tokenPrototypeDrawHandler, 'MIXED');
+  // libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.draw', tokenPrototypeDrawHandler, 'MIXED');
 
+  // ================
+  // WITH NO LEVELS
+  // ================
 
-    // ================
-    // WITH NO LEVELS
-    // ================
+  //@ts-ignore
+  libWrapper.register(
+    CONSTANTS.MODULE_NAME,
+    'SightLayer.prototype.testVisibility',
+    sightLayerPrototypeTestVisibilityHandler,
+    'WRAPPER',
+    { perf_mode: 'FAST' },
+  );
 
-    //@ts-ignore
-    libWrapper.register(
-      CONSTANTS.MODULE_NAME,
-      'SightLayer.prototype.testVisibility',
-      sightLayerPrototypeTestVisibilityHandler,
-      'WRAPPER',
-    );
-
-    //@ts-ignore
-    libWrapper.register(
-      CONSTANTS.MODULE_NAME,
-      'SightLayer.prototype.tokenVision',
-      sightLayerPrototypeTokenVisionHandlerNoLevels,
-      'MIXED',
-    );
+  //@ts-ignore
+  libWrapper.register(
+    CONSTANTS.MODULE_NAME,
+    'SightLayer.prototype.tokenVision',
+    sightLayerPrototypeTokenVisionHandlerNoLevels,
+    'MIXED',
+    { perf_mode: 'FAST' },
+  );
 
   if (game.modules.get('levels')?.active) {
     // ================
@@ -55,11 +56,7 @@ export function registerLibwrappers() {
     // );
 
     //@ts-ignore
-    libWrapper.ignore_conflicts(
-      CONSTANTS.MODULE_NAME, 
-      ['perfect-vision'], 
-      'Levels.prototype.overrideVisibilityTest'
-    );
+    libWrapper.ignore_conflicts(CONSTANTS.MODULE_NAME, ['perfect-vision'], 'Levels.prototype.overrideVisibilityTest');
 
     //@ts-ignore
     // libWrapper.register(
@@ -76,7 +73,7 @@ export function registerLibwrappers() {
       'Levels.prototype.overrideVisibilityTest',
       overrideVisibilityTestHandler,
       'MIXED',
-      { perf_mode: "FAST" }
+      { perf_mode: 'FAST' },
     );
 
     // //@ts-ignore
@@ -114,10 +111,14 @@ export function registerLibwrappers() {
 
   if (game.settings.get(CONSTANTS.MODULE_NAME, 'useEagleEye')) {
     //@ts-ignore
-    libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.isVisible', isVisibleHandler, 'MIXED');
+    libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.isVisible', isVisibleHandler, 'MIXED', {
+      perf_mode: 'FAST',
+    });
 
     //@ts-ignore
-    libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.updateToken', updateTokenHandler, 'MIXED');
+    libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.updateToken', updateTokenHandler, 'MIXED', {
+      perf_mode: 'FAST',
+    });
 
     // Just as we're about to recalculate vision for this token, keep track of its vision level
     //@ts-ignore
@@ -126,6 +127,7 @@ export function registerLibwrappers() {
       'Token.prototype.updateVisionSource',
       updateVisionSourceHandler,
       'WRAPPER',
+      { perf_mode: 'FAST' },
     );
   }
 }
@@ -170,69 +172,70 @@ export function sightLayerPrototypeTokenVisionHandlerNoLevels(wrapped, ...args) 
     }
     token.visible = tokenVisible;
   }
-}
-
-export function sightLayerPrototypeTokenVisionHandlerWithLevels(wrapped, ...args) {
-  // const sightLayer = <SightLayer>this;
-  // if (game.user?.isGM) {
-  // 	return true;
-  // }
-  // return wrapped(args);
-  // if(!sightLayer.tokenVision){
-  //   return wrapped(args);
-  // } else {
-  //   return true;
-  // }
-
-  if (!game.settings.get(CONSTANTS.MODULE_NAME, 'enableSightCheckForGM')) {
-    const gm = game.user?.isGM;
-    if (gm) {
-      return wrapped(...args);
-    }
-    let ownedTokens = <Token[]>canvas.tokens?.placeables.filter((token) => token.isOwner && (!token.data.hidden || gm));
-    if (ownedTokens.length === 0 || !canvas.tokens?.controlled[0]) {
-      ownedTokens = <Token[]>(
-        canvas.tokens?.placeables.filter((token) => (token.observer || token.isOwner) && (!token.data.hidden || gm))
-      );
-    }
-    for (const token of <Token[]>canvas.tokens?.placeables) {
-      if (ownedTokens.includes(token)) {
-        continue;
-      }
-      let tokenVisible = canvas.scene?.data.tokenVision ? false : gm || !token.data.hidden;
-      for (const ownedToken of ownedTokens) {
-        if (shouldIncludeVision(ownedToken, token)) {
-          tokenVisible = true;
-        } else {
-          tokenVisible = false;
-        }
-      }
-      token.visible = tokenVisible;
-    }
-  } else {
-    let ownedTokens = <Token[]>canvas.tokens?.placeables.filter((token) => token.isOwner && !token.data.hidden);
-    if (ownedTokens.length === 0 || !canvas.tokens?.controlled[0]) {
-      ownedTokens = <Token[]>(
-        canvas.tokens?.placeables.filter((token) => (token.observer || token.isOwner) && !token.data.hidden)
-      );
-    }
-    for (const token of <Token[]>canvas.tokens?.placeables) {
-      if (!game.user?.isGM && ownedTokens.includes(token)) {
-        continue;
-      }
-      let tokenVisible = canvas.scene?.data.tokenVision ? false : !token.data.hidden;
-      for (const ownedToken of ownedTokens) {
-        if (shouldIncludeVision(ownedToken, token)) {
-          tokenVisible = true;
-        } else {
-          tokenVisible = false;
-        }
-      }
-      token.visible = tokenVisible;
-    }
-  }
   return wrapped(...args);
 }
+
+// export function sightLayerPrototypeTokenVisionHandlerWithLevels(wrapped, ...args) {
+//   // const sightLayer = <SightLayer>this;
+//   // if (game.user?.isGM) {
+//   // 	return true;
+//   // }
+//   // return wrapped(args);
+//   // if(!sightLayer.tokenVision){
+//   //   return wrapped(args);
+//   // } else {
+//   //   return true;
+//   // }
+
+//   if (!game.settings.get(CONSTANTS.MODULE_NAME, 'enableSightCheckForGM')) {
+//     const gm = game.user?.isGM;
+//     if (gm) {
+//       return wrapped(...args);
+//     }
+//     let ownedTokens = <Token[]>canvas.tokens?.placeables.filter((token) => token.isOwner && (!token.data.hidden || gm));
+//     if (ownedTokens.length === 0 || !canvas.tokens?.controlled[0]) {
+//       ownedTokens = <Token[]>(
+//         canvas.tokens?.placeables.filter((token) => (token.observer || token.isOwner) && (!token.data.hidden || gm))
+//       );
+//     }
+//     for (const token of <Token[]>canvas.tokens?.placeables) {
+//       if (ownedTokens.includes(token)) {
+//         continue;
+//       }
+//       let tokenVisible = canvas.scene?.data.tokenVision ? false : gm || !token.data.hidden;
+//       for (const ownedToken of ownedTokens) {
+//         if (shouldIncludeVision(ownedToken, token)) {
+//           tokenVisible = true;
+//         } else {
+//           tokenVisible = false;
+//         }
+//       }
+//       token.visible = tokenVisible;
+//     }
+//   } else {
+//     let ownedTokens = <Token[]>canvas.tokens?.placeables.filter((token) => token.isOwner && !token.data.hidden);
+//     if (ownedTokens.length === 0 || !canvas.tokens?.controlled[0]) {
+//       ownedTokens = <Token[]>(
+//         canvas.tokens?.placeables.filter((token) => (token.observer || token.isOwner) && !token.data.hidden)
+//       );
+//     }
+//     for (const token of <Token[]>canvas.tokens?.placeables) {
+//       if (!game.user?.isGM && ownedTokens.includes(token)) {
+//         continue;
+//       }
+//       let tokenVisible = canvas.scene?.data.tokenVision ? false : !token.data.hidden;
+//       for (const ownedToken of ownedTokens) {
+//         if (shouldIncludeVision(ownedToken, token)) {
+//           tokenVisible = true;
+//         } else {
+//           tokenVisible = false;
+//         }
+//       }
+//       token.visible = tokenVisible;
+//     }
+//   }
+//   return wrapped(...args);
+// }
 
 export function overrideVisibilityTestHandler(wrapped, ...args) {
   const [sourceToken, targetToken] = args;
@@ -256,7 +259,7 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
   const tokenToCheckIfIsVisible = <Token>object;
   // this.sources is a map of selected tokens (may be size 0) all tokens
   // contribute to the vision so iterate through the tokens
-  let mySources:Token[] = [];
+  let mySources: Token[] = [];
   if (!this.sources || this.sources.size === 0) {
     // return res;
     mySources = <Token[]>canvas.tokens?.controlled;
@@ -275,7 +278,7 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
   }
   const visible_to_sources = [...mySources].map((s) => {
     // get the token elevation
-    const controlledToken = s;//<Token>s.object;
+    const controlledToken = s; //<Token>s.object;
     // if any active effects blocks, then the token is not visible for that sight source
     const is_visible = shouldIncludeVision(controlledToken, tokenToCheckIfIsVisible);
     // log(`terrains ${is_visible ? 'do not block' : 'do block'}`, terrains_block);
@@ -307,15 +310,15 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
 export const tokenPrototypeDrawHandler = function (wrapped, ...args) {
   const tokenData: Token = this as Token;
   const atcvEffects = getSensesFromToken(tokenData);
-  let currentActvEffect:AtcvEffect|undefined = undefined
+  let currentActvEffect: AtcvEffect | undefined = undefined;
   // Get the one with major priority they already are sorted for priority so the first one is the right one
-  for(const atcvEffect of atcvEffects){
-    if(atcvEffect.visionTargetImage){
+  for (const atcvEffect of atcvEffects) {
+    if (atcvEffect.visionTargetImage) {
       currentActvEffect = atcvEffect;
       break;
     }
   }
-  if(currentActvEffect){
+  if (currentActvEffect) {
     tokenData.data.img = currentActvEffect.visionTargetImage;
   }
   return wrapped(...args);

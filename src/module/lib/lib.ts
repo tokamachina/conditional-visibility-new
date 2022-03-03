@@ -708,7 +708,7 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
         statusSight: effectSight,
         visionDistanceValue: distance,
         visionLevelValue: atcvValue,
-        visionTargetImage: atcvTargetImage
+        visionTargetImage: atcvTargetImage,
       });
     }
   }
@@ -825,10 +825,7 @@ export function retrieveAtcvVisionTargetImageFromActiveEffect(effectEntity: Acti
   //atcvValue = effectEntity.data.changes.find((aee) => {
   atcvValue = atcvChanges.find((aee) => {
     if (
-      aee.key
-        .replace(regex, '')
-        .toLowerCase()
-        .startsWith(('ATCV.conditionTargetImage').replace(regex, '').toLowerCase())
+      aee.key.replace(regex, '').toLowerCase().startsWith('ATCV.conditionTargetImage'.replace(regex, '').toLowerCase())
     ) {
       return aee;
     }

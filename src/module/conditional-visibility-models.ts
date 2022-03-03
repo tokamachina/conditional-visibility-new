@@ -19,7 +19,7 @@ export interface AtcvEffect {
   visionDistanceValue: number | undefined;
   visionTargets: string[];
   visionSources: string[];
-  visionTargetImage:string;
+  visionTargetImage: string;
 }
 
 export interface SenseData {

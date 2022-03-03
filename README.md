@@ -18,6 +18,8 @@ And when that Drow casts Darkness, players should need Devil's Sight to see any 
 Conditional Visibility allows you to set conditions on tokens that will display them only to players whose senses meet the conditions necessary to see
 the token.
 
+**IMPORTANT: This module will work very good with the ligthing setting "Token vision" of scene configuration set to true, otherwise is still work, but is not advisable**
+
 ## NOTE: If you are a javascript developer and not a typescript developer, you can just use the javascript files under the dist folder
 
 ## Installation

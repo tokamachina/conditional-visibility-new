@@ -10,7 +10,7 @@ export function registerLibwrappers() {
   //@ts-ignore
   // libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.draw', tokenPrototypeDrawHandler, 'MIXED');
 
-  if (!game.modules.get('levels')?.active) {
+
     // ================
     // WITH NO LEVELS
     // ================
@@ -30,7 +30,8 @@ export function registerLibwrappers() {
       sightLayerPrototypeTokenVisionHandlerNoLevels,
       'MIXED',
     );
-  } else {
+
+  if (game.modules.get('levels')?.active) {
     // ================
     // WITH LEVELS EVERYTHING GO NUTS ???
     // ================
@@ -53,23 +54,46 @@ export function registerLibwrappers() {
     // );
 
     //@ts-ignore
-    libWrapper.ignore_conflicts(CONSTANTS.MODULE_NAME, ['perfect-vision'], 'Levels.prototype.overrideVisibilityTest');
+    libWrapper.ignore_conflicts(
+      CONSTANTS.MODULE_NAME, 
+      ['perfect-vision'], 
+      'Levels.prototype.overrideVisibilityTest'
+    );
 
-    // //@ts-ignore
+    //@ts-ignore
     // libWrapper.register(
     //   CONSTANTS.MODULE_NAME,
-    //   'Levels.prototype.overrideVisibilityTest',
-    //   overrideVisibilityTestHandler,
-    //   'MIXED',
+    //   'Levels.prototype.overrideSightLayerLevelsTestVisibility',
+    //   sightLayerPrototypeTestVisibilityHandler,
+    //   'WRAPPER',
+    //   { perf_mode: "FAST" }
     // );
 
     //@ts-ignore
     libWrapper.register(
       CONSTANTS.MODULE_NAME,
-      'Levels.prototype.advancedLosTestInLos',
+      'Levels.prototype.overrideVisibilityTest',
       overrideVisibilityTestHandler,
-      'WRAPPER',
+      'MIXED',
+      { perf_mode: "FAST" }
     );
+
+    // //@ts-ignore
+    // libWrapper.register(
+    //   CONSTANTS.MODULE_NAME,
+    //   'Levels.prototype.advancedLosTestInLos',
+    //   overrideVisibilityTestHandler,
+    //   'WRAPPER',
+    //   { perf_mode: "FAST" }
+    // );
+
+    //@ts-ignore
+    // libWrapper.register(
+    //   CONSTANTS.MODULE_NAME,
+    //   'Levels.prototype.advancedLosTestInLos',
+    //   overrideVisibilityTestHandler,
+    //   'WRAPPER',
+    // );
   }
 
   // This can be useful to apply active effect on template ?
@@ -102,16 +126,6 @@ export function registerLibwrappers() {
       updateVisionSourceHandler,
       'WRAPPER',
     );
-
-    // if (game.modules.get('levels')?.active) {
-    //   //@ts-ignore
-    //   libWrapper.register(
-    //     CONSTANTS.MODULE_NAME,
-    //     'Levels.prototype.advancedLosTestInLos',
-    //     updateVisionSourceHandler,
-    //     'MIXED',
-    //   );
-    // }
   }
 }
 
@@ -241,24 +255,26 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
   const tokenToCheckIfIsVisible = <Token>object;
   // this.sources is a map of selected tokens (may be size 0) all tokens
   // contribute to the vision so iterate through the tokens
+  let mySources:Token[] = [];
   if (!this.sources || this.sources.size === 0) {
+    // return res;
+    mySources = <Token[]>canvas.tokens?.controlled;
+  } else {
+    const uniqueIds = new Set();
+    this.sources.forEach((element) => {
+      const isDuplicate = uniqueIds.has(element.key);
+      uniqueIds.add(element.key);
+      if (!isDuplicate) {
+        mySources.push(<Token>element.object);
+      }
+    });
+  }
+  if (!mySources || mySources.length === 0) {
     return res;
   }
-
-  const uniqueIds = new Set();
-  const mySources = this.sources.filter((element) => {
-    const isDuplicate = uniqueIds.has(element.key);
-
-    uniqueIds.add(element.key);
-
-    if (!isDuplicate) {
-      return true;
-    }
-  });
-
   const visible_to_sources = [...mySources].map((s) => {
     // get the token elevation
-    const controlledToken = <Token>s.object;
+    const controlledToken = s;//<Token>s.object;
     // if any active effects blocks, then the token is not visible for that sight source
     const is_visible = shouldIncludeVision(controlledToken, tokenToCheckIfIsVisible);
     // log(`terrains ${is_visible ? 'do not block' : 'do block'}`, terrains_block);
@@ -266,7 +282,8 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
   }); // [...this.sources].forEach
 
   const sourcesNames = <string[]>mySources.map((e) => {
-    return e.object.data.name;
+    return e.data.name;
+    //return e.object.data.name;
   });
 
   // if any source has vision to the token, the token is visible

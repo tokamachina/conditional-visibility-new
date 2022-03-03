@@ -699,6 +699,7 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
       }
       const distance = retrieveAtcvVisionLevelDistanceFromActiveEffect(effectEntity);
       const atcvValue = retrieveAtcvVisionLevelFromActiveEffect(effectEntity, effectSight.id);
+      const atcvTargetImage = retrieveAtcvVisionTargetImageFromActiveEffect(effectEntity);
 
       statusEffects.push({
         visionElevation: visionElevation,
@@ -707,6 +708,7 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
         statusSight: effectSight,
         visionDistanceValue: distance,
         visionLevelValue: atcvValue,
+        visionTargetImage: atcvTargetImage
       });
     }
   }
@@ -807,6 +809,35 @@ export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffe
     return 0;
   }
   return Number(atcvValue.value);
+}
+
+export function retrieveAtcvVisionTargetImageFromActiveEffect(effectEntity: ActiveEffect): string {
+  const regex = /[^A-Za-z0-9]/g;
+  //Look up for ATCV to manage vision level
+  // TODO for now every active effect can have only one ATCV key ate the time not sure if is manageable
+  let atcvValue: any = '';
+  const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+  if (!effectNameToSet) {
+    return atcvValue;
+  }
+
+  const atcvChanges = EffectSupport.retrieveChangesOrderedByPriorityFromAE(effectEntity);
+  //atcvValue = effectEntity.data.changes.find((aee) => {
+  atcvValue = atcvChanges.find((aee) => {
+    if (
+      aee.key
+        .replace(regex, '')
+        .toLowerCase()
+        .startsWith(('ATCV.conditionTargetImage').replace(regex, '').toLowerCase())
+    ) {
+      return aee;
+    }
+  });
+  if (!atcvValue) {
+    // Ignore ???
+    return '';
+  }
+  return String(atcvValue.value);
 }
 
 export function retrieveAtcvVisionLevelDistanceFromActiveEffect(effectEntity: ActiveEffect): number {

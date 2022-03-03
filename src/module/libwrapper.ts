@@ -1,6 +1,7 @@
+import { AtcvEffect } from './conditional-visibility-models';
 import API from './api';
 import CONSTANTS from './constants';
-import { debug, log, shouldIncludeVision, templateTokens } from './lib/lib';
+import { debug, getSensesFromToken, log, shouldIncludeVision, templateTokens } from './lib/lib';
 import { canvas, game } from './settings';
 
 export function registerLibwrappers() {
@@ -8,7 +9,7 @@ export function registerLibwrappers() {
   // libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.refresh', tokenPrototypeRefreshHandler, 'MIXED');
 
   //@ts-ignore
-  // libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.draw', tokenPrototypeDrawHandler, 'MIXED');
+  libWrapper.register(CONSTANTS.MODULE_NAME, 'Token.prototype.draw', tokenPrototypeDrawHandler, 'MIXED');
 
 
     // ================
@@ -129,10 +130,10 @@ export function registerLibwrappers() {
   }
 }
 
-export function templatePrototypeRefreshHandler(wrapped) {
-  templateTokens(this);
-  return wrapped();
-}
+// export function templatePrototypeRefreshHandler(wrapped) {
+//   templateTokens(this);
+//   return wrapped();
+// }
 
 export function sightLayerPrototypeTokenVisionHandlerNoLevels(wrapped, ...args) {
   // const sightLayer = <SightLayer>this;
@@ -297,15 +298,26 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
   return is_visible;
 }
 
-export const tokenPrototypeRefreshHandler = function (wrapped, ...args) {
-  const tokenData: Token = this as Token;
-  tokenData.data.img = '';
-  return wrapped(...args);
-};
+// export const tokenPrototypeRefreshHandler = function (wrapped, ...args) {
+//   const tokenData: Token = this as Token;
+//   tokenData.data.img = '';
+//   return wrapped(...args);
+// };
 
 export const tokenPrototypeDrawHandler = function (wrapped, ...args) {
   const tokenData: Token = this as Token;
-  tokenData.data.img = '';
+  const atcvEffects = getSensesFromToken(tokenData);
+  let currentActvEffect:AtcvEffect|undefined = undefined
+  // Get the one with major priority they already are sorted for priority so the first one is the right one
+  for(const atcvEffect of atcvEffects){
+    if(atcvEffect.visionTargetImage){
+      currentActvEffect = atcvEffect;
+      break;
+    }
+  }
+  if(currentActvEffect){
+    tokenData.data.img = currentActvEffect.visionTargetImage;
+  }
   return wrapped(...args);
 };
 

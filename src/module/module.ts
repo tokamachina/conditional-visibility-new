@@ -288,6 +288,28 @@ const module = {
           if (!effectFounded) {
             const origin = undefined;
             const overlay = false;
+            const disabled = false;
+            // Add some feature if is a sense or a condition
+            if (effect) {
+              const regex = /[^A-Za-z0-9]/g;
+              const isSense = API.SENSES.find((sense: SenseData) => {
+                return sense.id
+                  .replace(regex, '')
+                  .toLowerCase()
+                  .startsWith(effect.customId.replace(regex, '').toLowerCase())
+                  ||
+                  i18n(sense.name)
+                  .replace(regex, '')
+                  .toLowerCase()
+                  .startsWith(i18n(effect.name).replace(regex, '').toLowerCase());
+              });
+              if (isSense) {
+                effect.isTemporary = false; // passive ae
+                // effect.dae = { stackable: false, specialDuration: [], transfer: true }
+                effect.transfer = false;
+              }
+              effect.transfer = !disabled;
+            }
             activeEffectsData.push(effect.convertToActiveEffectData({ origin, overlay }));
           }
         }

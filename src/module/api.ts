@@ -552,9 +552,21 @@ const API = {
       }
     }
 
+    const regex = /[^A-Za-z0-9]/g;
     const isSense = API.SENSES.find((sense: SenseData) => {
-      return sense.id == (<SenseData>senseData).id || i18n(sense.name) == i18n((<SenseData>senseData).name);
+      return sense.id
+        .replace(regex, '')
+        .toLowerCase()
+        .startsWith((<SenseData>senseData).id.replace(regex, '').toLowerCase())
+        ||
+        i18n(sense.name)
+        .replace(regex, '')
+        .toLowerCase()
+        .startsWith(i18n((<SenseData>senseData).name).replace(regex, '').toLowerCase());
     });
+    // const isSense = API.SENSES.find((sense: SenseData) => {   
+    //   return sense.id == (<SenseData>senseData).id || i18n(sense.name) == i18n((<SenseData>senseData).name);
+    // });
 
     if (!effect) {
       const senseOrCondition = <SenseData>sensesAndConditionOrderByName.find((sense: SenseData) => {

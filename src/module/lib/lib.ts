@@ -658,7 +658,11 @@ export function getConditionsFromToken(token: Token): AtcvEffect[] {
 }
 
 function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] {
-  const actor = <Actor>token.document.getActor();
+  const actor = <Actor>token.document.getActor() ||  <Actor>token.document.actor || <Actor>token.actor;
+  if(!actor){
+    warn(`No actor found for token '${token.name}'`, true);
+    return [];
+  }
   const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects;
   //const totalEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects.contents.filter(i => !i.data.disabled);
   const ATCVeffects = actorEffects.filter(

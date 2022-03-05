@@ -658,7 +658,11 @@ export function getConditionsFromToken(token: Token): AtcvEffect[] {
 }
 
 function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] {
-  const actor = <Actor>token.document.getActor() ||  <Actor>token.document.actor || <Actor>token.actor;
+  if(!token){
+    warn(`No token found`, true);
+    return [];
+  }
+  const actor = <Actor>token.document?.getActor() ||  <Actor>token.document?.actor || <Actor>token?.actor;
   if(!actor){
     warn(`No actor found for token '${token.name}'`, true);
     return [];

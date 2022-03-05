@@ -9,6 +9,7 @@ import {
   getConditionsFromToken,
   getSensesFromToken,
   i18n,
+  isStringEquals,
   prepareActiveEffectForConditionalVisibility,
   toggleStealth,
 } from './lib/lib';
@@ -291,17 +292,8 @@ const module = {
             const disabled = false;
             // Add some feature if is a sense or a condition
             if (effect) {
-              const regex = /[^A-Za-z0-9]/g;
               const isSense = API.SENSES.find((sense: SenseData) => {
-                return sense.id
-                  .replace(regex, '')
-                  .toLowerCase()
-                  .startsWith(effect.customId.replace(regex, '').toLowerCase())
-                  ||
-                  i18n(sense.name)
-                  .replace(regex, '')
-                  .toLowerCase()
-                  .startsWith(i18n(effect.name).replace(regex, '').toLowerCase());
+                return isStringEquals(sense.id, effect.customId) || isStringEquals(i18n(sense.name), i18n(effect.name));
               });
               if (isSense) {
                 effect.isTemporary = false; // passive ae

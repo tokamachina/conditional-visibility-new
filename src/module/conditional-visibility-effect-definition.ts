@@ -2,7 +2,7 @@ import API from './api';
 import { AtcvEffectSenseFlags, AtcvEffectConditionFlags, SenseData } from './conditional-visibility-models';
 import CONSTANTS from './constants';
 import Effect, { Constants } from './effects/effect';
-import { debug, i18n, i18nFormat, warn } from './lib/lib';
+import { debug, i18n, i18nFormat, isStringEquals, warn } from './lib/lib';
 import { canvas, game } from './settings';
 
 /**
@@ -10,9 +10,6 @@ import { canvas, game } from './settings';
  */
 export class ConditionalVisibilityEffectDefinitions {
   constructor() {}
-
-  // regex expression to match all non-alphanumeric characters in string
-  private static regex = /[^A-Za-z0-9]/g;
 
   /**
    * Get all effects
@@ -135,13 +132,7 @@ export class ConditionalVisibilityEffectDefinitions {
 
   static darkvision(number: number, visionLevel) {
     const effectSight = API.SENSES.find((a: SenseData) => {
-      // use replace() method to match and remove all the non-alphanumeric characters
-      return a.id
-        .replace(ConditionalVisibilityEffectDefinitions.regex, '')
-        .toLowerCase()
-        .startsWith(
-          AtcvEffectSenseFlags.DARKVISION.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
-        );
+      return isStringEquals(a.id, AtcvEffectSenseFlags.DARKVISION);
     });
     if (!effectSight) {
       debug(
@@ -192,13 +183,7 @@ export class ConditionalVisibilityEffectDefinitions {
 
   static blindsight(number: number, visionLevel) {
     const effectSight = API.SENSES.find((a: SenseData) => {
-      // use replace() method to match and remove all the non-alphanumeric characters
-      return a.id
-        .replace(ConditionalVisibilityEffectDefinitions.regex, '')
-        .toLowerCase()
-        .startsWith(
-          AtcvEffectSenseFlags.BLIND_SIGHT.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
-        );
+      return isStringEquals(a.id, AtcvEffectSenseFlags.BLIND_SIGHT);
     });
     if (!effectSight) {
       debug(
@@ -241,13 +226,7 @@ export class ConditionalVisibilityEffectDefinitions {
 
   static tremorsense(number: number, visionLevel) {
     const effectSight = API.SENSES.find((a: SenseData) => {
-      // use replace() method to match and remove all the non-alphanumeric characters
-      return a.id
-        .replace(ConditionalVisibilityEffectDefinitions.regex, '')
-        .toLowerCase()
-        .startsWith(
-          AtcvEffectSenseFlags.TREMOR_SENSE.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
-        );
+      return isStringEquals(a.id, AtcvEffectSenseFlags.TREMOR_SENSE);
     });
     if (!effectSight) {
       debug(
@@ -290,13 +269,7 @@ export class ConditionalVisibilityEffectDefinitions {
 
   static truesight(number, visionLevel) {
     const effectSight = API.SENSES.find((a: SenseData) => {
-      // use replace() method to match and remove all the non-alphanumeric characters
-      return a.id
-        .replace(ConditionalVisibilityEffectDefinitions.regex, '')
-        .toLowerCase()
-        .startsWith(
-          AtcvEffectSenseFlags.TRUE_SIGHT.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
-        );
+      return isStringEquals(a.id, AtcvEffectSenseFlags.TRUE_SIGHT);
     });
     if (!effectSight) {
       debug(
@@ -339,13 +312,7 @@ export class ConditionalVisibilityEffectDefinitions {
 
   static seeinvisible(number, visionLevel) {
     const effectSight = API.SENSES.find((a: SenseData) => {
-      // use replace() method to match and remove all the non-alphanumeric characters
-      return a.id
-        .replace(ConditionalVisibilityEffectDefinitions.regex, '')
-        .toLowerCase()
-        .startsWith(
-          AtcvEffectSenseFlags.SEE_INVISIBLE.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
-        );
+      return isStringEquals(a.id, AtcvEffectSenseFlags.SEE_INVISIBLE);
     });
     if (!effectSight) {
       debug(
@@ -388,13 +355,7 @@ export class ConditionalVisibilityEffectDefinitions {
 
   static devilssight(number, visionLevel) {
     const effectSight = API.SENSES.find((a: SenseData) => {
-      // use replace() method to match and remove all the non-alphanumeric characters
-      return a.id
-        .replace(ConditionalVisibilityEffectDefinitions.regex, '')
-        .toLowerCase()
-        .startsWith(
-          AtcvEffectSenseFlags.DEVILS_SIGHT.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
-        );
+      return isStringEquals(a.id, AtcvEffectSenseFlags.DEVILS_SIGHT);
     });
     if (!effectSight) {
       debug(
@@ -437,13 +398,7 @@ export class ConditionalVisibilityEffectDefinitions {
 
   static lowlightvision(number, visionLevel) {
     const effectSight = API.SENSES.find((a: SenseData) => {
-      // use replace() method to match and remove all the non-alphanumeric characters
-      return a.id
-        .replace(ConditionalVisibilityEffectDefinitions.regex, '')
-        .toLowerCase()
-        .startsWith(
-          AtcvEffectSenseFlags.LOW_LIGHT_VISION.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
-        );
+      return isStringEquals(a.id, AtcvEffectSenseFlags.LOW_LIGHT_VISION);
     });
     if (!effectSight) {
       debug(
@@ -500,13 +455,7 @@ export class ConditionalVisibilityEffectDefinitions {
 
   static blinded(number, visionLevel) {
     const effectSight = API.SENSES.find((a: SenseData) => {
-      // use replace() method to match and remove all the non-alphanumeric characters
-      return a.id
-        .replace(ConditionalVisibilityEffectDefinitions.regex, '')
-        .toLowerCase()
-        .startsWith(
-          AtcvEffectSenseFlags.BLINDED.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
-        );
+      return isStringEquals(a.id, AtcvEffectSenseFlags.BLINDED);
     });
     if (!effectSight) {
       debug(`Cannot find for system '${game.system.id}' the active effect with id '${AtcvEffectSenseFlags.BLINDED}'`);
@@ -564,13 +513,7 @@ export class ConditionalVisibilityEffectDefinitions {
 
   static hidden(visionLevel = 0) {
     const effectSight = API.CONDITIONS.find((a: SenseData) => {
-      // use replace() method to match and remove all the non-alphanumeric characters
-      return a.id
-        .replace(ConditionalVisibilityEffectDefinitions.regex, '')
-        .toLowerCase()
-        .startsWith(
-          AtcvEffectConditionFlags.HIDDEN.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
-        );
+      return isStringEquals(a.id, AtcvEffectConditionFlags.HIDDEN);
     });
     if (!effectSight) {
       debug(`Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.HIDDEN}'`);
@@ -599,13 +542,7 @@ export class ConditionalVisibilityEffectDefinitions {
 
   static invisible(visionLevel = 0) {
     const effectSight = API.CONDITIONS.find((a: SenseData) => {
-      // use replace() method to match and remove all the non-alphanumeric characters
-      return a.id
-        .replace(ConditionalVisibilityEffectDefinitions.regex, '')
-        .toLowerCase()
-        .startsWith(
-          AtcvEffectConditionFlags.INVISIBLE.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
-        );
+      return isStringEquals(a.id, AtcvEffectConditionFlags.INVISIBLE);
     });
     if (!effectSight) {
       debug(`Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.INVISIBLE}'`);
@@ -634,13 +571,7 @@ export class ConditionalVisibilityEffectDefinitions {
 
   static obscured(visionLevel = 0) {
     const effectSight = API.CONDITIONS.find((a: SenseData) => {
-      // use replace() method to match and remove all the non-alphanumeric characters
-      return a.id
-        .replace(ConditionalVisibilityEffectDefinitions.regex, '')
-        .toLowerCase()
-        .startsWith(
-          AtcvEffectConditionFlags.OBSCURED.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
-        );
+      return isStringEquals(a.id, AtcvEffectConditionFlags.OBSCURED);
     });
     if (!effectSight) {
       debug(`Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.OBSCURED}'`);
@@ -669,13 +600,7 @@ export class ConditionalVisibilityEffectDefinitions {
 
   static indarkness(visionLevel = 0) {
     const effectSight = API.CONDITIONS.find((a: SenseData) => {
-      // use replace() method to match and remove all the non-alphanumeric characters
-      return a.id
-        .replace(ConditionalVisibilityEffectDefinitions.regex, '')
-        .toLowerCase()
-        .startsWith(
-          AtcvEffectConditionFlags.IN_DARKNESS.replace(ConditionalVisibilityEffectDefinitions.regex, '').toLowerCase(),
-        );
+      return isStringEquals(a.id, AtcvEffectConditionFlags.IN_DARKNESS);
     });
     if (!effectSight) {
       debug(`Cannot find for system '${game.system.id}' the status with id '${AtcvEffectConditionFlags.IN_DARKNESS}'`);

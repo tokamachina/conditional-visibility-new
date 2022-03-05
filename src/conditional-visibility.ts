@@ -77,6 +77,14 @@ Hooks.once('ready', async function () {
 
 Hooks.once('libChangelogsReady', function () {
   //@ts-ignore
+  libChangelogs.registerConflict(
+    CONSTANTS.MODULE_NAME,
+    'levels',
+    `With levels module enabled and active, **if the scene is with "Token vision" set to false (unchecked box)**, after selected a token and click on the canvas with the option "Release on left click" enable the hidden token are visible for a small instant this is a incompatibility with the [Levels](https://github.com/theripper93/Levels) module i cannot solve, the simple solution is just enable the token vision on the current scene.`,
+    'minor',
+  );
+
+  //@ts-ignore
   libChangelogs.register(
     CONSTANTS.MODULE_NAME,
     `Big update integration levels. perfect vision, shared vision`,

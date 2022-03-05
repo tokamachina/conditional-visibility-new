@@ -11,8 +11,7 @@ let result = false;
 for(const effect of effects){
     // regex expression to match all non-alphanumeric characters in string
     const regex = /[^A-Za-z0-9]/g;
-    // use replace() method to match and remove all the non-alphanumeric characters
-    result  = effectNameToCheck.replace(regex, "").toLowerCase().startsWith(effectIdOfTheModule.replace(regex, "").toLowerCase());
+    result  = effectNameToCheck.replace(regex, "").toLowerCase().startsWith(effectIdOfTheModule.replace(regex, "").toLowerCase());S
     if(result)break;
 }
 return result;

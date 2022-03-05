@@ -100,6 +100,28 @@ export function dialogWarning(message, icon = 'fas fa-exclamation-triangle') {
     </p>`;
 }
 
+export function cleanUpString(stringToCleanUp: string) {
+  // regex expression to match all non-alphanumeric characters in string
+  const regex = /[^A-Za-z0-9]/g;
+  if (stringToCleanUp) {
+    return i18n(stringToCleanUp).replace(regex, '').toLowerCase();
+  } else {
+    return stringToCleanUp;
+  }
+}
+
+export function isStringEquals(stringToCheck1: string, stringToCheck2: string, startsWith = true): boolean {
+  if (stringToCheck1 && stringToCheck2) {
+    if (startsWith) {
+      return cleanUpString(stringToCheck1).startsWith(cleanUpString(stringToCheck2));
+    } else {
+      return cleanUpString(stringToCheck1) === cleanUpString(stringToCheck2);
+    }
+  } else {
+    return stringToCheck1 === stringToCheck2;
+  }
+}
+
 // =========================================================================================
 
 /**
@@ -504,7 +526,6 @@ export async function prepareActiveEffectForConditionalVisibility(
   // REMOVE EVERY SENSES WITH THE SAME NAME
   // const keysSensesFirstTime: string[] = [];
   for (const [key, sense] of visionCapabilities.retrieveSenses()) {
-    // use replace() method to match and remove all the non-alphanumeric characters
     const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
     if (sense.visionLevelValue && sense.visionLevelValue != 0) {
       if (await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true)) {
@@ -568,7 +589,6 @@ export async function prepareActiveEffectForConditionalVisibility(
 
   // const keysConditionsFirstTime: string[] = [];
   for (const [key, condition] of visionCapabilities.retrieveConditions()) {
-    // use replace() method to match and remove all the non-alphanumeric characters
     const effectNameToCheckOnActor = i18n(<string>condition.statusSight?.name);
     if (condition.visionLevelValue && condition.visionLevelValue != 0) {
       const activeEffectToRemove = <ActiveEffect>(
@@ -601,7 +621,6 @@ export async function prepareActiveEffectForConditionalVisibility(
 
   for (const [key, condition] of visionCapabilities.retrieveConditions()) {
     if (condition.visionLevelValue && condition.visionLevelValue != 0) {
-      // use replace() method to match and remove all the non-alphanumeric characters
       const effectNameToCheckOnActor = i18n(<string>condition.statusSight?.name);
       if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
         await API.addEffectConditionalVisibilityOnToken(
@@ -649,21 +668,14 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
   let conditionTargets: string[] = [];
   let conditionSources: string[] = [];
   const statusEffects: AtcvEffect[] = [];
-  // regex expression to match all non-alphanumeric characters in string
-  const regex = /[^A-Za-z0-9]/g;
 
   for (const effectEntity of ATCVeffects) {
     const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
     if (!effectNameToSet) {
       continue;
     }
-    // use replace() method to match and remove all the non-alphanumeric characters
-    const effectNameToCheckOnActor = effectNameToSet.replace(regex, '');
     const effectSight = statusSights.find((a: SenseData) => {
-      return effectNameToCheckOnActor
-        .replace(regex, '')
-        .toLowerCase()
-        .startsWith(a.id.replace(regex, '').toLowerCase());
+      return isStringEquals(effectNameToSet, a.id) || isStringEquals(effectNameToSet, a.name);
     });
     // if is a AE with the label of the module (no id sorry)
     if (effectSight) {
@@ -783,7 +795,6 @@ export function retrieveAtcvSourcesFromActiveEffect(effectEntityChanges: EffectC
 }
 
 export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effectSightId: string): number {
-  const regex = /[^A-Za-z0-9]/g;
   //Look up for ATCV to manage vision level
   // TODO for now every active effect can have only one ATCV key ate the time not sure if is manageable
   let atcvValue: any = 0;
@@ -795,12 +806,7 @@ export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffe
   const atcvChanges = EffectSupport.retrieveChangesOrderedByPriorityFromAE(effectEntity);
   //atcvValue = effectEntity.data.changes.find((aee) => {
   atcvValue = atcvChanges.find((aee) => {
-    if (
-      aee.key
-        .replace(regex, '')
-        .toLowerCase()
-        .startsWith(('ATCV.' + effectSightId).replace(regex, '').toLowerCase())
-    ) {
+    if (isStringEquals(aee.key, 'ATCV.' + effectSightId)) {
       return aee;
     }
   });
@@ -812,7 +818,6 @@ export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffe
 }
 
 export function retrieveAtcvVisionTargetImageFromActiveEffect(effectEntity: ActiveEffect): string {
-  const regex = /[^A-Za-z0-9]/g;
   //Look up for ATCV to manage vision level
   // TODO for now every active effect can have only one ATCV key ate the time not sure if is manageable
   let atcvValue: any = '';
@@ -824,9 +829,7 @@ export function retrieveAtcvVisionTargetImageFromActiveEffect(effectEntity: Acti
   const atcvChanges = EffectSupport.retrieveChangesOrderedByPriorityFromAE(effectEntity);
   //atcvValue = effectEntity.data.changes.find((aee) => {
   atcvValue = atcvChanges.find((aee) => {
-    if (
-      aee.key.replace(regex, '').toLowerCase().startsWith('ATCV.conditionTargetImage'.replace(regex, '').toLowerCase())
-    ) {
+    if (isStringEquals(aee.key, 'ATCV.conditionTargetImage')) {
       return aee;
     }
   });

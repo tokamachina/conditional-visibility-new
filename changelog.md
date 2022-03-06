@@ -1,3 +1,7 @@
+## 0.4.9
+
+- Bug fixing recovery actor from token
+
 ## 0.4.8
 
 - Bug fixing recovery actor from token

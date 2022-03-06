@@ -662,7 +662,7 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
     info(`No token found`);
     return [];
   }
-  const actor = <Actor>token.document?.getActor() ||  <Actor>token.document?.actor || <Actor>token?.actor;
+  const actor = <Actor>token.document?.actor || <Actor>token?.actor; // <Actor>token.document?.getActor() ||  
   if(!actor){
     info(`No actor found for token '${token.name}'`);
     return [];

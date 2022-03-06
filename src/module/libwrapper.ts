@@ -257,6 +257,9 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
     return res;
   }
   const tokenToCheckIfIsVisible = <Token>object;
+  if(!tokenToCheckIfIsVisible.data){
+    return res;
+  }
   // this.sources is a map of selected tokens (may be size 0) all tokens
   // contribute to the vision so iterate through the tokens
   let mySources: Token[] = [];

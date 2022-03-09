@@ -5,7 +5,7 @@
     {{#each senses as |sense|}}
         <div class="form-group">
             <label style="display:flex"><img src="{{sense.img}}" style="height:25px; width:25px; margin: 3px;"></img>{{localize sense.name}}</label>
-            <input type="number" min=-1 step=1 {{#if sense.value}} value="{{sense.value}}" {{else}} value="0" {{/if}} name="flags.conditional-visibility.{{sense.id}}"/>
+            <input type="number" min=-1 step=1 {{#if sense.value}} value="{{sense.value}}" {{else}} value="0" {{/if}} name="flags.conditional-visibility.{{sense.id}}.visionLevelValue"/>
         </div>
     {{/each}}
 </fieldset>
@@ -16,7 +16,7 @@
     {{#each conditions as |condition|}}
         <div class="form-group">
             <label style="display:flex"><img src="{{condition.img}}" style="height:25px; width:25px; margin: 3px; background: #454545"></img>{{localize condition.name}}</label>
-            <input type="number" min=-1 step=1 {{#if condition.value}} value="{{condition.value}}" {{else}} value="0" {{/if}} name="flags.conditional-visibility.{{condition.id}}"/>
+            <input type="number" min=-1 step=1 {{#if condition.value}} value="{{condition.value}}" {{else}} value="0" {{/if}} name="flags.conditional-visibility.{{condition.id}}.visionLevelValue"/>
         </div>
     {{/each}}
 </fieldset>

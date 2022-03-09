@@ -9,6 +9,7 @@ import {
   AtcvEffectConditionFlags,
   SenseData,
   VisionCapabilities,
+  AtcvEffectFlagData,
 } from '../conditional-visibility-models.js';
 import EmbeddedCollection from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs';
 import {
@@ -512,8 +513,10 @@ export async function prepareActiveEffectForConditionalVisibility(
       const activeEffectToRemove = <ActiveEffect>(
         await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
       );
-      // const actve = retrieveAtcvVisionLevelFromActiveEffect(activeEffectToRemove,senseData);
-      const actve = sourceToken.document?.getFlag(CONSTANTS.MODULE_NAME, senseData.id);
+      //// const actve = retrieveAtcvVisionLevelFromActiveEffect(activeEffectToRemove,senseData);
+      //const actve = sourceToken.document?.getFlag(CONSTANTS.MODULE_NAME, senseData.id);
+      const atcvEffectFlagData = <AtcvEffectFlagData>sourceToken.document?.getFlag(CONSTANTS.MODULE_NAME, senseData.id);
+      const actve = atcvEffectFlagData.visionLevelValue;
       if (actve == 0 || actve == null || actve == undefined) {
         await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
       }
@@ -927,8 +930,10 @@ export function retrieveAtcvVisionLevelDistanceFromActiveEffect(effectChanges:Ef
 }
 
 export async function toggleStealth(event) {
-  const stealthedWithHiddenConditionOri =
-    this.object.document.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN) ?? 0;
+  //const stealthedWithHiddenConditionOri =
+  //  this.object.document.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN) ?? 0;
+  const atcvEffectFlagData = <AtcvEffectFlagData>this.object.document.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN);
+  const stealthedWithHiddenConditionOri = atcvEffectFlagData.visionLevelValue ?? 0;
   let stealthedWithHiddenCondition = duplicate(stealthedWithHiddenConditionOri);
   if (stealthedWithHiddenCondition == 0 && getProperty(this.object.document, `data.${API.STEALTH_PASSIVE_SKILL}`)) {
     stealthedWithHiddenCondition = getProperty(this.object.document, `data.${API.STEALTH_PASSIVE_SKILL}`);
@@ -988,18 +993,36 @@ export async function toggleStealth(event) {
           }
           for (const selectedToken of selectedTokens) {
             if (senseId != AtcvEffectSenseFlags.NONE && senseId != AtcvEffectSenseFlags.NORMAL) {
-              if (valStealthRoll == 0) {
-                const effect = await ConditionalVisibilityEffectDefinitions.effect(senseId);
-                await API.removeEffectOnToken(selectedToken.id, i18n(<string>effect?.name));
+              const effect = <Effect>await ConditionalVisibilityEffectDefinitions.effect(senseId);
+              if(effect){
+                if (valStealthRoll == 0) {
+                  await API.removeEffectOnToken(selectedToken.id, i18n(<string>effect?.name));
+                  await selectedToken.document.unsetFlag(CONSTANTS.MODULE_NAME, senseId);
+                }else{
+                  //await selectedToken.document.setFlag(CONSTANTS.MODULE_NAME, senseId, valStealthRoll);
+                  const atcvEffectFlagData = AtcvEffectFlagData.fromEffect(effect);
+                  atcvEffectFlagData.visionLevelValue = valStealthRoll;
+                  await selectedToken.document.setFlag(CONSTANTS.MODULE_NAME, senseId, atcvEffectFlagData);
+                }
+              }else{
+                warn(`Can't find effect definition for '${senseId}'`, true)
               }
-              await selectedToken.document.setFlag(CONSTANTS.MODULE_NAME, senseId, valStealthRoll);
             }
             if (conditionId != AtcvEffectConditionFlags.NONE) {
-              if (valStealthRoll == 0) {
-                const effect = await ConditionalVisibilityEffectDefinitions.effect(conditionId);
-                await API.removeEffectOnToken(selectedToken.id, i18n(<string>effect?.name));
+              const effect = <Effect>await ConditionalVisibilityEffectDefinitions.effect(conditionId);
+              if(effect){
+                if (valStealthRoll == 0) {
+                  await API.removeEffectOnToken(selectedToken.id, i18n(<string>effect?.name));
+                  await selectedToken.document.unsetFlag(CONSTANTS.MODULE_NAME, conditionId);
+                }else{
+                  //await selectedToken.document.setFlag(CONSTANTS.MODULE_NAME, conditionId, valStealthRoll);
+                  const atcvEffectFlagData = AtcvEffectFlagData.fromEffect(effect);
+                  atcvEffectFlagData.visionLevelValue = valStealthRoll;
+                  await selectedToken.document.setFlag(CONSTANTS.MODULE_NAME, conditionId, atcvEffectFlagData);
+                }
+              }else{
+                warn(`Can't find effect definition for '${conditionId}'`, true)
               }
-              await selectedToken.document.setFlag(CONSTANTS.MODULE_NAME, conditionId, valStealthRoll);
             }
           }
           event.currentTarget.classList.toggle('active', valStealthRoll && valStealthRoll != 0);

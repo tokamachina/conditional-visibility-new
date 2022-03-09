@@ -594,10 +594,9 @@ const API = {
       if (token && effect) {
         const nameToUse = senseData?.name ? senseData?.name : effect?.name;
         await this.effectInterface.addEffectOnToken(nameToUse, <string>token.id, effect);
-
+        //await token?.document?.setFlag(CONSTANTS.MODULE_NAME, (<Effect>effect).customId, visionLevel);
         const atcvEffectFlagData = AtcvEffectFlagData.fromEffect(effect);
         await token?.document?.setFlag(CONSTANTS.MODULE_NAME, (<Effect>effect).customId, atcvEffectFlagData);
-        //await token?.document?.setFlag(CONSTANTS.MODULE_NAME, (<Effect>effect).customId, visionLevel);
       }
     }
   },

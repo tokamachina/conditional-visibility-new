@@ -1,3 +1,5 @@
+import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
+import { ActiveEffectData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 /* eslint-disable prefer-const */
 import API from './api';
 import CONSTANTS from './constants';
@@ -5,11 +7,12 @@ import Effect from './effects/effect';
 import {
   error,
   retrieveAtcvVisionLevelDistanceFromActiveEffect,
-  retrieveAtcvVisionLevelFromActiveEffect,
   i18n,
   retrieveAtcvTargetsFromActiveEffect,
   retrieveAtcvElevationFromActiveEffect,
   retrieveAtcvSourcesFromActiveEffect,
+  retrieveAtcvVisionLevelValueFromActiveEffect,
+  retrieveAtcvVisionTargetImageFromActiveEffect,
 } from './lib/lib';
 
 export interface AtcvEffect {
@@ -20,6 +23,41 @@ export interface AtcvEffect {
   visionTargets: string[];
   visionSources: string[];
   visionTargetImage: string;
+}
+
+export class AtcvEffectFlagData {
+  visionLevelValue: number | undefined;
+  visionDistanceValue: number | undefined;
+  visionElevation: boolean;
+  visionSources: string[];
+  visionTargets: string[];
+  visionTargetImage: string;
+
+  constructor(){}
+
+  static fromEffect(effect:Effect){
+    const effectChanges = effect._handleIntegrations();
+    const res = new AtcvEffectFlagData();
+    res.visionLevelValue = retrieveAtcvVisionLevelValueFromActiveEffect(effectChanges);
+    res.visionDistanceValue = retrieveAtcvVisionLevelDistanceFromActiveEffect(effectChanges);
+    res.visionElevation = retrieveAtcvElevationFromActiveEffect(effectChanges);
+    res.visionSources = retrieveAtcvSourcesFromActiveEffect(effectChanges);
+    res.visionTargets = retrieveAtcvTargetsFromActiveEffect(effectChanges);
+    res.visionTargetImage = retrieveAtcvVisionTargetImageFromActiveEffect(effectChanges);
+    return res;
+  }
+
+  static fromActiveEffect(activeEffect:ActiveEffect){
+    const effectChanges = activeEffect.data.changes;
+    const res = new AtcvEffectFlagData();
+    res.visionLevelValue = retrieveAtcvVisionLevelValueFromActiveEffect(effectChanges);
+    res.visionDistanceValue = retrieveAtcvVisionLevelDistanceFromActiveEffect(effectChanges);
+    res.visionElevation = retrieveAtcvElevationFromActiveEffect(effectChanges);
+    res.visionSources = retrieveAtcvSourcesFromActiveEffect(effectChanges);
+    res.visionTargets = retrieveAtcvTargetsFromActiveEffect(effectChanges);
+    res.visionTargetImage = retrieveAtcvVisionTargetImageFromActiveEffect(effectChanges);
+    return res;
+  }
 }
 
 export interface SenseData {

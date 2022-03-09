@@ -11,6 +11,11 @@ import {
   i18n,
   isStringEquals,
   prepareActiveEffectForConditionalVisibility,
+  retrieveAtcvElevationFromActiveEffect,
+  retrieveAtcvSourcesFromActiveEffect,
+  retrieveAtcvTargetImageFromActiveEffect,
+  retrieveAtcvTargetsFromActiveEffect,
+  retrieveAtcvVisionLevelDistanceFromActiveEffect,
   toggleStealth,
 } from './lib/lib';
 import API from './api';
@@ -20,6 +25,7 @@ import { canvas, game } from './settings';
 import { checkSystem } from './settings';
 import {
   AtcvEffectConditionFlags,
+  AtcvEffectFlagData,
   AtcvEffectSenseFlags,
   SenseData,
   VisionCapabilities,
@@ -30,6 +36,7 @@ import {
 } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
 import { EffectSupport } from './effects/effect';
 import { ActiveEffectData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
+import StatusEffects from './effects/status-effects';
 
 export const initHooks = async (): Promise<void> => {
   // registerSettings();
@@ -238,12 +245,16 @@ const module = {
           if (updateKey === statusSight.id) {
             // TODO TO CHECK IF WE NEED TO FILTER THE TOKENS AGAIN MAYBE WITH A ADDITIONAL ATCV active change data effect ?
             for (const tokenToSet of tokenArray) {
-              if (change.value != tokenToSet?.document.getFlag(CONSTANTS.MODULE_NAME, updateKey)) {
+              const currentAtcvEffectFlagData = <AtcvEffectFlagData>tokenToSet?.document.getFlag(CONSTANTS.MODULE_NAME, updateKey);
+              if (change.value != String(<number>currentAtcvEffectFlagData.visionLevelValue)) {
                 if (isRemoved) {
-                  await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, 0);
+                  await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, undefined);
+                  //await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, 0);
                   // setProperty(tokenToSet.document, `data.flags.${CONSTANTS.MODULE_NAME}.${statusSight.id}`, 0);
                 } else {
-                  await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
+                  const atcvEffectFlagData = AtcvEffectFlagData.fromActiveEffect(active);
+                  await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, atcvEffectFlagData);
+                  //await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
                   // setProperty(tokenToSet.document, `data.flags.${CONSTANTS.MODULE_NAME}.${statusSight.id}`, change.value);
                 }
                 if (statusSight?.path) {

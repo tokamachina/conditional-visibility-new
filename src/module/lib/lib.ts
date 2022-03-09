@@ -18,6 +18,7 @@ import {
 import Effect from '../effects/effect.js';
 import StatusEffects from '../effects/status-effects.js';
 import { ConditionalVisibilityEffectDefinitions } from '../conditional-visibility-effect-definition';
+import { data } from 'jquery';
 
 // =============================
 // Module Generic function
@@ -533,7 +534,8 @@ export async function prepareActiveEffectForConditionalVisibility(
           await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
         );
         if (activeEffectToRemove) {
-          const actve = retrieveAtcvVisionLevelFromActiveEffect(activeEffectToRemove, key);
+          //const actve = retrieveAtcvVisionLevelFromActiveEffect(activeEffectToRemove, key);
+          const actve = retrieveAtcvVisionLevelValueFromActiveEffect(activeEffectToRemove.data.changes);
           if (sense.visionLevelValue != actve) {
             // if (keysSensesFirstTime.includes(key)) {
             await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
@@ -548,7 +550,8 @@ export async function prepareActiveEffectForConditionalVisibility(
         const activeEffectToRemove = <ActiveEffect>(
           await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
         );
-        const actve = retrieveAtcvVisionLevelFromActiveEffect(activeEffectToRemove, key);
+        //const actve = retrieveAtcvVisionLevelFromActiveEffect(activeEffectToRemove, key);
+        const actve = retrieveAtcvVisionLevelValueFromActiveEffect(activeEffectToRemove.data.changes);
         if (sense.visionLevelValue != actve) {
           await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
         }
@@ -595,7 +598,8 @@ export async function prepareActiveEffectForConditionalVisibility(
         await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
       );
       if (activeEffectToRemove) {
-        const actve = retrieveAtcvVisionLevelFromActiveEffect(activeEffectToRemove, key);
+        //const actve = retrieveAtcvVisionLevelFromActiveEffect(activeEffectToRemove, key);
+        const actve = retrieveAtcvVisionLevelValueFromActiveEffect(activeEffectToRemove.data.changes);
         if (condition.visionLevelValue != actve) {
           // if (keysConditionsFirstTime.includes(key)) {
           await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
@@ -609,7 +613,8 @@ export async function prepareActiveEffectForConditionalVisibility(
         const activeEffectToRemove = <ActiveEffect>(
           await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
         );
-        const actve = retrieveAtcvVisionLevelFromActiveEffect(activeEffectToRemove, key);
+        //const actve = retrieveAtcvVisionLevelFromActiveEffect(activeEffectToRemove, key);
+        const actve = retrieveAtcvVisionLevelValueFromActiveEffect(activeEffectToRemove.data.changes);
         if (condition.visionLevelValue != actve) {
           await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
         }
@@ -662,14 +667,14 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
     info(`No token found`);
     return [];
   }
-  const actor = <Actor>token.document?.actor || <Actor>token?.actor; // <Actor>token.document?.getActor() ||  
+  const actor = <Actor>token.document?.actor || <Actor>token?.actor; // <Actor>token.document?.getActor() ||
   if(!actor){
     info(`No actor found for token '${token.name}'`);
     return [];
   }
   const actorEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects;
   //const totalEffects = <EmbeddedCollection<typeof ActiveEffect, ActorData>>actor?.data.effects.contents.filter(i => !i.data.disabled);
-  const ATCVeffects = actorEffects.filter(
+  const atcvEffects = actorEffects.filter(
     (entity) => !!entity.data.changes.find((effect) => effect.key.includes('ATCV')),
   );
   let visionElevation = true;
@@ -677,7 +682,7 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
   let conditionSources: string[] = [];
   const statusEffects: AtcvEffect[] = [];
 
-  for (const effectEntity of ATCVeffects) {
+  for (const effectEntity of atcvEffects) {
     const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
     if (!effectNameToSet) {
       continue;
@@ -687,26 +692,26 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
     });
     // if is a AE with the label of the module (no id sorry)
     if (effectSight) {
-      // Organize non-disabled effects by their application priority
-      const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e: ActiveEffect) => {
-        if (e.data.disabled) {
-          return changes;
-        }
-        return changes.concat(
-          //@ts-ignore
-          (<EffectChangeData[]>e.data.changes).map((c: EffectChangeData) => {
-            const c2 = <EffectChangeData>duplicate(c);
-            // c2.effect = e;
-            c2.priority = <number>c2.priority ?? c2.mode * 10;
-            return c2;
-          }),
-        );
-      }, []);
-      changes.sort((a, b) => <number>a.priority - <number>b.priority);
+      // // Organize non-disabled effects by their application priority
+      // const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e: ActiveEffect) => {
+      //   if (e.data.disabled) {
+      //     return changes;
+      //   }
+      //   return changes.concat(
+      //     //@ts-ignore
+      //     (<EffectChangeData[]>e.data.changes).map((c: EffectChangeData) => {
+      //       const c2 = <EffectChangeData>duplicate(c);
+      //       // c2.effect = e;
+      //       c2.priority = <number>c2.priority ?? c2.mode * 10;
+      //       return c2;
+      //     }),
+      //   );
+      // }, []);
+      // changes.sort((a, b) => <number>a.priority - <number>b.priority);
 
-      visionElevation = retrieveAtcvElevationFromActiveEffect(changes);
-      conditionTargets = retrieveAtcvTargetsFromActiveEffect(changes);
-      conditionSources = retrieveAtcvSourcesFromActiveEffect(changes);
+      visionElevation = retrieveAtcvElevationFromActiveEffect(effectEntity.data.changes);
+      conditionTargets = retrieveAtcvTargetsFromActiveEffect(effectEntity.data.changes);
+      conditionSources = retrieveAtcvSourcesFromActiveEffect(effectEntity.data.changes);
 
       // look up if you have not basic AE and if the check elevation is not enabled
       if (
@@ -717,9 +722,15 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
       ) {
         visionElevation = false;
       }
-      const distance = retrieveAtcvVisionLevelDistanceFromActiveEffect(effectEntity);
-      const atcvValue = retrieveAtcvVisionLevelFromActiveEffect(effectEntity, effectSight.id);
-      const atcvTargetImage = retrieveAtcvVisionTargetImageFromActiveEffect(effectEntity);
+      let distance = 0
+      let atcvValue = 0;
+      let atcvTargetImage = '';
+      const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+      if (effectNameToSet) {
+        distance = retrieveAtcvVisionLevelDistanceFromActiveEffect(effectEntity.data.changes);
+        atcvValue = retrieveAtcvVisionLevelValueFromActiveEffect(effectEntity.data.changes);
+        atcvTargetImage = retrieveAtcvVisionTargetImageFromActiveEffect(effectEntity.data.changes);
+      }
 
       statusEffects.push({
         visionElevation: visionElevation,
@@ -735,86 +746,114 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
   return statusEffects;
 }
 
-export function retrieveAtcvElevationFromActiveEffect(effectEntityChanges: EffectChangeData[]): boolean {
+export function retrieveAtcvElevationFromActiveEffect(effectChanges:EffectChangeData[]): boolean {
   let checkElevationAcvt = false;
+  // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+  // if (!effectNameToSet) {
+  //   return atcvValue;
+  // }
+  const effectEntityChanges = effectChanges.sort((a, b) => <number>a.priority - <number>b.priority);
   // Apply all changes
   for (const change of effectEntityChanges) {
-    if (change.key.includes('ATCV.conditionElevation')) {
-      if (change.value) {
-        checkElevationAcvt = Boolean(change.value);
-      }
+    if (isStringEquals(change.key,'ATCV.conditionElevation') && change.value) {
+      checkElevationAcvt = Boolean(change.value);
+      break;
     }
   }
   return checkElevationAcvt;
 }
 
-export function retrieveAtcvTargetsFromActiveEffect(effectEntityChanges: EffectChangeData[]): string[] {
-  let checkTargetsAcvt: string[] = [];
+export function retrieveAtcvTargetImageFromActiveEffect(effectChanges:EffectChangeData[]): string {
+  let checkTargetImageAcvt = '';
+  // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+  // if (!effectNameToSet) {
+  //   return atcvValue;
+  // }
+  const effectEntityChanges = effectChanges.sort((a, b) => <number>a.priority - <number>b.priority);
   // Apply all changes
   for (const change of effectEntityChanges) {
-    if (change.key.includes('ATCV.conditionTargets')) {
-      if (change.value) {
-        const inTags = <any>change.value;
-        if (!(typeof inTags === 'string' || inTags instanceof RegExp || Array.isArray(inTags))) {
-          error(`'ATCV.conditionTargets' must be of type string or array`);
-        }
-        let providedTags = typeof inTags === 'string' ? inTags.split(',') : inTags;
+    if (isStringEquals(change.key,'ATCV.conditionTargetImage') && change.value) {
+      checkTargetImageAcvt = String(change.value);
+      break;
+    }
+  }
+  return checkTargetImageAcvt;
+}
 
-        if (!Array.isArray(providedTags)) providedTags = [providedTags];
-
-        providedTags.forEach((t) => {
-          if (!(typeof t === 'string' || t instanceof RegExp)) {
-            error(`'ATCV.conditionTargets' in array must be of type string or regexp`);
-          }
-        });
-
-        checkTargetsAcvt = providedTags.map((t) => (t instanceof RegExp ? t : t.trim()));
+export function retrieveAtcvTargetsFromActiveEffect(effectChanges:EffectChangeData[]): string[] {
+  let checkTargetsAcvt: string[] = [];
+  // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+  // if (!effectNameToSet) {
+  //   return atcvValue;
+  // }
+  const effectEntityChanges = effectChanges.sort((a, b) => <number>a.priority - <number>b.priority);
+  // Apply all changes
+  for (const change of effectEntityChanges) {
+    if (isStringEquals(change.key,'ATCV.conditionTargets') && change.value) {
+      const inTags = <any>change.value;
+      if (!(typeof inTags === 'string' || inTags instanceof RegExp || Array.isArray(inTags))) {
+        error(`'ATCV.conditionTargets' must be of type string or array`);
       }
+      let providedTags = typeof inTags === 'string' ? inTags.split(',') : inTags;
+
+      if (!Array.isArray(providedTags)) providedTags = [providedTags];
+
+      providedTags.forEach((t) => {
+        if (!(typeof t === 'string' || t instanceof RegExp)) {
+          error(`'ATCV.conditionTargets' in array must be of type string or regexp`);
+        }
+      });
+
+      checkTargetsAcvt = providedTags.map((t) => (t instanceof RegExp ? t : t.trim()));
+      break;
     }
   }
   return checkTargetsAcvt;
 }
 
-export function retrieveAtcvSourcesFromActiveEffect(effectEntityChanges: EffectChangeData[]): string[] {
+export function retrieveAtcvSourcesFromActiveEffect(effectChanges:EffectChangeData[]): string[] {
   let checkSourcesAcvt: string[] = [];
+  // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+  // if (!effectNameToSet) {
+  //   return atcvValue;
+  // }
+  const effectEntityChanges = effectChanges.sort((a, b) => <number>a.priority - <number>b.priority);
   // Apply all changes
   for (const change of effectEntityChanges) {
-    if (change.key.includes('ATCV.conditionSources')) {
-      if (change.value) {
-        const inTags = <any>change.value;
-        if (!(typeof inTags === 'string' || inTags instanceof RegExp || Array.isArray(inTags))) {
-          error(`'ATCV.conditionSources' must be of type string or array`);
-        }
-        let providedTags = typeof inTags === 'string' ? inTags.split(',') : inTags;
-
-        if (!Array.isArray(providedTags)) providedTags = [providedTags];
-
-        providedTags.forEach((t) => {
-          if (!(typeof t === 'string' || t instanceof RegExp)) {
-            error(`'ATCV.conditionSources' in array must be of type string or regexp`);
-          }
-        });
-
-        checkSourcesAcvt = providedTags.map((t) => (t instanceof RegExp ? t : t.trim()));
+    if(isStringEquals(change.key,'ATCV.conditionSources') && change.value) {
+      const inTags = <any>change.value;
+      if (!(typeof inTags === 'string' || inTags instanceof RegExp || Array.isArray(inTags))) {
+        error(`'ATCV.conditionSources' must be of type string or array`);
       }
+      let providedTags = typeof inTags === 'string' ? inTags.split(',') : inTags;
+
+      if (!Array.isArray(providedTags)) providedTags = [providedTags];
+
+      providedTags.forEach((t) => {
+        if (!(typeof t === 'string' || t instanceof RegExp)) {
+          error(`'ATCV.conditionSources' in array must be of type string or regexp`);
+        }
+      });
+
+      checkSourcesAcvt = providedTags.map((t) => (t instanceof RegExp ? t : t.trim()));
+      break;
     }
   }
   return checkSourcesAcvt;
 }
 
-export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effectSightId: string): number {
+export function retrieveAtcvVisionLevelValueFromActiveEffect(effectChanges:EffectChangeData[]): number {
   //Look up for ATCV to manage vision level
   // TODO for now every active effect can have only one ATCV key ate the time not sure if is manageable
   let atcvValue: any = 0;
-  const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
-  if (!effectNameToSet) {
-    return atcvValue;
-  }
-
-  const atcvChanges = EffectSupport.retrieveChangesOrderedByPriorityFromAE(effectEntity);
+  // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+  // if (!effectNameToSet) {
+  //   return atcvValue;
+  // }
+  const effectEntityChanges = effectChanges.sort((a, b) => <number>a.priority - <number>b.priority);
   //atcvValue = effectEntity.data.changes.find((aee) => {
-  atcvValue = atcvChanges.find((aee) => {
-    if (isStringEquals(aee.key, 'ATCV.' + effectSightId)) {
+  atcvValue = effectEntityChanges.find((aee) => {
+    if (aee.key.startsWith('ATCV.') && !aee.key.startsWith('ATCV.condition') && aee.value) {
       return aee;
     }
   });
@@ -825,19 +864,39 @@ export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffe
   return Number(atcvValue.value);
 }
 
-export function retrieveAtcvVisionTargetImageFromActiveEffect(effectEntity: ActiveEffect): string {
+// export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effectSightId: string): number {
+//   //Look up for ATCV to manage vision level
+//   // TODO for now every active effect can have only one ATCV key ate the time not sure if is manageable
+//   let atcvValue: any = 0;
+//   const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+//   if (!effectNameToSet) {
+//     return atcvValue;
+//   }
+//   const effectEntityChanges = EffectSupport.retrieveChangesOrderedByPriorityFromAE(effectEntity);
+//   //atcvValue = effectEntity.data.changes.find((aee) => {
+//   atcvValue = effectEntityChanges.find((aee) => {
+//     if (isStringEquals(aee.key, 'ATCV.' + effectSightId) && aee.value) {
+//       return aee;
+//     }
+//   });
+//   if (!atcvValue) {
+//     // Ignore ???
+//     return 0;
+//   }
+//   return Number(atcvValue.value);
+// }
+
+export function retrieveAtcvVisionTargetImageFromActiveEffect(effectChanges:EffectChangeData[]): string {
   //Look up for ATCV to manage vision level
   // TODO for now every active effect can have only one ATCV key ate the time not sure if is manageable
   let atcvValue: any = '';
-  const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
-  if (!effectNameToSet) {
-    return atcvValue;
-  }
-
-  const atcvChanges = EffectSupport.retrieveChangesOrderedByPriorityFromAE(effectEntity);
-  //atcvValue = effectEntity.data.changes.find((aee) => {
-  atcvValue = atcvChanges.find((aee) => {
-    if (isStringEquals(aee.key, 'ATCV.conditionTargetImage')) {
+  // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+  // if (!effectNameToSet) {
+  //   return atcvValue;
+  // }
+  const effectEntityChanges = effectChanges.sort((a, b) => <number>a.priority - <number>b.priority);
+  atcvValue = effectEntityChanges.find((aee) => {
+    if (isStringEquals(aee.key, 'ATCV.conditionTargetImage') && aee.value) {
       return aee;
     }
   });
@@ -848,16 +907,17 @@ export function retrieveAtcvVisionTargetImageFromActiveEffect(effectEntity: Acti
   return String(atcvValue.value);
 }
 
-export function retrieveAtcvVisionLevelDistanceFromActiveEffect(effectEntity: ActiveEffect): number {
+export function retrieveAtcvVisionLevelDistanceFromActiveEffect(effectChanges:EffectChangeData[]): number {
   let distance = 0;
-  const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
-  if (!effectNameToSet) {
-    return distance;
-  }
+  // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
+  // if (!effectNameToSet) {
+  //   return atcvValue;
+  // }
+  const effectEntityChanges = effectChanges.sort((a, b) => <number>a.priority - <number>b.priority);
   // if is a AE with the label of the module (no id sorry)
   //Look up for ATL dim and bright sight to manage distance
-  const dimSightAE = effectEntity.data.changes.find((aee) => aee.key == 'ATL.dimSight');
-  const brightSightAE = effectEntity.data.changes.find((aee) => aee.key == 'ATL.brightSight');
+  const dimSightAE = effectEntityChanges.find((aee) => isStringEquals(aee.key,'ATL.dimSight') && aee.value);
+  const brightSightAE = effectEntityChanges.find((aee) => isStringEquals(aee.key,'ATL.brightSight') && aee.value);
   const brightSight = Number(brightSightAE?.value);
   const dimSight = Number(dimSightAE?.value);
   if (brightSight || dimSight) {

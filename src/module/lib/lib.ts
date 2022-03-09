@@ -666,12 +666,12 @@ export function getConditionsFromToken(token: Token): AtcvEffect[] {
 }
 
 function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] {
-  if(!token){
+  if (!token) {
     info(`No token found`);
     return [];
   }
   const actor = <Actor>token.document?.actor || <Actor>token?.actor; // <Actor>token.document?.getActor() ||
-  if(!actor){
+  if (!actor) {
     info(`No actor found for token '${token.name}'`);
     return [];
   }
@@ -725,7 +725,7 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
       ) {
         visionElevation = false;
       }
-      let distance = 0
+      let distance = 0;
       let atcvValue = 0;
       let atcvTargetImage = '';
       const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
@@ -749,7 +749,7 @@ function _getCVFromToken(token: Token, statusSights: SenseData[]): AtcvEffect[] 
   return statusEffects;
 }
 
-export function retrieveAtcvElevationFromActiveEffect(effectChanges:EffectChangeData[]): boolean {
+export function retrieveAtcvElevationFromActiveEffect(effectChanges: EffectChangeData[]): boolean {
   let checkElevationAcvt = false;
   // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
   // if (!effectNameToSet) {
@@ -758,7 +758,7 @@ export function retrieveAtcvElevationFromActiveEffect(effectChanges:EffectChange
   const effectEntityChanges = effectChanges.sort((a, b) => <number>a.priority - <number>b.priority);
   // Apply all changes
   for (const change of effectEntityChanges) {
-    if (isStringEquals(change.key,'ATCV.conditionElevation') && change.value) {
+    if (isStringEquals(change.key, 'ATCV.conditionElevation') && change.value) {
       checkElevationAcvt = Boolean(change.value);
       break;
     }
@@ -766,7 +766,7 @@ export function retrieveAtcvElevationFromActiveEffect(effectChanges:EffectChange
   return checkElevationAcvt;
 }
 
-export function retrieveAtcvTargetImageFromActiveEffect(effectChanges:EffectChangeData[]): string {
+export function retrieveAtcvTargetImageFromActiveEffect(effectChanges: EffectChangeData[]): string {
   let checkTargetImageAcvt = '';
   // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
   // if (!effectNameToSet) {
@@ -775,7 +775,7 @@ export function retrieveAtcvTargetImageFromActiveEffect(effectChanges:EffectChan
   const effectEntityChanges = effectChanges.sort((a, b) => <number>a.priority - <number>b.priority);
   // Apply all changes
   for (const change of effectEntityChanges) {
-    if (isStringEquals(change.key,'ATCV.conditionTargetImage') && change.value) {
+    if (isStringEquals(change.key, 'ATCV.conditionTargetImage') && change.value) {
       checkTargetImageAcvt = String(change.value);
       break;
     }
@@ -783,7 +783,7 @@ export function retrieveAtcvTargetImageFromActiveEffect(effectChanges:EffectChan
   return checkTargetImageAcvt;
 }
 
-export function retrieveAtcvTargetsFromActiveEffect(effectChanges:EffectChangeData[]): string[] {
+export function retrieveAtcvTargetsFromActiveEffect(effectChanges: EffectChangeData[]): string[] {
   let checkTargetsAcvt: string[] = [];
   // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
   // if (!effectNameToSet) {
@@ -792,7 +792,7 @@ export function retrieveAtcvTargetsFromActiveEffect(effectChanges:EffectChangeDa
   const effectEntityChanges = effectChanges.sort((a, b) => <number>a.priority - <number>b.priority);
   // Apply all changes
   for (const change of effectEntityChanges) {
-    if (isStringEquals(change.key,'ATCV.conditionTargets') && change.value) {
+    if (isStringEquals(change.key, 'ATCV.conditionTargets') && change.value) {
       const inTags = <any>change.value;
       if (!(typeof inTags === 'string' || inTags instanceof RegExp || Array.isArray(inTags))) {
         error(`'ATCV.conditionTargets' must be of type string or array`);
@@ -814,7 +814,7 @@ export function retrieveAtcvTargetsFromActiveEffect(effectChanges:EffectChangeDa
   return checkTargetsAcvt;
 }
 
-export function retrieveAtcvSourcesFromActiveEffect(effectChanges:EffectChangeData[]): string[] {
+export function retrieveAtcvSourcesFromActiveEffect(effectChanges: EffectChangeData[]): string[] {
   let checkSourcesAcvt: string[] = [];
   // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
   // if (!effectNameToSet) {
@@ -823,7 +823,7 @@ export function retrieveAtcvSourcesFromActiveEffect(effectChanges:EffectChangeDa
   const effectEntityChanges = effectChanges.sort((a, b) => <number>a.priority - <number>b.priority);
   // Apply all changes
   for (const change of effectEntityChanges) {
-    if(isStringEquals(change.key,'ATCV.conditionSources') && change.value) {
+    if (isStringEquals(change.key, 'ATCV.conditionSources') && change.value) {
       const inTags = <any>change.value;
       if (!(typeof inTags === 'string' || inTags instanceof RegExp || Array.isArray(inTags))) {
         error(`'ATCV.conditionSources' must be of type string or array`);
@@ -845,7 +845,7 @@ export function retrieveAtcvSourcesFromActiveEffect(effectChanges:EffectChangeDa
   return checkSourcesAcvt;
 }
 
-export function retrieveAtcvVisionLevelValueFromActiveEffect(effectChanges:EffectChangeData[]): number {
+export function retrieveAtcvVisionLevelValueFromActiveEffect(effectChanges: EffectChangeData[]): number {
   //Look up for ATCV to manage vision level
   // TODO for now every active effect can have only one ATCV key ate the time not sure if is manageable
   let atcvValue: any = 0;
@@ -889,7 +889,7 @@ export function retrieveAtcvVisionLevelValueFromActiveEffect(effectChanges:Effec
 //   return Number(atcvValue.value);
 // }
 
-export function retrieveAtcvVisionTargetImageFromActiveEffect(effectChanges:EffectChangeData[]): string {
+export function retrieveAtcvVisionTargetImageFromActiveEffect(effectChanges: EffectChangeData[]): string {
   //Look up for ATCV to manage vision level
   // TODO for now every active effect can have only one ATCV key ate the time not sure if is manageable
   let atcvValue: any = '';
@@ -910,7 +910,7 @@ export function retrieveAtcvVisionTargetImageFromActiveEffect(effectChanges:Effe
   return String(atcvValue.value);
 }
 
-export function retrieveAtcvVisionLevelDistanceFromActiveEffect(effectChanges:EffectChangeData[]): number {
+export function retrieveAtcvVisionLevelDistanceFromActiveEffect(effectChanges: EffectChangeData[]): number {
   let distance = 0;
   // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
   // if (!effectNameToSet) {
@@ -919,8 +919,8 @@ export function retrieveAtcvVisionLevelDistanceFromActiveEffect(effectChanges:Ef
   const effectEntityChanges = effectChanges.sort((a, b) => <number>a.priority - <number>b.priority);
   // if is a AE with the label of the module (no id sorry)
   //Look up for ATL dim and bright sight to manage distance
-  const dimSightAE = effectEntityChanges.find((aee) => isStringEquals(aee.key,'ATL.dimSight') && aee.value);
-  const brightSightAE = effectEntityChanges.find((aee) => isStringEquals(aee.key,'ATL.brightSight') && aee.value);
+  const dimSightAE = effectEntityChanges.find((aee) => isStringEquals(aee.key, 'ATL.dimSight') && aee.value);
+  const brightSightAE = effectEntityChanges.find((aee) => isStringEquals(aee.key, 'ATL.brightSight') && aee.value);
   const brightSight = Number(brightSightAE?.value);
   const dimSight = Number(dimSightAE?.value);
   if (brightSight || dimSight) {
@@ -932,7 +932,9 @@ export function retrieveAtcvVisionLevelDistanceFromActiveEffect(effectChanges:Ef
 export async function toggleStealth(event) {
   //const stealthedWithHiddenConditionOri =
   //  this.object.document.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN) ?? 0;
-  const atcvEffectFlagData = <AtcvEffectFlagData>this.object.document.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN);
+  const atcvEffectFlagData = <AtcvEffectFlagData>(
+    this.object.document.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN)
+  );
   const stealthedWithHiddenConditionOri = atcvEffectFlagData.visionLevelValue ?? 0;
   let stealthedWithHiddenCondition = duplicate(stealthedWithHiddenConditionOri);
   if (stealthedWithHiddenCondition == 0 && getProperty(this.object.document, `data.${API.STEALTH_PASSIVE_SKILL}`)) {
@@ -994,34 +996,34 @@ export async function toggleStealth(event) {
           for (const selectedToken of selectedTokens) {
             if (senseId != AtcvEffectSenseFlags.NONE && senseId != AtcvEffectSenseFlags.NORMAL) {
               const effect = <Effect>await ConditionalVisibilityEffectDefinitions.effect(senseId);
-              if(effect){
+              if (effect) {
                 if (valStealthRoll == 0) {
                   await API.removeEffectOnToken(selectedToken.id, i18n(<string>effect?.name));
                   await selectedToken.document.unsetFlag(CONSTANTS.MODULE_NAME, senseId);
-                }else{
+                } else {
                   //await selectedToken.document.setFlag(CONSTANTS.MODULE_NAME, senseId, valStealthRoll);
                   const atcvEffectFlagData = AtcvEffectFlagData.fromEffect(effect);
                   atcvEffectFlagData.visionLevelValue = valStealthRoll;
                   await selectedToken.document.setFlag(CONSTANTS.MODULE_NAME, senseId, atcvEffectFlagData);
                 }
-              }else{
-                warn(`Can't find effect definition for '${senseId}'`, true)
+              } else {
+                warn(`Can't find effect definition for '${senseId}'`, true);
               }
             }
             if (conditionId != AtcvEffectConditionFlags.NONE) {
               const effect = <Effect>await ConditionalVisibilityEffectDefinitions.effect(conditionId);
-              if(effect){
+              if (effect) {
                 if (valStealthRoll == 0) {
                   await API.removeEffectOnToken(selectedToken.id, i18n(<string>effect?.name));
                   await selectedToken.document.unsetFlag(CONSTANTS.MODULE_NAME, conditionId);
-                }else{
+                } else {
                   //await selectedToken.document.setFlag(CONSTANTS.MODULE_NAME, conditionId, valStealthRoll);
                   const atcvEffectFlagData = AtcvEffectFlagData.fromEffect(effect);
                   atcvEffectFlagData.visionLevelValue = valStealthRoll;
                   await selectedToken.document.setFlag(CONSTANTS.MODULE_NAME, conditionId, atcvEffectFlagData);
                 }
-              }else{
-                warn(`Can't find effect definition for '${conditionId}'`, true)
+              } else {
+                warn(`Can't find effect definition for '${conditionId}'`, true);
               }
             }
           }

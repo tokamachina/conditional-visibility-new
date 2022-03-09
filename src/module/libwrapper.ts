@@ -257,7 +257,7 @@ export function sightLayerPrototypeTestVisibilityHandler(wrapped, ...args) {
     return res;
   }
   const tokenToCheckIfIsVisible = <Token>object;
-  if(!tokenToCheckIfIsVisible.data){
+  if (!tokenToCheckIfIsVisible.data) {
     return res;
   }
   // this.sources is a map of selected tokens (may be size 0) all tokens

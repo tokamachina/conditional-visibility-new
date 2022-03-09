@@ -129,9 +129,9 @@ const module = {
         const s2: any = duplicate(s);
         //s2.value = tokenConfig.object.getFlag(CONSTANTS.MODULE_NAME, s.id);
         const currentAtcvEffectFlagData = <AtcvEffectFlagData>tokenConfig.object.getFlag(CONSTANTS.MODULE_NAME, s.id);
-        if(currentAtcvEffectFlagData){
+        if (currentAtcvEffectFlagData) {
           s2.value = currentAtcvEffectFlagData.visionLevelValue ?? 0;
-        }else{
+        } else {
           s2.value = 0;
         }
         sensesTemplateData.push(s2);
@@ -144,9 +144,9 @@ const module = {
         const s2: any = duplicate(s);
         //s2.value = tokenConfig.object.getFlag(CONSTANTS.MODULE_NAME, s.id);
         const currentAtcvEffectFlagData = <AtcvEffectFlagData>tokenConfig.object.getFlag(CONSTANTS.MODULE_NAME, s.id);
-        if(currentAtcvEffectFlagData){
+        if (currentAtcvEffectFlagData) {
           s2.value = currentAtcvEffectFlagData.visionLevelValue ?? 0;
-        }else{
+        } else {
           s2.value = 0;
         }
         conditionsTemplateData.push(s2);
@@ -164,31 +164,29 @@ const module = {
     const token = <Token>document.object;
     if (change.flags && change.flags[CONSTANTS.MODULE_NAME]) {
       const sourceVisionCapabilities: VisionCapabilities = new VisionCapabilities(<Token>document.object);
-      const p = getProperty(change,`flags.${CONSTANTS.MODULE_NAME}`);
+      const p = getProperty(change, `flags.${CONSTANTS.MODULE_NAME}`);
       for (const key in p) {
         const senseOrConditionIdKey = key;
         const senseOrConditionValue = <AtcvEffectFlagData>p[key];
-        const senseOrConditionId = senseOrConditionIdKey.replace('-=','');
-        if(senseOrConditionValue?.visionLevelValue != 0){
+        const senseOrConditionId = senseOrConditionIdKey.replace('-=', '');
+        if (senseOrConditionValue?.visionLevelValue != 0) {
           const isSense = <SenseData>API.SENSES.find((sense: SenseData) => {
             return (
-              isStringEquals(sense.id, senseOrConditionId) ||
-              isStringEquals(i18n(sense.name), i18n(senseOrConditionId))
+              isStringEquals(sense.id, senseOrConditionId) || isStringEquals(i18n(sense.name), i18n(senseOrConditionId))
             );
           });
           const isCondition = <SenseData>API.CONDITIONS.find((sense: SenseData) => {
             return (
-              isStringEquals(sense.id, senseOrConditionId) ||
-              isStringEquals(i18n(sense.name), i18n(senseOrConditionId))
+              isStringEquals(sense.id, senseOrConditionId) || isStringEquals(i18n(sense.name), i18n(senseOrConditionId))
             );
           });
-          if(isSense){
+          if (isSense) {
             let cur = <AtcvEffect>sourceVisionCapabilities.senses.get(senseOrConditionId);
-            if(cur){
+            if (cur) {
               cur.visionLevelValue = <number>senseOrConditionValue.visionLevelValue;
-              sourceVisionCapabilities.senses.set(senseOrConditionId,cur);
-            }else{
-              cur=  <AtcvEffect>{};  
+              sourceVisionCapabilities.senses.set(senseOrConditionId, cur);
+            } else {
+              cur = <AtcvEffect>{};
               cur.statusSight = isSense;
               cur.visionDistanceValue = 0;
               cur.visionElevation = isSense.conditionElevation;
@@ -196,15 +194,15 @@ const module = {
               cur.visionSources = isSense.conditionSources;
               cur.visionTargets = isSense.conditionTargets;
               cur.visionTargetImage = isSense.conditionTargetImage;
-              sourceVisionCapabilities.senses.set(senseOrConditionId,cur);
+              sourceVisionCapabilities.senses.set(senseOrConditionId, cur);
             }
-          }else{
+          } else {
             let cur = <AtcvEffect>sourceVisionCapabilities.conditions.get(senseOrConditionId);
-            if(cur){
+            if (cur) {
               cur.visionLevelValue = <number>senseOrConditionValue.visionLevelValue;
-              sourceVisionCapabilities.conditions.set(senseOrConditionId,cur);
-            }else{
-              cur=  <AtcvEffect>{};  
+              sourceVisionCapabilities.conditions.set(senseOrConditionId, cur);
+            } else {
+              cur = <AtcvEffect>{};
               cur.statusSight = isCondition;
               cur.visionDistanceValue = 0;
               cur.visionElevation = isCondition.conditionElevation;
@@ -212,7 +210,7 @@ const module = {
               cur.visionSources = isCondition.conditionSources;
               cur.visionTargets = isCondition.conditionTargets;
               cur.visionTargetImage = isCondition.conditionTargetImage;
-              sourceVisionCapabilities.conditions.set(senseOrConditionId,cur);
+              sourceVisionCapabilities.conditions.set(senseOrConditionId, cur);
             }
           }
         }
@@ -283,7 +281,7 @@ const module = {
     }
 
     if (atcvEffects.length > 0) {
-      for(const atcvEffect of atcvEffects){
+      for (const atcvEffect of atcvEffects) {
         // // Organize non-disabled effects by their application priority
         // const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e: ActiveEffect) => {
         //   if (e.data.disabled) {
@@ -301,7 +299,7 @@ const module = {
         // }, []);
         // changes.sort((a, b) => <number>a.priority - <number>b.priority);
         // const changes = effect.data.changes;
-        const changes = atcvEffect.data.changes.sort((a, b) => <number>a.priority - <number>b.priority);;
+        const changes = atcvEffect.data.changes.sort((a, b) => <number>a.priority - <number>b.priority);
         // Apply all changes
         for (const change of changes) {
           if (!change.key.includes('ATCV')) {
@@ -313,14 +311,15 @@ const module = {
             if (updateKey === statusSight.id) {
               // TODO TO CHECK IF WE NEED TO FILTER THE TOKENS AGAIN MAYBE WITH A ADDITIONAL ATCV active change data effect ?
               for (const tokenToSet of tokenArray) {
-                const currentAtcvEffectFlagData = <AtcvEffectFlagData>tokenToSet?.document.getFlag(CONSTANTS.MODULE_NAME, updateKey);
-                const currentValue = String(<number>currentAtcvEffectFlagData.visionLevelValue) ?? '0'
+                const currentAtcvEffectFlagData = <AtcvEffectFlagData>(
+                  tokenToSet?.document.getFlag(CONSTANTS.MODULE_NAME, updateKey)
+                );
+                const currentValue = String(<number>currentAtcvEffectFlagData.visionLevelValue) ?? '0';
                 if (change.value != currentValue) {
                   if (isRemoved) {
                     //await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, 0);
                     //// setProperty(tokenToSet.document, `data.flags.${CONSTANTS.MODULE_NAME}.${statusSight.id}`, 0);
                     await tokenToSet?.document.unsetFlag(CONSTANTS.MODULE_NAME, updateKey);
-
                   } else {
                     //await tokenToSet?.document.setFlag(CONSTANTS.MODULE_NAME, updateKey, change.value);
                     //// setProperty(tokenToSet.document, `data.flags.${CONSTANTS.MODULE_NAME}.${statusSight.id}`, change.value);
@@ -409,7 +408,9 @@ const module = {
       }
       const buttonPos = game.settings.get(CONSTANTS.MODULE_NAME, 'hudPos');
       //const hiddenValue = app.object.document.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN);
-      const atcvEffectFlagData = <AtcvEffectFlagData>app.object.document.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN);
+      const atcvEffectFlagData = <AtcvEffectFlagData>(
+        app.object.document.getFlag(CONSTANTS.MODULE_NAME, AtcvEffectConditionFlags.HIDDEN)
+      );
       const hiddenValue = atcvEffectFlagData.visionLevelValue ?? 0;
       const borderButton = `<div class="control-icon toggleStealth ${
         hiddenValue && hiddenValue != 0 ? 'active' : ''

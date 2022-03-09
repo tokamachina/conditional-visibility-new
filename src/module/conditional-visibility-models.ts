@@ -33,9 +33,9 @@ export class AtcvEffectFlagData {
   visionTargets: string[];
   visionTargetImage: string;
 
-  constructor(){}
+  constructor() {}
 
-  static fromAtcvEffect(atcvEffect:AtcvEffect){
+  static fromAtcvEffect(atcvEffect: AtcvEffect) {
     const res = new AtcvEffectFlagData();
     res.visionLevelValue = atcvEffect.visionLevelValue;
     res.visionDistanceValue = atcvEffect.visionDistanceValue;
@@ -46,7 +46,7 @@ export class AtcvEffectFlagData {
     return res;
   }
 
-  static fromEffect(effect:Effect){
+  static fromEffect(effect: Effect) {
     const effectChanges = effect._handleIntegrations();
     const res = new AtcvEffectFlagData();
     res.visionLevelValue = retrieveAtcvVisionLevelValueFromActiveEffect(effectChanges);
@@ -58,7 +58,7 @@ export class AtcvEffectFlagData {
     return res;
   }
 
-  static fromActiveEffect(activeEffect:ActiveEffect){
+  static fromActiveEffect(activeEffect: ActiveEffect) {
     const effectChanges = activeEffect.data.changes;
     const res = new AtcvEffectFlagData();
     res.visionLevelValue = retrieveAtcvVisionLevelValueFromActiveEffect(effectChanges);
@@ -284,8 +284,10 @@ export class VisionCapabilities {
   addSenses() {
     Promise.all(
       API.SENSES.map(async (statusSight) => {
-        const atcvEffectFlagData = <AtcvEffectFlagData>this.token?.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id)
-        if(atcvEffectFlagData){
+        const atcvEffectFlagData = <AtcvEffectFlagData>(
+          this.token?.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id)
+        );
+        if (atcvEffectFlagData) {
           let visionLevelValue = atcvEffectFlagData.visionLevelValue || 0;
           let visionDistanceValue = atcvEffectFlagData.visionDistanceValue || 0;
           let conditionElevation = atcvEffectFlagData.visionElevation || false;
@@ -347,8 +349,10 @@ export class VisionCapabilities {
   addConditions() {
     Promise.all(
       API.CONDITIONS.map(async (statusSight) => {
-        const atcvEffectFlagData = <AtcvEffectFlagData>this.token.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id);
-        if(atcvEffectFlagData){
+        const atcvEffectFlagData = <AtcvEffectFlagData>(
+          this.token.document?.getFlag(CONSTANTS.MODULE_NAME, statusSight.id)
+        );
+        if (atcvEffectFlagData) {
           let visionLevelValue = atcvEffectFlagData.visionLevelValue || 0;
           let visionDistanceValue = atcvEffectFlagData.visionDistanceValue || 0;
           let conditionElevation = atcvEffectFlagData.visionElevation || false;

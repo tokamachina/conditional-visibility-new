@@ -13,6 +13,7 @@ import {
 } from '../conditional-visibility-models.js';
 import EmbeddedCollection from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs';
 import {
+  ActiveEffectData,
   ActorData,
   TokenData,
 } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
@@ -303,6 +304,7 @@ function isTokenInside(token, wallsBlockTargeting) {
   return false;
 }
 
+// TODO PREPARE TEMPLATE TO APPLY EFFECT ?
 export function templateTokens(template) {
   const wallsBlockTargeting = true;
   const tokens = <TokenData[]>canvas.tokens?.placeables.map((t) => t.data);
@@ -314,7 +316,6 @@ export function templateTokens(template) {
     }
   }
   //game.user?.updateTokenTargets(targets);
-  // TODO APPLY EFFECT
 }
 
 export function shouldIncludeVision(sourceToken: Token, targetToken: Token): boolean | null {
@@ -525,9 +526,9 @@ export async function prepareActiveEffectForConditionalVisibility(
 
   // const actor = <Actor>sourceToken.document.getActor();
 
-  // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
-
+  // MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
   // REMOVE EVERY SENSES WITH THE SAME NAME
+  
   // const keysSensesFirstTime: string[] = [];
   for (const [key, sense] of visionCapabilities.retrieveSenses()) {
     const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
@@ -537,15 +538,31 @@ export async function prepareActiveEffectForConditionalVisibility(
           await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor)
         );
         if (activeEffectToRemove) {
-          //const actve = retrieveAtcvVisionLevelFromActiveEffect(activeEffectToRemove, key);
           const actve = retrieveAtcvVisionLevelValueFromActiveEffect(activeEffectToRemove.data.changes);
           if (sense.visionLevelValue != actve) {
-            // if (keysSensesFirstTime.includes(key)) {
-            await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
-            // } else {
-            //   keysSensesFirstTime.push(key);
-            // }
+            //await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
+            const data = <ActiveEffectData>duplicate(activeEffectToRemove.data);
+            data.changes.forEach((aee) => {
+              if (aee.key.startsWith('ATCV.') && !aee.key.startsWith('ATCV.condition') && aee.value) {
+                aee.value = String(sense.visionLevelValue);
+              }
+            });
+            await API.updateActiveEffectFromIdOnToken(
+              <string>sourceToken.id,
+              <string>activeEffectToRemove.id,
+              undefined,
+              undefined,
+              data,
+            );
           }
+        } else {
+          await API.addEffectConditionalVisibilityOnToken(
+            <string>sourceToken.id,
+            <string>sense.statusSight?.id,
+            false,
+            sense.visionDistanceValue,
+            sense.visionLevelValue,
+          );
         }
       }
     } else {
@@ -564,33 +581,22 @@ export async function prepareActiveEffectForConditionalVisibility(
 
   // ADD THE SENSES FINALLY
 
-  for (const [key, sense] of visionCapabilities.retrieveSenses()) {
-    if (sense.visionLevelValue && sense.visionLevelValue != 0) {
-      const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
-      if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
-        await API.addEffectConditionalVisibilityOnToken(
-          <string>sourceToken.id,
-          <string>sense.statusSight?.id,
-          false,
-          sense.visionDistanceValue,
-          sense.visionLevelValue,
-        );
-      }
-      //else {
-      //   const ae = <ActiveEffect>await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor);
-      //   updateAtcvVisionLevel(
-      //     sourceToken,
-      //     ae,
-      //     <string>sense.statusSight?.id,
-      //     <string>sense.statusSight?.path,
-      //     sense.visionLevelValue,
-      //   );
-      // }
-    }
-  }
+  // for (const [key, sense] of visionCapabilities.retrieveSenses()) {
+  //   if (sense.visionLevelValue && sense.visionLevelValue != 0) {
+  //     const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
+  //     if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
+  //       await API.addEffectConditionalVisibilityOnToken(
+  //         <string>sourceToken.id,
+  //         <string>sense.statusSight?.id,
+  //         false,
+  //         sense.visionDistanceValue,
+  //         sense.visionLevelValue,
+  //       );
+  //     }
+  //   }
+  // }
 
-  // TODO MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
-
+  // MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
   // REMOVE EVERY CONDITIONS WITH THE SAME NAME
 
   // const keysConditionsFirstTime: string[] = [];
@@ -604,12 +610,29 @@ export async function prepareActiveEffectForConditionalVisibility(
         //const actve = retrieveAtcvVisionLevelFromActiveEffect(activeEffectToRemove, key);
         const actve = retrieveAtcvVisionLevelValueFromActiveEffect(activeEffectToRemove.data.changes);
         if (condition.visionLevelValue != actve) {
-          // if (keysConditionsFirstTime.includes(key)) {
-          await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
-          // } else {
-          //   keysConditionsFirstTime.push(key);
-          // }
+          //await API.removeEffectFromIdOnToken(<string>sourceToken.id, <string>activeEffectToRemove.id);
+          const data = <ActiveEffectData>duplicate(activeEffectToRemove.data);
+          data.changes.forEach((aee) => {
+            if (aee.key.startsWith('ATCV.') && !aee.key.startsWith('ATCV.condition') && aee.value) {
+              aee.value = String(condition.visionLevelValue);
+            }
+          });
+          await API.updateActiveEffectFromIdOnToken(
+            <string>sourceToken.id,
+            <string>activeEffectToRemove.id,
+            undefined,
+            undefined,
+            data,
+          );
         }
+      } else {
+        await API.addEffectConditionalVisibilityOnToken(
+          <string>sourceToken.id,
+          <string>condition.statusSight?.id,
+          false,
+          condition.visionDistanceValue,
+          condition.visionLevelValue,
+        );
       }
     } else {
       if (await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true)) {
@@ -627,30 +650,20 @@ export async function prepareActiveEffectForConditionalVisibility(
 
   // ADD THE CONDITIONS FINALLY
 
-  for (const [key, condition] of visionCapabilities.retrieveConditions()) {
-    if (condition.visionLevelValue && condition.visionLevelValue != 0) {
-      const effectNameToCheckOnActor = i18n(<string>condition.statusSight?.name);
-      if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
-        await API.addEffectConditionalVisibilityOnToken(
-          <string>sourceToken.id,
-          <string>condition.statusSight?.id,
-          false,
-          condition.visionDistanceValue,
-          condition.visionLevelValue,
-        );
-      }
-      //else {
-      //   const ae = <ActiveEffect>await API.findEffectByNameOnToken(<string>sourceToken.id, effectNameToCheckOnActor);
-      //   updateAtcvVisionLevel(
-      //     sourceToken,
-      //     ae,
-      //     <string>condition.statusSight?.id,
-      //     <string>condition.statusSight?.path,
-      //     condition.visionLevelValue,
-      //   );
-      // }
-    }
-  }
+  // for (const [key, condition] of visionCapabilities.retrieveConditions()) {
+  //   if (condition.visionLevelValue && condition.visionLevelValue != 0) {
+  //     const effectNameToCheckOnActor = i18n(<string>condition.statusSight?.name);
+  //     if (!(await API.hasEffectAppliedOnToken(<string>sourceToken.id, effectNameToCheckOnActor, true))) {
+  //       await API.addEffectConditionalVisibilityOnToken(
+  //         <string>sourceToken.id,
+  //         <string>condition.statusSight?.id,
+  //         false,
+  //         condition.visionDistanceValue,
+  //         condition.visionLevelValue,
+  //       );
+  //     }
+  //   }
+  // }
 
   // Refresh the flags (this is necessary for retrocompatibility)
   visionCapabilities.refreshSenses();
@@ -847,7 +860,6 @@ export function retrieveAtcvSourcesFromActiveEffect(effectChanges: EffectChangeD
 
 export function retrieveAtcvVisionLevelValueFromActiveEffect(effectChanges: EffectChangeData[]): number {
   //Look up for ATCV to manage vision level
-  // TODO for now every active effect can have only one ATCV key ate the time not sure if is manageable
   let atcvValue: any = 0;
   // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
   // if (!effectNameToSet) {
@@ -869,7 +881,6 @@ export function retrieveAtcvVisionLevelValueFromActiveEffect(effectChanges: Effe
 
 // export function retrieveAtcvVisionLevelFromActiveEffect(effectEntity: ActiveEffect, effectSightId: string): number {
 //   //Look up for ATCV to manage vision level
-//   // TODO for now every active effect can have only one ATCV key ate the time not sure if is manageable
 //   let atcvValue: any = 0;
 //   const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
 //   if (!effectNameToSet) {
@@ -891,7 +902,6 @@ export function retrieveAtcvVisionLevelValueFromActiveEffect(effectChanges: Effe
 
 export function retrieveAtcvVisionTargetImageFromActiveEffect(effectChanges: EffectChangeData[]): string {
   //Look up for ATCV to manage vision level
-  // TODO for now every active effect can have only one ATCV key ate the time not sure if is manageable
   let atcvValue: any = '';
   // const effectNameToSet = effectEntity.name ? effectEntity.name : effectEntity.data.label;
   // if (!effectNameToSet) {

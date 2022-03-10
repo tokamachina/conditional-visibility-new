@@ -78,6 +78,19 @@ export function registerSocket() {
     API.toggleEffectFromIdOnTokenArr(...args),
   );
   conditionalVisibilitySocket.register('findEffectByNameOnToken', (...args) => API.findEffectByNameOnTokenArr(...args));
+  conditionalVisibilitySocket.register('updateEffectFromIdOnToken', (...args) =>
+    API.updateEffectFromIdOnTokenArr(...args),
+  );
+  conditionalVisibilitySocket.register('updateEffectFromNameOnToken', (...args) =>
+    API.updateEffectFromNameOnTokenArr(...args),
+  );
+  conditionalVisibilitySocket.register('updateActiveEffectFromIdOnToken', (...args) =>
+    API.updateActiveEffectFromIdOnTokenArr(...args),
+  );
+  conditionalVisibilitySocket.register('updateActiveEffectFromNameOnToken', (...args) =>
+    API.updateActiveEffectFromNameOnTokenArr(...args),
+  );
+
   return conditionalVisibilitySocket;
 }
 

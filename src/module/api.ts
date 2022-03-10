@@ -7,6 +7,7 @@ import { EnhancedConditions } from './cub/enhanced-conditions';
 import { canvas, game } from './settings';
 import Effect, { EffectSupport } from './effects/effect';
 import { ConditionalVisibilityEffectDefinitions } from './conditional-visibility-effect-definition';
+import { ActiveEffectData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 
 const API = {
   effectInterface: EffectInterface,
@@ -341,6 +342,66 @@ const API = {
     return result;
   },
 
+  async updateEffectFromIdOnTokenArr(...inAttributes: any[]): Promise<boolean | undefined> {
+    if (!Array.isArray(inAttributes)) {
+      throw error('updateEffectFromIdOnTokenArr | inAttributes must be of type array');
+    }
+    const [effectId, uuid, origin, overlay, effectUpdated] = inAttributes;
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.updateEffectFromIdOnToken(
+      effectId,
+      uuid,
+      origin,
+      overlay,
+      effectUpdated,
+    );
+    return result;
+  },
+
+  async updateEffectFromNameOnTokenArr(...inAttributes: any[]): Promise<boolean | undefined> {
+    if (!Array.isArray(inAttributes)) {
+      throw error('updateEffectFromNameOnTokenArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid, origin, overlay, effectUpdated] = inAttributes;
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.updateEffectFromNameOnToken(
+      effectName,
+      uuid,
+      origin,
+      overlay,
+      effectUpdated,
+    );
+    return result;
+  },
+
+  async updateActiveEffectFromIdOnTokenArr(...inAttributes: any[]): Promise<boolean | undefined> {
+    if (!Array.isArray(inAttributes)) {
+      throw error('updateActiveEffectFromIdOnTokenArr | inAttributes must be of type array');
+    }
+    const [effectId, uuid, origin, overlay, effectUpdated] = inAttributes;
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.updateActiveEffectFromIdOnToken(
+      effectId,
+      uuid,
+      origin,
+      overlay,
+      effectUpdated,
+    );
+    return result;
+  },
+
+  async updateActiveEffectFromNameOnTokenArr(...inAttributes: any[]): Promise<boolean | undefined> {
+    if (!Array.isArray(inAttributes)) {
+      throw error('updateActiveEffectFromNameOnTokenArr | inAttributes must be of type array');
+    }
+    const [effectName, uuid, origin, overlay, effectUpdated] = inAttributes;
+    const result = await (<EffectInterface>this.effectInterface)._effectHandler.updateActiveEffectFromNameOnToken(
+      effectName,
+      uuid,
+      origin,
+      overlay,
+      effectUpdated,
+    );
+    return result;
+  },
+
   // ======================
   // Effect Actor Management
   // ======================
@@ -450,6 +511,62 @@ const API = {
 
   async removeEffectFromIdOnToken(tokenId: string, effectId: string) {
     const result = await this.effectInterface.removeEffectFromIdOnToken(effectId, <string>tokenId);
+    return result;
+  },
+
+  async updateEffectFromIdOnToken(tokenId: string, effectId: string, origin, overlay, effectUpdated: Effect) {
+    const result = await this.effectInterface.updateEffectFromIdOnToken(
+      effectId,
+      tokenId,
+      origin,
+      overlay,
+      effectUpdated,
+    );
+    return result;
+  },
+
+  async updateEffectFromNameOnToken(tokenId: string, effectName: string, origin, overlay, effectUpdated: Effect) {
+    const result = await this.effectInterface.updateEffectFromNameOnToken(
+      effectName,
+      tokenId,
+      origin,
+      overlay,
+      effectUpdated,
+    );
+    return result;
+  },
+
+  async updateActiveEffectFromIdOnToken(
+    tokenId: string,
+    effectId: string,
+    origin,
+    overlay,
+    effectUpdated: ActiveEffectData,
+  ) {
+    const result = await this.effectInterface.updateActiveEffectFromIdOnToken(
+      effectId,
+      tokenId,
+      origin,
+      overlay,
+      effectUpdated,
+    );
+    return result;
+  },
+
+  async updateActiveEffectFromNameOnToken(
+    tokenId: string,
+    effectName: string,
+    origin,
+    overlay,
+    effectUpdated: ActiveEffectData,
+  ) {
+    const result = await this.effectInterface.updateActiveEffectFromNameOnToken(
+      effectName,
+      tokenId,
+      origin,
+      overlay,
+      effectUpdated,
+    );
     return result;
   },
 

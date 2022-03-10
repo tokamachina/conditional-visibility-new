@@ -99,7 +99,10 @@ export const readyHooks = async (): Promise<void> => {
   // ConditionalVisibility.initialize(sightLayer, canvas.hud?.token);
   // Add any additional hooks if necessary
   Hooks.on('renderTokenConfig', (tokenConfig, html, data) => {
-    module.onRenderTokenConfig(tokenConfig, html, data);
+    // Only GM can see this
+    if (game.user?.isGM) {
+      module.onRenderTokenConfig(tokenConfig, html, data);
+    }
   });
 
   Hooks.on('updateToken', (document: TokenDocument, change, options, userId) => {
@@ -115,7 +118,10 @@ export const readyHooks = async (): Promise<void> => {
   });
 
   Hooks.on('renderTokenHUD', (app, html, data) => {
-    module.renderTokenHUD(app, html, data);
+    // Only GM can see this
+    if (game.user?.isGM) {
+      module.renderTokenHUD(app, html, data);
+    }
   });
 };
 
@@ -282,23 +288,6 @@ const module = {
 
     if (atcvEffects.length > 0) {
       for (const atcvEffect of atcvEffects) {
-        // // Organize non-disabled effects by their application priority
-        // const changes = <EffectChangeData[]>ATCVeffects.reduce((changes, e: ActiveEffect) => {
-        //   if (e.data.disabled) {
-        //     return changes;
-        //   }
-        //   return changes.concat(
-        //     //@ts-ignore
-        //     (<EffectChangeData[]>e.data.changes).map((c: EffectChangeData) => {
-        //       const c2 = <EffectChangeData>duplicate(c);
-        //       // c2.effect = e;
-        //       c2.priority = <number>c2.priority ?? c2.mode * 10;
-        //       return c2;
-        //     }),
-        //   );
-        // }, []);
-        // changes.sort((a, b) => <number>a.priority - <number>b.priority);
-        // const changes = effect.data.changes;
         const changes = atcvEffect.data.changes.sort((a, b) => <number>a.priority - <number>b.priority);
         // Apply all changes
         for (const change of changes) {
@@ -384,7 +373,10 @@ const module = {
               }
               effect.transfer = !disabled;
             }
-            activeEffectsData.push(effect.convertToActiveEffectData({ origin, overlay }));
+            const data = effect.convertToActiveEffectData({ origin, overlay });
+            data.name = data.name + ' (CV)';
+            data.label = data.label + ' (CV)';
+            activeEffectsData.push(data);
           }
         }
 

@@ -1,3 +1,7 @@
+## 0.4.12
+
+- bug fixing, update instead remove the effect
+
 ## 0.4.9
 
 - Bug fixing recovery actor from token

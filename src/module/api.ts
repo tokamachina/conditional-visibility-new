@@ -407,22 +407,22 @@ const API = {
   // ======================
   /*
   async addEffectOnActor(actorId: string, effectName: string, effect: Effect) {
-    const result = await API.effectInterface.addEffectOnActor(effectName, <string>actorId, effect);
+    const result = await this.effectInterface.addEffectOnActor(effectName, <string>actorId, effect);
     return result;
-  }.
+  },
 
   async findEffectByNameOnActor(actorId: string, effectName: string): Promise<ActiveEffect | null> {
-    const result = await API.effectInterface.findEffectByNameOnActor(effectName, <string>actorId);
+    const result = await this.effectInterface.findEffectByNameOnActor(effectName, <string>actorId);
     return result;
   },
 
   async hasEffectAppliedOnActor(actorId: string, effectName: string, includeDisabled:boolean) {
-    const result = await API.effectInterface.hasEffectAppliedOnActor(effectName, <string>actorId, includeDisabled);
+    const result = await this.effectInterface.hasEffectAppliedOnActor(effectName, <string>actorId, includeDisabled);
     return result;
   },
 
   async hasEffectAppliedFromIdOnActor(actorId: string, effectId: string, includeDisabled:boolean) {
-    const result = await API.effectInterface.hasEffectAppliedFromIdOnActor(effectId, <string>actorId, includeDisabled);
+    const result = await this.effectInterface.hasEffectAppliedFromIdOnActor(effectId, <string>actorId, includeDisabled);
     return result;
   },
 
@@ -433,7 +433,7 @@ const API = {
     forceEnabled?: boolean,
     forceDisabled?: boolean,
   ) {
-    const result = await API.effectInterface.toggleEffectFromIdOnActor(
+    const result = await this.effectInterface.toggleEffectFromIdOnActor(
       effectId,
       <string>actorId,
       alwaysDelete,
@@ -444,17 +444,17 @@ const API = {
   },
 
   async addActiveEffectOnActor(actorId: string, activeEffect: ActiveEffect) {
-    const result = API.effectInterface.addActiveEffectOnActor(<string>actorId, activeEffect.data);
+    const result = this.effectInterface.addActiveEffectOnActor(<string>actorId, activeEffect.data);
     return result;
   },
 
-  static async removeEffectOnActor(actorId: string, effectName: string) {
-    const result = await API.effectInterface.removeEffectOnActor(effectName, <string>actorId);
+  async removeEffectOnActor(actorId: string, effectName: string) {
+    const result = await this.effectInterface.removeEffectOnActor(effectName, <string>actorId);
     return result;
-  }
+  },
 
   async removeEffectFromIdOnActor(actorId: string, effectId: string) {
-    const result = await API.effectInterface.removeEffectFromIdOnActor(effectId, <string>actorId);
+    const result = await this.effectInterface.removeEffectFromIdOnActor(effectId, <string>actorId);
     return result;
   },
   */

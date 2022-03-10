@@ -528,7 +528,7 @@ export async function prepareActiveEffectForConditionalVisibility(
 
   // MANAGE THE UPDATE OF EFFECT INSTEAD REMOVE AND ADD
   // REMOVE EVERY SENSES WITH THE SAME NAME
-  
+
   // const keysSensesFirstTime: string[] = [];
   for (const [key, sense] of visionCapabilities.retrieveSenses()) {
     const effectNameToCheckOnActor = i18n(<string>sense.statusSight?.name);
